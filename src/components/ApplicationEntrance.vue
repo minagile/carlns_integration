@@ -1,0 +1,32 @@
+<template>
+  <!-- 申请入口 -->
+  <div class="application_entrance">
+    <router-view></router-view>
+    <router-link class="enter" :to="{name: 'Enterprise'}">
+      <img src="../assets/img/enterprise.png" alt="企业用户">
+    </router-link>
+    <router-link class="enter" :to="{name: 'Personal'}">
+      <img src="../assets/img/personal.png" alt="个人用户">
+    </router-link>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'ApplicationEntrance'
+}
+</script>
+
+<style lang="less" scoped>
+.application_entrance {
+  margin-top: 20px;
+  height: 97%;
+  background: #fff;
+  display: flex;
+  justify-content: space-around;
+  position: relative;
+  .enter {
+    margin-top: 300px;
+  }
+}
+</style>
