@@ -19,10 +19,10 @@
             </el-select>
           </el-form-item>
           <el-form-item label="法人姓名：" prop="peoplename">
-            <el-input v-model="ruleForm.name" placeholder="请输入负责人姓名"></el-input>
+            <el-input v-model="ruleForm.peoplename" placeholder="请输入负责人姓名"></el-input>
           </el-form-item>
           <el-form-item label="联系方式：" prop="phone">
-            <el-input v-model="ruleForm.name" placeholder="请输入联系方式"></el-input>
+            <el-input v-model="ruleForm.phone" placeholder="请输入联系方式"></el-input>
           </el-form-item>
         </el-form>
       </div>
@@ -78,6 +78,7 @@
         <span style="padding: 0 62px;"></span>
         <button :class="{active:'single' === active}" @click="toubao('single')">单辆投保</button>
       </div>
+      <!-- 批量投保 -->
       <div class="batch" v-show="batchShow">
         <div class="import">
           <div class="bigbox"></div>
@@ -86,8 +87,86 @@
         <span style="padding: 0 115px;"></span>
         <button>返回</button>
       </div>
+      <!-- 单辆投保 -->
       <div class="single" v-show="singleShow">
-        danliang
+        <el-form :model="form" :rules="rules" ref="form" size="mini" label-width="167px" class="demo-ruleForm">
+          <el-form-item label="车架号：" prop="name">
+            <el-input v-model="form.name" placeholder="请输入车架号"></el-input>
+          </el-form-item>
+          <div class="choose">
+            <div class="license p">
+              <el-radio v-model="radio" label="1">车辆合格证：</el-radio>
+              <el-input size="mini" v-model="form.name" placeholder="请输入您的合格证号"></el-input>
+            </div>
+            <div class="carnumber p">
+              <el-radio v-model="radio" label="2">车牌号：</el-radio>
+              <el-input size="mini" v-model="form.name" placeholder="请输入您的车牌号" disabled></el-input>
+            </div>
+          </div>
+          <el-form-item label="商业险：" prop="name">
+            <el-input v-model="form.name" placeholder="请输入商业险"></el-input>
+          </el-form-item>
+          <el-form-item label="交强险：" prop="name">
+            <el-input v-model="form.name" placeholder="请输入交强险"></el-input>
+          </el-form-item>
+          <el-form-item label="车船税：" prop="name">
+            <el-input v-model="form.name" placeholder="请输入车船税"></el-input>
+          </el-form-item>
+          <el-form-item label="选择保单：" prop="name">
+            <el-radio-group v-model="form.name" size="small">
+              <el-radio-button label="上海"></el-radio-button>
+              <el-radio-button label="深圳"></el-radio-button>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="月付期数：" prop="name">
+            <el-select v-model="value8" filterable placeholder="请选择">
+              <el-option
+                v-for="item in options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <!-- <div class="pic">
+            <figure>
+              <div class="text"><span>缴费通知单：</span></div>
+              <div class="right">
+                <div class="box">
+                  <img src="../../assets/img/uploadpic.png" alt="">
+                  <a>点击上传</a>
+                  <input type="file">
+                </div>
+                <p>支持jpg、jpeg、png等格式，体积在5M以下 </p>
+              </div>
+            </figure>
+            <figure>
+              <div class="text"><span>购车发票：</span></div>
+              <div class="right">
+                <div class="box">
+                  <img src="../../assets/img/uploadpic.png" alt="">
+                  <a>点击上传</a>
+                  <input type="file">
+                </div>
+                <p>支持jpg、jpeg、png等格式，体积在5M以下 </p>
+              </div>
+            </figure>
+            <figure>
+              <div class="text"><span>机动车行驶证：</span></div>
+              <div class="right">
+                <div class="box">
+                  <img src="../../assets/img/uploadpic.png" alt="">
+                  <a>点击上传</a>
+                  <input type="file">
+                </div>
+                <p>支持jpg、jpeg、png等格式，体积在5M以下 </p>
+              </div>
+            </figure>
+          </div> -->
+        </el-form>
+        <button class="save">保存</button>
+        <span style="padding: 0 115px;"></span>
+        <button>返回</button>
       </div>
     </div>
   </div>
@@ -98,6 +177,7 @@ export default {
   name: 'Enterprise',
   data () {
     return {
+      radio: '1',
       options: [{
         value: '选项1',
         label: '黄金糕'
@@ -107,6 +187,9 @@ export default {
         name: '',
         peoplename: '',
         phone: ''
+      },
+      form: {
+        name: ''
       },
       rules: {
         name: [
@@ -119,6 +202,12 @@ export default {
         ],
         phone: [
           { required: true, message: '请输入联系方式', trigger: 'blur' },
+          { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+        ]
+      },
+      formrules: {
+        name: [
+          { required: true, message: '请输入企业名称', trigger: 'blur' },
           { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
         ]
       },
@@ -180,6 +269,8 @@ export default {
             display: block;
             width: 130px;
             text-align: right;
+            font-size: 14px;
+            color: #606266;
           }
         }
         .right {
@@ -266,6 +357,40 @@ export default {
       border-radius:20px;
     }
   }
+}
+.single {
+  .el-form {
+    text-align: left;
+    padding-top: 50px;
+    .choose {
+      overflow: hidden;
+      .p {
+        margin-bottom: 18px;
+        position: relative;
+        .el-radio {
+          text-align: right;
+          font-size: 14px;
+          color: #606266;
+          line-height: 40px;
+          padding: 0 12px 0 0;
+          -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+          position: absolute;
+          top: 0;
+          line-height: 28px;
+          right: 918px;
+        }
+        .el-input {
+          // float: left;
+          margin-left: 167px;
+          width: 918px;
+        }
+      }
+    }
+  }
+}
+.batch, .single {
+  text-align: center;
   button {
     width: 210px;
     height: 57px;

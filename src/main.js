@@ -5,6 +5,17 @@ import App from './App'
 import router from './router'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
+// import axios from 'axios'
+import VueResource from 'vue-resource'
+import { post, fetch, patch, put } from './assets/js/http'
+
+// 定义全局变量
+Vue.prototype.$post = post
+Vue.prototype.$fetch = fetch
+Vue.prototype.$patch = patch
+Vue.prototype.$put = put
+
+Vue.use(VueResource)
 
 Vue.config.productionTip = false
 Vue.use(ElementUI)

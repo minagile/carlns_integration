@@ -9,22 +9,23 @@
         <div class="input">
           <i>*</i>
           <span>企业名称：</span>
-          <input type="text" placeholder="请输入企业名称">
+          <input type="text" placeholder="请输入企业名称" v-model="msg.channelName" @blur="phoneNumber">
         </div>
         <div class="input">
           <i>*</i>
-          <span>企业名称：</span>
-          <input type="text" placeholder="请输入企业名称">
+          <span>法人姓名：</span>
+          <input type="text" placeholder="请输入法人姓名" v-model="msg.channelUserName" @blur="phoneNumber">
         </div>
         <div class="input">
           <i>*</i>
-          <span>企业名称：</span>
-          <input type="text" placeholder="请输入企业名称">
+          <span>经营地址：</span>
+          <input type="text" placeholder="请输入经营地址" v-model="msg.address" @blur="phoneNumber">
         </div>
         <div class="input">
           <i>*</i>
-          <span>企业名称：</span>
-          <input type="text" placeholder="请输入企业名称">
+          <span>联系方式：</span>
+          <input type="text" placeholder="请输入联系方式" v-model="msg.channelUserPhone" @blur="phoneNumber">
+          <!-- <input type="text" placeholder="请输入联系方式" v-model="msg.channelUserPhone"> -->
         </div>
       </div>
       <div class="basic pic">
@@ -38,7 +39,8 @@
               <div class="box">
                 <img src="../../assets/img/uploadpic.png" alt="">
                 <a>点击上传</a>
-                <input type="file">
+                <div class="img_show"></div>
+                <input type="file" @change="fileImage($event, 1)" accept="image/jpeg,image/x-png,image/gif">
               </div>
               <p>支持jpg、jpeg、png等格式，体积在5M以下 </p>
             </div>
@@ -49,7 +51,8 @@
               <div class="box">
                 <img src="../../assets/img/uploadpic.png" alt="">
                 <a>点击上传</a>
-                <input type="file">
+                <div class="img_show">{{ pdfName }}</div>
+                <input type="file" @change="filePdf($event)" accept=".pdf">
               </div>
               <button>下载</button>
               <p>请先下载代理合作协议，签字后以PDF格式上传</p>
@@ -61,7 +64,8 @@
               <div class="box">
                 <img src="../../assets/img/uploadpic.png" alt="">
                 <a>请上传身份证正面</a>
-                <input type="file">
+                <div class="img_show"></div>
+                <input type="file" @change="fileImage($event, 3)" accept="image/jpeg,image/x-png,image/gif">
               </div>
               <p>支持jpg、jpeg、png等格式，体积在5M以下 </p>
             </div>
@@ -72,7 +76,8 @@
               <div class="box">
                 <img src="../../assets/img/uploadpic.png" alt="">
                 <a>请上传身份证反面</a>
-                <input type="file">
+                <div class="img_show"></div>
+                <input type="file" @change="fileImage($event, 4)" accept="image/jpeg,image/x-png,image/gif">
               </div>
               <p>支持jpg、jpeg、png等格式，体积在5M以下 </p>
             </div>
@@ -80,7 +85,7 @@
         </div>
       </div>
       <div class="footer">
-        <button @click="$router.push('/Tips')">提 交</button>
+        <button @click="submit">提 交</button>
       </div>
     </div>
   </div>
@@ -91,6 +96,148 @@ export default {
   name: 'ChannelApplication',
   data () {
     return {
+      msg: {
+        channelName: '',
+        channelUserName: '',
+        address: '',
+        channelUserPhone: '',
+        channelIdCardUp: {},
+        channelIdCardDown: {},
+        channelLicenseUrl: {},
+        channelProtocolUrl: {}
+      },
+      pdfName: ''
+    }
+  },
+  methods: {
+    submit () {
+      if (this.msg.channelLicenseUrl.__ob__) {
+        this.$message({
+          type: 'error',
+          message: '请先上传营业执照'
+        })
+      } else if (this.msg.channelProtocolUrl.__ob__) {
+        this.$message({
+          type: 'error',
+          message: '请先上传代理商合作协议'
+        })
+      } else if (this.msg.channelIdCardUp.__ob__) {
+        this.$message({
+          type: 'error',
+          message: '请先上传身份证'
+        })
+      } else if (this.msg.channelIdCardDown.__ob__) {
+        this.$message({
+          type: 'error',
+          message: '请先上传身份证'
+        })
+      } else {
+        var formData = new FormData()
+        formData.append('channelName', this.msg.channelName)
+        formData.append('channelUserName', this.msg.channelUserName)
+        formData.append('channelUserPhone', this.msg.channelUserPhone)
+        formData.append('address', this.msg.address)
+        formData.append('channelIdCardUp', this.msg.channelIdCardUp)
+        formData.append('channelIdCardDown', this.msg.channelIdCardDown)
+        formData.append('channelLicenseUrl', this.msg.channelLicenseUrl)
+        formData.append('channelProtocolUrl', this.msg.channelProtocolUrl)
+        let config = {
+          headers: {'Content-Type': 'multipart/form-data'}
+        }
+        this.$http.post('http://192.168.1.124:8080/fd/channel/insert', formData, config).then(res => {
+          if (res.body.code === 0) {
+            this.$router.push('/Tips')
+          } else {
+            this.$message({
+              type: 'info',
+              message: res.body.msg
+            })
+          }
+        })
+      }
+    },
+    filePdf (e) {
+      var filepdf = e.target.files[0]
+      if (filepdf.name.split('.')[1] === 'pdf') {
+        var imgSize = filepdf.size / 1024
+        if (imgSize > 3 * 1024) {
+          this.$message({
+            type: 'info',
+            message: '请上传大小不要超过3M的文件'
+          })
+        } else {
+          this.pdfName = filepdf.name
+          this.msg.channelProtocolUrl = filepdf
+          // console.log(filepdf)
+          // e.target.parentNode.children[0].src = '../../assets/img/upload.png'
+          // console.log(e.target.parentNode.children[0])
+        }
+      } else {
+        this.$message({
+          type: 'info',
+          message: '请上传pdf格式的文件'
+        })
+      }
+    },
+    fileImage (e, i) {
+      var that = this
+      var file = e.target.files[0]
+      if (file.name.split('.')[1] !== 'png' && file.name.split('.')[1] !== 'gif' && file.name.split('.')[1] !== 'jpg' && file.name.split('.')[1] !== 'jpeg' && file.name.split('.')[1] !== 'bmp' && file.name.split('.')[1] !== 'pdf') {
+        this.$message({
+          type: 'info',
+          message: '请上传图片'
+        })
+      } else {
+        var imgSize = file.size / 1024
+        if (imgSize > 5 * 1024) {
+          this.$message({
+            type: 'info',
+            message: '请上传大小不要超过5M的图片'
+          })
+        } else {
+          var reader = new FileReader()
+          reader.readAsDataURL(file) // 读出 base64
+          reader.onloadend = function () {
+            // 图片的 base64 格式, 可以直接当成 img 的 src 属性值
+            var dataURL = reader.result
+            var avatar = dataURL
+            // console.log(i)
+            // console.log(avatar)
+            e.target.previousElementSibling.style.backgroundImage = 'url(' + avatar + ')'
+            if (i === 1) {
+              that.msg.channelLicenseUrl = file
+            }
+            if (i === 3) {
+              that.msg.channelIdCardUp = file
+            }
+            if (i === 4) {
+              that.msg.channelIdCardDown = file
+            }
+          }
+        }
+      }
+    },
+    // 电话号码验证
+    phoneNumber (event) {
+      if (event.target.value === '') {
+        event.target.parentNode.style.borderColor = 'red'
+        this.$message({
+          type: 'error',
+          message: event.target.previousElementSibling.innerText + '不能为空'
+        })
+      } else {
+        event.target.parentNode.style.borderColor = '#a0a0a0'
+        if (this.msg.channelUserPhone !== '') {
+          var myreg = /^[1][3,4,5,7,8][0-9]{9}$/
+          if (!myreg.test(this.msg.channelUserPhone)) {
+            event.target.parentNode.style.borderColor = 'red'
+            this.$message({
+              type: 'error',
+              message: '手机号输入不正确'
+            })
+          }
+        }
+      }
     }
   },
   components: {
@@ -192,6 +339,14 @@ export default {
               font-family: MicrosoftYaHei;
               font-weight: 400;
               color:rgba(46,146,255,1);
+            }
+            .img_show {
+              position: absolute;
+              width: 100%;
+              height: 100%;
+              top: 0;
+              left: 0;
+              background-size: cover;
             }
             input {
               position: absolute;

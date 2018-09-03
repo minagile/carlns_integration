@@ -49,17 +49,17 @@ export default {
     return {
       num: 1,
       list: ['/HomePage', '/ApplicationEntrance'],
-      list2: ['首页', '申请入口', '待分期', '已分期', '未通过', '退保中心']
+      list2: ['首页', '申请入口', '待分期', '已分期', '未通过', '退保中心'],
+      navArr: []
     }
   },
   mounted () {
     let path = this.$router.history.current.fullPath
-    // console.log(path.split('/'))
+    // console.log(path)
     this.list.forEach((v, k) => {
       if (path.split('/')[1] === v.split('/')[1]) {
         this.num = k + 1
-        this.$emit('getNav', this.list2[k])
-        this.$emit('getNavLink', this.list[k])
+        this.$emit('getNavLink', this.list[k].split('/')[1])
       }
     })
   },
@@ -67,8 +67,7 @@ export default {
     tab (index) {
       this.num = index
       this.$router.push(this.list[this.num - 1])
-      this.$emit('getNav', this.list2[this.num - 1])
-      this.$emit('getNavLink', this.list[this.num - 1])
+      this.$emit('getNavLink', this.list[this.num - 1].split('/')[1])
     }
   }
 }

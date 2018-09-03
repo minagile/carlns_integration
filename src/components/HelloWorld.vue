@@ -2,20 +2,20 @@
   <div class="hello">
     <el-container>
       <el-aside width="200px">
-        <SideBar @getNav="getNav" @getNavLink="getNavLink"/>
+        <SideBar @getNavLink="getNavLink"/>
       </el-aside>
       <el-container>
         <el-header>
           <!-- 面包屑导航 -->
           <el-breadcrumb separator-class="el-icon-d-arrow-right">
-            <el-breadcrumb-item v-for="(list, index) in currentList" :key="index" :to="{ path: currentListLink[index] }">{{ list }}</el-breadcrumb-item>
+            <el-breadcrumb-item v-for="(list, index) in currentListLink" :key="index" :to="{ name: list }">{{ list | breadcrumb }}</el-breadcrumb-item>
           </el-breadcrumb>
           <div style="float:right;">
             <el-button type="text">
               <img src="../assets/img/per.png" alt="">
-              用户名
+              {{ username }}
             </el-button>
-            <el-button type="text" @click="$router.push('/Login')">
+            <el-button type="text" @click="loginout">
               <img src="../assets/img/loginout.png" alt="">
               退出登录
             </el-button>
@@ -37,22 +37,48 @@ export default {
   data () {
     return {
       currentList: [],
-      currentListLink: []
+      currentListLink: [],
+      username: ''
     }
   },
+  // 获取路由信息
+  beforeRouteUpdate (to, from, next) {
+    let arr = to.path.split('/')
+    arr.splice(0, 1)
+    this.currentList = arr
+    this.currentListLink = arr
+    next()
+  },
   mounted () {
+    // 用户名展示
+    this.username = sessionStorage.getItem('username')
+    // this.$get('/fd/company/selectCompany').then(res => {
+    //   console.log(res)
+    // })
   },
   methods: {
+    // 侧边栏切换时面包屑导航的展示
     getNavLink (data) {
       this.currentListLink[0] = data
     },
-    getNav (data) {
-      this.currentList[0] = data
+    loginout () {
+      sessionStorage.clear()
+      this.$router.push('/Login')
     }
   },
   components: {
     SideBar,
     HomePage
+  },
+  filters: {
+    // 面包屑导航
+    breadcrumb (data) {
+      if (data === 'HomePage') return '首页'
+      if (data === 'ApplicationEntrance') return '申请入口'
+      if (data === 'Enterprise') return '企业用户'
+      if (data === 'Personal') return '个人用户'
+      return data
+    }
   }
 }
 </script>

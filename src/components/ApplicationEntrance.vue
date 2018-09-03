@@ -2,18 +2,28 @@
   <!-- 申请入口 -->
   <div class="application_entrance">
     <router-view></router-view>
-    <router-link class="enter" :to="{name: 'Enterprise'}">
+    <a class="enter" @click="change('Enterprise')"  >
       <img src="../assets/img/enterprise.png" alt="企业用户">
-    </router-link>
-    <router-link class="enter" :to="{name: 'Personal'}">
+    </a>
+    <a class="enter" @click="change('Personal')" >
       <img src="../assets/img/personal.png" alt="个人用户">
-    </router-link>
+    </a>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'ApplicationEntrance'
+  name: 'ApplicationEntrance',
+  data () {
+    return {
+      router: '企业用户'
+    }
+  },
+  methods: {
+    change (data) {
+      this.$router.push({name: data})
+    }
+  }
 }
 </script>
 

@@ -1,18 +1,48 @@
 <template>
   <div class="login">
-    <el-card class="box-card" :body-style="{ padding: '50px 57px 0 53px' }">
+    <el-card class="box-card" :body-style="{ padding: '50px 57px 0 53px' }" v-if="forget">
       <div slot="header" class="clearfix">
         <span style="font-size: 20px;font-family:PingFang-SC-Regular;">欢迎登录</span>
       </div>
       <div class="text item">
         <p>账号</p>
-        <input type="text">
+        <input type="text" v-model="user">
         <p>密码</p>
-        <input type="text" name="" id="">
-        <button @click="$router.push('/HomePage')">登 录</button>
+        <div class="psd">
+          <input type="password" v-model="psd" @keypress="enter">
+          <img src="../assets/img/eye.png" @click="showPsd($event)"/>
+        </div>
+        <button @click="login">登 录</button>
         <p class="last">
-          <a>忘记密码？</a>
-          <a class="l" href="/#/ChannelApplication">点我进行渠道代理申请</a>
+          <a @click="forget = !forget">忘记密码？</a>
+          <a class="l" href="/ChannelApplication">点我进行渠道代理申请</a>
+        </p>
+      </div>
+    </el-card>
+    <!-- 忘记密码 -->
+    <el-card class="box-card" :body-style="{ padding: '10px 57px 0 53px' }" v-if="!forget">
+      <div slot="header" class="clearfix">
+        <span style="font-size: 20px;font-family:PingFang-SC-Regular;">修改密码</span>
+      </div>
+      <div class="text item">
+        <p>账号</p>
+        <input type="text" v-model="user">
+        <p>验证码</p>
+        <input type="text" v-model="code" style="width: 175px;float:left;">
+        <button style="width: 160px;font-size: 16px;margin: 0 0 0 5px;;float:left;">获取验证码<span v-show="false">{{ count }}s</span></button>
+        <p>密码</p>
+        <div class="psd">
+          <input type="password" v-model="forgetpsd">
+          <img src="../assets/img/eye.png" @click="showPsd($event)"/>
+        </div>
+        <p>确认密码</p>
+        <div class="psd">
+          <input type="password" v-model="forgetpsdconfirm">
+          <img src="../assets/img/eye.png" @click="showPsd($event)"/>
+        </div>
+        <button @click="changePsd">确 定</button>
+        <p class="last" style="padding-top: 20px;">
+          <a class="l" @click="forget = !forget">点我返回登录</a>
         </p>
       </div>
     </el-card>
@@ -24,6 +54,62 @@ export default {
   name: 'Login',
   data () {
     return {
+      user: '',
+      psd: '',
+      forget: true,
+      count: 60,
+      code: '',
+      forgetpsd: '',
+      forgetpsdconfirm: ''
+    }
+  },
+  methods: {
+    // 回车键登录
+    enter (e) {
+      if (e.keyCode === 13) {
+        this.login()
+      }
+    },
+    // 修改密码
+    changePsd () {
+    },
+    // 显示密码
+    showPsd (ev) {
+      if (ev.target.previousElementSibling.type === 'password') {
+        ev.target.previousElementSibling.type = 'text'
+      } else {
+        ev.target.previousElementSibling.type = 'password'
+      }
+    },
+    // 登录
+    login () {
+      if (this.user === '') {
+        this.$message({
+          type: 'error',
+          message: '请输入账号'
+        })
+      } else if (this.psd === '') {
+        this.$message({
+          type: 'error',
+          message: '请输入密码'
+        })
+      } else {
+        this.$fetch('/login/user', {
+          username: this.user,
+          password: this.psd
+        }).then((response) => {
+          if (response.code === 0) {
+            sessionStorage.setItem('token', response.data.token)
+            sessionStorage.setItem('username', response.data.username)
+            this.$router.push('/HomePage')
+          } else {
+            this.$message({
+              type: 'error',
+              message: response.msg
+            })
+          }
+        })
+      }
     }
   },
   components: {
@@ -54,7 +140,7 @@ export default {
     margin-top: -330px;
     margin-left: -226px;
     p {
-      line-height: 34px;
+      line-height: 24px;
       text-indent: 24px;
       font-size: 14px;
       &.last {
@@ -76,7 +162,7 @@ export default {
     input {
       width:342px;
       height:48px;
-      background:rgba(232,232,234,1);
+      background-color:rgba(232,232,234,1);
       opacity:0.32;
       border-radius:24px;
       border: 0;
@@ -102,6 +188,15 @@ export default {
         transition: 1s;
         background: rgb(255, 139, 107);
       }
+    }
+  }
+  .psd {
+    position: relative;
+    img {
+      position: absolute;
+      top: 17px;
+      right: 28px;
+      cursor: pointer;
     }
   }
 }
