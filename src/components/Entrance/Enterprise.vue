@@ -39,7 +39,8 @@
             <div class="box">
               <img src="../../assets/img/uploadpic.png" alt="">
               <a>点击上传</a>
-              <input type="file">
+              <div class="img_show"></div>
+              <input type="file" @change="fileImage($event)" accept="image/jpeg,image/x-png,image/gif" />
             </div>
             <p>支持jpg、jpeg、png等格式，体积在5M以下 </p>
           </div>
@@ -50,7 +51,8 @@
             <div class="box">
               <img src="../../assets/img/uploadpic.png" alt="">
               <a>请上传身份证正面</a>
-              <input type="file">
+              <div class="img_show"></div>
+              <input type="file" @change="fileImage($event)" accept="image/jpeg,image/x-png,image/gif" />
             </div>
             <p>支持jpg、jpeg、png等格式，体积在5M以下 </p>
           </div>
@@ -61,7 +63,8 @@
             <div class="box">
               <img src="../../assets/img/uploadpic.png" alt="">
               <a>请上传身份证反面</a>
-              <input type="file">
+              <div class="img_show"></div>
+              <input type="file" @change="fileImage($event)" accept="image/jpeg,image/x-png,image/gif" />
             </div>
             <p>支持jpg、jpeg、png等格式，体积在5M以下 </p>
           </div>
@@ -226,6 +229,32 @@ export default {
         this.batchShow = false
         this.singleShow = true
       }
+    },
+    fileImage (e) {
+      var file = e.target.files[0]
+      if (file.name.split('.')[1] !== 'png' && file.name.split('.')[1] !== 'gif' && file.name.split('.')[1] !== 'jpg' && file.name.split('.')[1] !== 'jpeg' && file.name.split('.')[1] !== 'bmp' && file.name.split('.')[1] !== 'pdf') {
+        this.$message({
+          type: 'info',
+          message: '请上传图片'
+        })
+      } else {
+        var imgSize = file.size / 1024
+        if (imgSize > 5 * 1024) {
+          this.$message({
+            type: 'info',
+            message: '请上传大小不要超过5M的图片'
+          })
+        } else {
+          var reader = new FileReader()
+          reader.readAsDataURL(file) // 读出 base64
+          reader.onloadend = function () {
+            // 图片的 base64 格式, 可以直接当成 img 的 src 属性值
+            var dataURL = reader.result
+            var avatar = dataURL
+            e.target.previousElementSibling.style.backgroundImage = 'url(' + avatar + ')'
+          }
+        }
+      }
     }
   }
 }
@@ -297,6 +326,14 @@ export default {
               font-family: MicrosoftYaHei;
               font-weight: 400;
               color:rgba(46,146,255,1);
+            }
+            .img_show {
+              position: absolute;
+              width: 100%;
+              height: 100%;
+              top: 0;
+              left: 0;
+              background-size: cover;
             }
             input {
               position: absolute;

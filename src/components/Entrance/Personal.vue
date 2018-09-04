@@ -36,7 +36,7 @@
     <!-- 车险投保信息 -->
     <div class="con">
       <div class="tit">
-        <img src="../../assets/img/upload_pic_txt.png" alt="">
+        <img src="../../assets/img/car_msg.png" alt="">
       </div>
       <div class="info">
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" size="mini" label-width="167px" class="demo-ruleForm">
@@ -50,10 +50,15 @@
             <el-input v-model="ruleForm.phone" placeholder="请输入联系方式"></el-input>
           </el-form-item>
           <el-form-item label="选择保单：" prop="name">
-            <el-radio-group v-model="ruleForm.name" size="small">
-              <el-radio-button label="上海"></el-radio-button>
-              <el-radio-button label="深圳"></el-radio-button>
-            </el-radio-group>
+            <template>
+              <el-button size="mini" plain>一年保单</el-button>
+              <el-button size="mini" plain>三年保单</el-button>
+              <span class="dai">
+                <span>是否有车贷：</span>
+                <el-radio v-model="radio" label="1">是</el-radio>
+                <el-radio v-model="radio" label="2">否</el-radio>
+              </span>
+            </template>
           </el-form-item>
           <el-form-item label="月付期数：" prop="name">
             <el-select v-model="value8" filterable placeholder="请选择">
@@ -71,7 +76,7 @@
     <!-- 上传图片信息 -->
     <div class="con">
       <div class="tit">
-        <img src="../../assets/img/car_msg.png" alt="">
+        <img src="../../assets/img/upload_pic_txt.png" alt="">
       </div>
       <div class="pic">
         <figure>
@@ -80,7 +85,8 @@
             <div class="box">
               <img src="../../assets/img/uploadpic.png" alt="">
               <a>点击上传</a>
-              <input type="file">
+              <div class="img_show"></div>
+              <input type="file" @change="fileImage($event)" accept="image/jpeg,image/x-png,image/gif" />
             </div>
             <p>支持jpg、jpeg、png等格式，体积在5M以下 </p>
           </div>
@@ -91,7 +97,8 @@
             <div class="box">
               <img src="../../assets/img/uploadpic.png" alt="">
               <a>点击上传</a>
-              <input type="file">
+              <div class="img_show"></div>
+              <input type="file" @change="fileImage($event)" accept="image/jpeg,image/x-png,image/gif" />
             </div>
             <p>支持jpg、jpeg、png等格式，体积在5M以下 </p>
           </div>
@@ -102,7 +109,8 @@
             <div class="box">
               <img src="../../assets/img/uploadpic.png" alt="">
               <a>点击上传</a>
-              <input type="file">
+              <div class="img_show"></div>
+              <input type="file" @change="fileImage($event)" accept="image/jpeg,image/x-png,image/gif" />
             </div>
             <p>支持jpg、jpeg、png等格式，体积在5M以下 </p>
           </div>
@@ -113,7 +121,8 @@
             <div class="box">
               <img src="../../assets/img/uploadpic.png" alt="">
               <a>请上传身份证正面</a>
-              <input type="file">
+              <div class="img_show"></div>
+              <input type="file" @change="fileImage($event)" accept="image/jpeg,image/x-png,image/gif" />
             </div>
             <p>支持jpg、jpeg、png等格式，体积在5M以下 </p>
           </div>
@@ -124,7 +133,8 @@
             <div class="box">
               <img src="../../assets/img/uploadpic.png" alt="">
               <a>请上传身份证反面</a>
-              <input type="file">
+              <div class="img_show"></div>
+              <input type="file" @change="fileImage($event)" accept="image/jpeg,image/x-png,image/gif" />
             </div>
             <p>支持jpg、jpeg、png等格式，体积在5M以下 </p>
           </div>
@@ -170,7 +180,34 @@ export default {
     }
   },
   mounted () {},
-  methods: {}
+  methods: {
+    fileImage (e) {
+      var file = e.target.files[0]
+      if (file.name.split('.')[1] !== 'png' && file.name.split('.')[1] !== 'gif' && file.name.split('.')[1] !== 'jpg' && file.name.split('.')[1] !== 'jpeg' && file.name.split('.')[1] !== 'bmp' && file.name.split('.')[1] !== 'pdf') {
+        this.$message({
+          type: 'info',
+          message: '请上传图片'
+        })
+      } else {
+        var imgSize = file.size / 1024
+        if (imgSize > 5 * 1024) {
+          this.$message({
+            type: 'info',
+            message: '请上传大小不要超过5M的图片'
+          })
+        } else {
+          var reader = new FileReader()
+          reader.readAsDataURL(file) // 读出 base64
+          reader.onloadend = function () {
+            // 图片的 base64 格式, 可以直接当成 img 的 src 属性值
+            var dataURL = reader.result
+            var avatar = dataURL
+            e.target.previousElementSibling.style.backgroundImage = 'url(' + avatar + ')'
+          }
+        }
+      }
+    }
+  }
 }
 </script>
 
@@ -182,6 +219,8 @@ export default {
   background: #fff;
   width: 100%;
   min-height: 100%;
+  .info {
+  }
   .con {
     width: 1085px;
     margin: 0 auto;
@@ -265,6 +304,14 @@ export default {
               font-weight: 400;
               color:rgba(46,146,255,1);
             }
+            .img_show {
+              position: absolute;
+              width: 100%;
+              height: 100%;
+              top: 0;
+              left: 0;
+              background-size: cover;
+            }
             input {
               position: absolute;
               width: 100%;
@@ -289,20 +336,20 @@ export default {
 }
 footer {
   text-align: center;
-}
-button {
-  width: 210px;
-  height: 57px;
-  line-height: 57px;
-  border: 0;
-  border-radius: 57px;
-  margin-bottom: 40px;
-  font-size:20px;
-  font-family:PingFang-SC-Bold;
-  font-weight: 600;
-  color:#666;
-  outline: none;
-  background: linear-gradient(left, #4e8fff, #5cc5ff);
-  color: #fff;
+  button {
+    width: 210px;
+    height: 57px;
+    line-height: 57px;
+    border: 0;
+    border-radius: 57px;
+    margin-bottom: 40px;
+    font-size:20px;
+    font-family:PingFang-SC-Bold;
+    font-weight: 600;
+    color:#666;
+    outline: none;
+    background: linear-gradient(left, #4e8fff, #5cc5ff);
+    color: #fff;
+  }
 }
 </style>

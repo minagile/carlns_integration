@@ -63,6 +63,7 @@ export default {
       forgetpsdconfirm: ''
     }
   },
+  mounted () {},
   methods: {
     // 回车键登录
     enter (e) {

@@ -38,6 +38,24 @@
           <span slot="title">退保中心</span>
         </a>
       </li>
+      <li>
+        <a :class="{active:7 == num}"  @click="tab(7)">
+          <img src="../../assets/img/guanli.png" alt="">
+          <span slot="title">渠道管理</span>
+        </a>
+      </li>
+      <li>
+        <a :class="{active:8 == num}"  @click="tab(8)">
+          <img src="../../assets/img/juece.png" alt="">
+          <span slot="title">决策支持</span>
+        </a>
+      </li>
+      <li>
+        <a :class="{active:9 == num}"  @click="tab(9)">
+          <img src="../../assets/img/zhanghao.png" alt="">
+          <span slot="title">账号管理</span>
+        </a>
+      </li>
     </ul>
   </div>
 </template>
@@ -48,8 +66,8 @@ export default {
   data () {
     return {
       num: 1,
-      list: ['/HomePage', '/ApplicationEntrance'],
-      list2: ['首页', '申请入口', '待分期', '已分期', '未通过', '退保中心'],
+      list: ['/HomePage', '/ApplicationEntrance', '/StayByStage', '/AlreadyByStage', '/NotThrough', '/RetreatCenter', '/ChannelManagement', '/DecisionSupport', '/AccountManagement'],
+      list2: ['首页', '申请入口', '待分期', '已分期', '未通过', '退保中心', '渠道管理', '决策支持', '账号管理', '渠道管理', '决策支持', '账号管理'],
       navArr: []
     }
   },
@@ -97,7 +115,7 @@ export default {
         height: 60px;
         padding: 0 20px 0 30px;
         color: #fff;
-        font-size: 14px;
+        font-size: 15px;
         img {
           vertical-align: middle;
           padding-right: 10px;

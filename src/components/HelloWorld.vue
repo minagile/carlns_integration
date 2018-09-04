@@ -77,6 +77,12 @@ export default {
       if (data === 'ApplicationEntrance') return '申请入口'
       if (data === 'Enterprise') return '企业用户'
       if (data === 'Personal') return '个人用户'
+      if (data === 'StayByStage') return '待分期'
+      if (data === 'DetailC') return '企业详情查看'
+      if (data === 'DetailP') return '个人详情查看'
+      if (data === 'AlreadyByStage') return '已分期'
+      if (data === 'NotThrough') return '未通过'
+      if (data === 'RetreatCenter') return '退保中心'
       return data
     }
   }

@@ -4,10 +4,19 @@ import HelloWorld from '@/components/HelloWorld'
 import Login from '@/components/Login'
 import ChannelApplication from '@/components/ApplicationChannel/ChannelApplication'
 import Tips from '@/components/ApplicationChannel/Tips'
-import ApplicationEntrance from '@/components/ApplicationEntrance'
 import HomePage from '@/components/HomePage'
+import ApplicationEntrance from '@/components/ApplicationEntrance'
 import Enterprise from '@/components/Entrance/Enterprise'
 import Personal from '@/components/Entrance/Personal'
+import StayByStage from '@/components/StayByStage'
+import DetailC from '@/components/Stay/DetailC'
+import DetailP from '@/components/Stay/DetailP'
+import AlreadyByStage from '@/components/AlreadyByStage'
+import NotThrough from '@/components/NotThrough'
+import RetreatCenter from '@/components/RetreatCenter'
+import ChannelManagement from '@/components/ChannelManagement'
+import DecisionSupport from '@/components/DecisionSupport'
+import AccountManagement from '@/components/AccountManagement'
 
 Vue.use(Router)
 
@@ -19,11 +28,13 @@ export default new Router({
       name: 'HelloWorld',
       component: HelloWorld,
       children: [
+        // 首页
         {
           path: '/HomePage',
           name: 'HomePage',
           component: HomePage
         },
+        // 申请入口
         {
           path: '/ApplicationEntrance',
           name: 'ApplicationEntrance',
@@ -40,6 +51,60 @@ export default new Router({
               component: Personal
             }
           ]
+        },
+        // 待分期
+        {
+          path: '/StayByStage',
+          name: 'StayByStage',
+          component: StayByStage,
+          children: [
+            {
+              path: '/StayByStage/DetailC',
+              name: 'DetailC',
+              component: DetailC
+            },
+            {
+              path: '/StayByStage/DetailP',
+              name: 'DetailP',
+              component: DetailP
+            }
+          ]
+        },
+        // 已分期
+        {
+          path: '/AlreadyByStage',
+          name: 'AlreadyByStage',
+          component: AlreadyByStage
+        },
+        // 未通过
+        {
+          path: '/NotThrough',
+          name: 'NotThrough',
+          component: NotThrough
+        },
+        // 退保中心
+        {
+          path: '/RetreatCenter',
+          name: 'RetreatCenter',
+          component: RetreatCenter
+        },
+        // 渠道管理
+        {
+          path: '/ChannelManagement',
+          name: 'ChannelManagement',
+          component: ChannelManagement
+        },
+        // 决策支持
+        {
+          path: '/DecisionSupport',
+          name: 'DecisionSupport',
+          component: DecisionSupport
+        },
+        // 账号管理
+        {
+          path: '/AccountManagement',
+          name: 'AccountManagement',
+          component: AccountManagement
         }
       ]
     },
@@ -58,10 +123,5 @@ export default new Router({
       name: 'Tips',
       component: Tips
     }
-    // {
-    //   path: '/ApplicationEntrance',
-    //   name: 'ApplicationEntrance',
-    //   component: ApplicationEntrance
-    // }
   ]
 })
