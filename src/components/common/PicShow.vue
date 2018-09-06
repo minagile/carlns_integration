@@ -27,11 +27,12 @@ export default {
 .pic_show {
   .pic {
     overflow: hidden;
-    padding-top: 40px;
-    padding-bottom: 80px;
+    // padding-top: 40px;
+    padding-bottom: 20px;
     figure {
       // height: 200px;
       // width: 50%;
+      padding-top: 30px;
       float: left;
       .text {
         float: left;

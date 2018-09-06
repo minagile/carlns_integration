@@ -52,7 +52,7 @@ export default {
   mounted () {
     // 用户名展示
     this.username = sessionStorage.getItem('username')
-    // this.$get('/fd/company/selectCompany').then(res => {
+    // this.$fetch('/fd/message/showMessage').then(res => {
     //   console.log(res)
     // })
   },

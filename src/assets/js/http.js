@@ -3,7 +3,7 @@ import router from '../../router'
 // import { Message } from 'element-ui'
 
 axios.defaults.timeout = 5000
-axios.defaults.baseURL = 'http://192.168.1.124:8080'
+axios.defaults.baseURL = 'http://192.168.1.131:8080'
 
 // http request 拦截器
 axios.interceptors.request.use(
@@ -24,7 +24,7 @@ axios.interceptors.request.use(
 // http response 拦截器
 axios.interceptors.response.use(
   response => {
-    // console.log(response)
+    console.log(response)
     if (response.data.code === 101) {
       router.push({
         path: '/Login',

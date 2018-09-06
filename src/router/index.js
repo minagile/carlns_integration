@@ -12,6 +12,8 @@ import StayByStage from '@/components/StayByStage'
 import DetailC from '@/components/Stay/DetailC'
 import DetailP from '@/components/Stay/DetailP'
 import AlreadyByStage from '@/components/AlreadyByStage'
+import ADetailC from '@/components/Already/ADetailC'
+import ADetailP from '@/components/Already/ADetailP'
 import NotThrough from '@/components/NotThrough'
 import RetreatCenter from '@/components/RetreatCenter'
 import ChannelManagement from '@/components/ChannelManagement'
@@ -74,7 +76,19 @@ export default new Router({
         {
           path: '/AlreadyByStage',
           name: 'AlreadyByStage',
-          component: AlreadyByStage
+          component: AlreadyByStage,
+          children: [
+            {
+              path: '/AlreadyByStage/ADetailC',
+              name: 'ADetailC',
+              component: ADetailC
+            },
+            {
+              path: '/AlreadyByStage/ADetailP',
+              name: 'ADetailP',
+              component: ADetailP
+            }
+          ]
         },
         // 未通过
         {

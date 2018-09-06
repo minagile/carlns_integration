@@ -2,25 +2,32 @@
   <!-- 待分期 -->
   <div class="stay_by_stage">
     <router-view></router-view>
-    <el-table :data="tableData" :show-header="false" style="width: 100%" :row-style="{'height': '94px'}">
-      <el-table-column width="60">
-        <template slot-scope="scope">
-          <div class="index">{{ scope.$index + 1 }}</div>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" prop="name" label="姓名"></el-table-column>
-      <el-table-column align="center" prop="address" label="地址"></el-table-column>
-      <el-table-column align="center" prop="address" label="地址"></el-table-column>
-      <el-table-column align="center" prop="address" label="地址"></el-table-column>
-      <el-table-column align="center" prop="address" label="地址"></el-table-column>
-      <el-table-column align="center" width="360">
-        <template slot-scope="scope">
-          <el-button type="primary" round plain size="small" @click="$router.push({name: 'DetailP'})">查看详情</el-button>
-          <el-button type="primary" round plain size="small">上传付款计划表</el-button>
-          <el-button type="primary" round plain size="small">上传付款凭证</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+    <header>
+      <el-button type="primary">全部显示</el-button>
+      <el-button type="info">显示企业</el-button>
+      <el-button type="info">显示个人</el-button>
+    </header>
+    <div class="con">
+      <el-table :data="tableData" :show-header="false" style="width: 100%" :row-style="{'height': '94px'}">
+        <el-table-column width="60">
+          <template slot-scope="scope">
+            <div class="index">{{ scope.$index + 1 }}</div>
+          </template>
+        </el-table-column>
+        <el-table-column align="center" prop="name" label="姓名"></el-table-column>
+        <el-table-column align="center" prop="address" label="地址"></el-table-column>
+        <el-table-column align="center" prop="address" label="地址"></el-table-column>
+        <el-table-column align="center" prop="address" label="地址"></el-table-column>
+        <el-table-column align="center" prop="address" label="地址"></el-table-column>
+        <el-table-column align="center" width="360">
+          <template slot-scope="scope">
+            <el-button type="primary" round plain size="small" @click="$router.push({name: 'DetailP'})">查看详情</el-button>
+            <el-button type="primary" round plain size="small">上传付款计划表</el-button>
+            <el-button type="primary" round plain size="small">上传付款凭证</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
   </div>
 </template>
 
@@ -46,8 +53,18 @@ export default {
 .stay_by_stage {
   margin-top: 20px;
   height: 97%;
-  background: #fff;
+  // background: #fff;
   position: relative;
+  header {
+    background: #fff;
+    // height: 110px;
+    padding: 30px 0 30px 25px;
+  }
+  .con {
+    background: #fff;
+    margin-top: 20px;
+    height: 86%;
+  }
   .el-button+.el-button {
     margin: 0;
   }
