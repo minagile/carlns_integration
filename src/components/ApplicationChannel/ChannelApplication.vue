@@ -92,6 +92,7 @@
 </template>
 
 <script>
+import { Req } from '../../assets/js/http.js'
 export default {
   name: 'ChannelApplication',
   data () {
@@ -144,7 +145,7 @@ export default {
         let config = {
           headers: {'Content-Type': 'multipart/form-data'}
         }
-        this.$http.post('http://192.168.1.124:8080/fd/channel/insert', formData, config).then(res => {
+        this.$http.post(Req + '/fd/channel/insert', formData, config).then(res => {
           if (res.body.code === 0) {
             this.$router.push('/Tips')
           } else {

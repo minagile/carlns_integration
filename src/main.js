@@ -9,6 +9,14 @@ import 'element-ui/lib/theme-chalk/index.css'
 import VueResource from 'vue-resource'
 import { post, fetch, patch, put } from './assets/js/http'
 
+import './assets/css/style.css'
+import vueEventCalendar from 'vue-event-calendar'
+
+Vue.use(vueEventCalendar, {
+  locale: 'en',
+  color: 'rgb(158, 123, 255)'
+})
+
 // 定义全局变量
 Vue.prototype.$post = post
 Vue.prototype.$fetch = fetch

@@ -19,6 +19,8 @@ import RetreatCenter from '@/components/RetreatCenter'
 import ChannelManagement from '@/components/ChannelManagement'
 import DecisionSupport from '@/components/DecisionSupport'
 import AccountManagement from '@/components/AccountManagement'
+import Home from '@/managementSystem/HomePage'
+import System from '@/managementSystem/System'
 
 Vue.use(Router)
 
@@ -136,6 +138,18 @@ export default new Router({
       path: '/Tips',
       name: 'Tips',
       component: Tips
+    },
+    {
+      path: '/m',
+      name: 'Home',
+      component: Home,
+      children: [
+        {
+          path: '/m/System',
+          name: 'System',
+          component: System
+        }
+      ]
     }
   ]
 })

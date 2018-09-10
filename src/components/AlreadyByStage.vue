@@ -23,6 +23,7 @@
         <el-table-column align="center" width="120">
           <template slot-scope="scope">
             <el-button type="primary" round plain size="small" @click="$router.push({name: 'ADetailP'})">查看详情</el-button>
+            <el-button type="primary" round plain size="small" @click="$router.push({name: 'ADetailC'})">查看详情</el-button>
           </template>
         </el-table-column>
       </el-table>

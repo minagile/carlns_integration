@@ -53,14 +53,63 @@
         </div>
       </div>
     </div>
+    <div class="zujian">
+      <PersonDetail/>
+    </div>
+    <div class="btn">
+      <button class="save" @click="dialogFormVisible = true">保存</button>
+      <span style="padding: 0 115px;"></span>
+      <button>返回</button>
+    </div>
+    <el-dialog :show-close="false" :visible.sync="dialogFormVisible" :modal-append-to-body="false" width="680px">
+      <template>
+        <div class="header">
+          <img src="../../assets/img/pay_detail.png" alt="">
+          <span>支付信息</span>
+        </div>
+      </template>
+      <el-form :model="form">
+        <el-form-item label="姓名：" :label-width="formLabelWidth">
+          <el-input v-model="form.name" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="身份证号" :label-width="formLabelWidth">
+          <el-input v-model="form.name" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="银行卡号：" :label-width="formLabelWidth">
+          <el-input v-model="form.name" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="手机号：" :label-width="formLabelWidth">
+          <el-input v-model="form.name" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="验证码：" :label-width="formLabelWidth">
+          <el-input v-model="form.name" auto-complete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="dialogFormVisible = false">确认支付</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+import PersonDetail from '../common/PersonDetail'
 export default {
   name: 'ADetailP',
   data () {
     return {
+      dialogFormVisible: false,
+      form: {
+        name: '',
+        region: '',
+        date1: '',
+        date2: '',
+        delivery: false,
+        type: [],
+        resource: '',
+        desc: ''
+      },
+      formLabelWidth: '120px'
     }
   },
   methods: {
@@ -70,6 +119,9 @@ export default {
     isShowBox2 (e) {
       document.getElementById('show').style.display = 'none'
     }
+  },
+  components: {
+    PersonDetail
   }
 }
 </script>
@@ -82,9 +134,9 @@ export default {
   background: #fff;
   width: 100%;
   min-height: 100%;
-  z-index: 99999;
+  z-index: 5;
   .top {
-    width:990px;
+    width: 990px;
     padding: 0 10px;
     height: 60px;
     line-height:60px;
@@ -97,6 +149,7 @@ export default {
     justify-content: space-between;
     position: relative;
     cursor: pointer;
+    z-index: 1;
     li {
       img {
         vertical-align:middle;
@@ -119,6 +172,7 @@ export default {
       top: 61px;
       left: 0;
       display: none;
+      // z-index: 999;
       header {
         width:100%;
         height:53px;
@@ -171,6 +225,54 @@ export default {
             }
           }
         }
+      }
+    }
+  }
+  .zujian {
+    position: relative;
+    padding-top: 50px;
+  }
+  .btn {
+    text-align: center;
+    padding-top: 100px;
+    button {
+      width: 210px;
+      height: 57px;
+      line-height: 57px;
+      border: 0;
+      border-radius: 57px;
+      margin-bottom: 40px;
+      font-size: 20px;
+      font-family: PingFang-SC-Bold;
+      font-weight: 600;
+      color:#666;
+      outline: none;
+      background: #ccc;
+      &.save {
+        background: linear-gradient(left, #4e8fff, #5cc5ff);
+        color: #fff;
+      }
+    }
+  }
+  .el-dialog {
+    .el-input {
+      width: 90%;
+    }
+    .header {
+      position: absolute;
+      top: 0;
+      left: 0;
+      background: #447BED;
+      color: #fff;
+      width: 100%;
+      height: 40px;
+      line-height: 40px;
+      img {
+        vertical-align:  middle;
+        padding: 0 10px;
+      }
+      span {
+        font-size: 18px;
       }
     }
   }

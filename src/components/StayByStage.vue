@@ -22,7 +22,7 @@
         <el-table-column align="center" width="360">
           <template slot-scope="scope">
             <el-button type="primary" round plain size="small" @click="$router.push({name: 'DetailP'})">查看详情</el-button>
-            <el-button type="primary" round plain size="small">上传付款计划表</el-button>
+            <el-button type="primary" round plain size="small" @click="$router.push({name: 'DetailC'})">上传付款计划表</el-button>
             <el-button type="primary" round plain size="small">上传付款凭证</el-button>
           </template>
         </el-table-column>

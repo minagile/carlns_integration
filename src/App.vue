@@ -21,6 +21,7 @@ html, body {
 #app {
   height: 100%;
   font-family: MicrosoftYaHei;
+  min-width: 1000px;
 }
 a {
   cursor: pointer;

@@ -24,7 +24,7 @@ axios.interceptors.request.use(
 // http response 拦截器
 axios.interceptors.response.use(
   response => {
-    console.log(response)
+    // console.log(response)
     if (response.data.code === 101) {
       router.push({
         path: '/Login',
@@ -108,3 +108,5 @@ export function put (url, data = {}) {
     })
   })
 }
+
+export const Req = axios.defaults.baseURL

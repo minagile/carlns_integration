@@ -54,7 +54,7 @@ export default {
   name: 'Login',
   data () {
     return {
-      user: '',
+      user: '14763775886',
       psd: '',
       forget: true,
       count: 60,

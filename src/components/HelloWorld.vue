@@ -52,9 +52,6 @@ export default {
   mounted () {
     // 用户名展示
     this.username = sessionStorage.getItem('username')
-    // this.$fetch('/fd/message/showMessage').then(res => {
-    //   console.log(res)
-    // })
   },
   methods: {
     // 侧边栏切换时面包屑导航的展示

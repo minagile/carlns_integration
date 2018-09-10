@@ -2,7 +2,8 @@
   <!-- 账号管理 -->
   <div class="account_management">
     <header>账号管理</header>
-    <div class="con"></div>
+    <div class="con">
+    </div>
   </div>
 </template>
 
@@ -10,10 +11,12 @@
 export default {
   name: 'AccountManagement',
   data () {
-    return {}
+    return {
+    }
   },
   mounted () {},
-  methods: {}
+  methods: {
+  }
 }
 </script>
 
