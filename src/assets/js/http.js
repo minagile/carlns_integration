@@ -1,5 +1,6 @@
 import axios from 'axios'
 import router from '../../router'
+import qs from 'qs'
 // import { Message } from 'element-ui'
 
 axios.defaults.timeout = 5000
@@ -9,9 +10,9 @@ axios.defaults.baseURL = 'http://192.168.1.131:8080'
 axios.interceptors.request.use(
   config => {
     const token = sessionStorage.getItem('token')
-    config.data = JSON.stringify(config.data)
+    // config.data = JSON.stringify(config.data)
     config.headers = {
-      'Content-Type': 'application/x-www-form-urlencoded',
+      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
       'token': token
     }
     // if (token) {
@@ -30,6 +31,11 @@ axios.interceptors.response.use(
         path: '/Login',
         querry: { redirect: router.currentRoute.fullPath }
         // 从哪个页面跳转
+      })
+    } else if (response.data.code === 102) {
+      router.push({
+        path: '/MLogin',
+        querry: { redirect: router.currentRoute.fullPath }
       })
     }
     return response
@@ -65,43 +71,9 @@ export function fetch (url, params = {}) {
  * @returns {Promise}
  */
 
-export function post (url, data = {}) {
+export function post (url, params) {
   return new Promise((resolve, reject) => {
-    axios.post(url, data).then(response => {
-      resolve(response.data)
-    }, err => {
-      reject(err)
-    })
-  })
-}
-
-/**
- * 封装patch请求
- * @param url
- * @param data
- * @returns {Promise}
-*/
-
-export function patch (url, data = {}) {
-  return new Promise((resolve, reject) => {
-    axios.patch(url, data).then(response => {
-      resolve(response.data)
-    }, err => {
-      reject(err)
-    })
-  })
-}
-
-/**
- * 封装put请求
- * @param url
- * @param data
- * @returns {Promise}
-*/
-
-export function put (url, data = {}) {
-  return new Promise((resolve, reject) => {
-    axios.put(url, data).then(response => {
+    axios.post(url, qs.stringify(params)).then(response => {
       resolve(response.data)
     }, err => {
       reject(err)
@@ -110,3 +82,20 @@ export function put (url, data = {}) {
 }
 
 export const Req = axios.defaults.baseURL
+
+// PostFlie(url, data) {
+//   return new Promise((resolve, reject) => {
+//     //根据data对象生成FormData对象
+//     var temp = new FormData();
+//     for (var t in data) {
+//       temp.append(t, data[t]);
+//     }
+//     axios.post(url, temp).then((res) => {
+//       if (res) {
+//           resolve(res.Data);
+//       }
+//     }).catch((error) => {
+//       reject(error);
+//     })
+//   })
+// }

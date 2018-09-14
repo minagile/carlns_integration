@@ -1,8 +1,8 @@
 <template>
   <div class="home">
-    <TopTab />
+    <TopTab @channelId="channelId" />
     <div class="con">
-      <router-view></router-view>
+      <router-view :channelId="channel_id"></router-view>
     </div>
   </div>
 </template>
@@ -12,7 +12,14 @@ import TopTab from './common/TopTab'
 export default {
   name: 'HomePage',
   data () {
-    return {}
+    return {
+      channel_id: '1'
+    }
+  },
+  methods: {
+    channelId (id) {
+      this.channel_id = id
+    }
   },
   components: {
     TopTab

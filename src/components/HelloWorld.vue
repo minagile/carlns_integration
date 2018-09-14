@@ -80,6 +80,8 @@ export default {
       if (data === 'AlreadyByStage') return '已分期'
       if (data === 'NotThrough') return '未通过'
       if (data === 'RetreatCenter') return '退保中心'
+      if (data === 'DecisionSupport') return '决策支持'
+      if (data === 'AccountManagement') return '账号管理'
       return data
     }
   }

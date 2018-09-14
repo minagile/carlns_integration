@@ -74,7 +74,7 @@ export default {
         this.$emit('getNavLink', this.list[k].split('/')[1])
       }
     })
-    console.log(this.list1)
+    // console.log(this.list1)
   },
   methods: {
     tab (index) {

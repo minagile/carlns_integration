@@ -21,6 +21,12 @@ import DecisionSupport from '@/components/DecisionSupport'
 import AccountManagement from '@/components/AccountManagement'
 import Home from '@/managementSystem/HomePage'
 import System from '@/managementSystem/System'
+import AllChannels from '@/managementSystem/AllChannels'
+import AuditC from '@/managementSystem/home/AuditC'
+import AuditP from '@/managementSystem/home/AuditP'
+import ObligationsP from '@/managementSystem/home/ObligationsP'
+import ObligationsC from '@/managementSystem/home/ObligationsC'
+import MLogin from '@/managementSystem/MLogin'
 
 Vue.use(Router)
 
@@ -144,12 +150,45 @@ export default new Router({
       name: 'Home',
       component: Home,
       children: [
+        // 系统
         {
           path: '/m/System',
           name: 'System',
           component: System
+        },
+        // 全部渠道
+        {
+          path: '/m/AllChannels',
+          name: 'AllChannels',
+          component: AllChannels
+        },
+        // 企业待审核
+        {
+          path: '/m/AuditC',
+          name: 'AuditC',
+          component: AuditC
+        },
+        {
+          path: '/m/AuditP',
+          name: 'AuditP',
+          component: AuditP
+        },
+        {
+          path: '/m/ObligationsP',
+          name: 'ObligationsP',
+          component: ObligationsP
+        },
+        {
+          path: '/m/ObligationsC',
+          name: 'ObligationsC',
+          component: ObligationsC
         }
       ]
+    },
+    {
+      path: '/MLogin',
+      name: 'MLogin',
+      component: MLogin
     }
   ]
 })

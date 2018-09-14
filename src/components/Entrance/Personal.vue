@@ -224,52 +224,66 @@ export default {
       }
     },
     save () {
-      var formData = new FormData()
-      formData.append('username', this.ruleForm.username)
-      formData.append('idNumber', this.ruleForm.idNumber)
-      formData.append('tel', this.ruleForm.tel)
-      formData.append('carVin', this.ruleForm.carVin)
-      formData.append('type', this.ruleForm.type)
-      formData.append('carNameplate', this.ruleForm.carNameplate)
-      formData.append('insureCommercial', this.ruleForm.insureCommercial)
-      formData.append('insureFic', this.ruleForm.insureFic)
-      formData.append('insureCarBoatTax', this.ruleForm.insureCarBoatTax)
-      formData.append('insureAge', this.ruleForm.insureAge)
-      formData.append('state', this.ruleForm.state)
-      formData.append('insureStages', this.ruleForm.insureStages)
-      formData.append('carPayBillUrl', this.ruleForm.carPayBillUrl)
-      formData.append('carInvoiceUrl', this.ruleForm.carInvoiceUrl)
-      formData.append('license', this.ruleForm.license)
-      formData.append('personUp', this.ruleForm.personUp)
-      formData.append('personDown', this.ruleForm.personDown)
-      let config = {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'token': sessionStorage.getItem('token')
+      if (this.ruleForm.username === '') {
+        this.$message.error('负责人姓名不能为空')
+      } else if (this.ruleForm.idNumber === '') {
+        this.$message.error('身份证号不能为空')
+      } else if (this.ruleForm.tel === '') {
+        this.$message.error('联系方式不能为空')
+      } else if (this.ruleForm.carVin === '') {
+        this.$message.error('车架号不能为空')
+      } else if (this.ruleForm.insureCommercial === '') {
+        this.$message.error('商业险不能为空')
+      } else if (this.ruleForm.carPayBillUrl === '') {
+        this.$message.error('请上传缴费通知单')
+      } else if (this.ruleForm.carInvoiceUrl === '') {
+        this.$message.error('请上传购车发票')
+      } else if (this.ruleForm.license === '') {
+        this.$message.error('请上传机动车行驶证')
+      } else if (this.ruleForm.personUp === '') {
+        this.$message.error('请上传身份证正面')
+      } else if (this.ruleForm.personDown === '') {
+        this.$message.error('请上传身份证反面')
+      } else {
+        var formData = new FormData()
+        formData.append('username', this.ruleForm.username)
+        formData.append('idNumber', this.ruleForm.idNumber)
+        formData.append('tel', this.ruleForm.tel)
+        formData.append('carVin', this.ruleForm.carVin)
+        formData.append('type', this.ruleForm.type)
+        formData.append('carNameplate', this.ruleForm.carNameplate)
+        formData.append('insureCommercial', this.ruleForm.insureCommercial)
+        formData.append('insureFic', this.ruleForm.insureFic)
+        formData.append('insureCarBoatTax', this.ruleForm.insureCarBoatTax)
+        formData.append('insureAge', this.ruleForm.insureAge)
+        formData.append('state', this.ruleForm.state)
+        formData.append('insureStages', this.ruleForm.insureStages)
+        formData.append('carPayBillUrl', this.ruleForm.carPayBillUrl)
+        formData.append('carInvoiceUrl', this.ruleForm.carInvoiceUrl)
+        formData.append('license', this.ruleForm.license)
+        formData.append('personUp', this.ruleForm.personUp)
+        formData.append('personDown', this.ruleForm.personDown)
+        let config = {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            'token': sessionStorage.getItem('token')
+          }
         }
+        this.$http.post(Req + '/fd/insure/insert', formData, config).then(res => {
+          if (res.body.code === 101) {
+            this.$router.push({
+              path: '/Login',
+              querry: { redirect: this.$router.currentRoute.fullPath }
+              // 从哪个页面跳转
+            })
+          } else if (res.body.code === 0) {
+            this.$message(res.body.msg)
+            this.$router.push({name: 'HomePage'})
+          } else {
+            this.$message.error(res.body.msg)
+          }
+        })
       }
-      // /fd/insure/insert
-      this.$http.post(Req + '/fd/insure/insert', formData, config).then(res => {
-        // console.log(res.status)
-        if (res.body.code === 101) {
-          this.$router.push({
-            path: '/Login',
-            querry: { redirect: this.$router.currentRoute.fullPath }
-            // 从哪个页面跳转
-          })
-        } else if (res.body.code === 0) {
-          this.$message({
-            message: res.body.msg,
-            type: 'info'
-          })
-          this.$router.push({name: 'HomePage'})
-        } else {
-          this.$message({
-            message: res.body.msg,
-            type: 'danger'
-          })
-        }
-      })
     },
     fileImage (e, i) {
       var that = this

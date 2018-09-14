@@ -4,27 +4,72 @@
     <header>
       <button v-for="(data, index) in list" :key="index" :class="{active: index == num}" @click="tab(index)">{{ data }}</button>
     </header>
+    <!-- <a @click="$router.push({name: 'AccountManagement'})">12312</a> -->
     <div class="con">
-      <button>添加</button>
-      <el-table
-        :data="tableData"
-        style="width: 100%">
-        <el-table-column
-          prop="date"
-          label="日期"
-          width="180">
+      <button @click="add">添加</button>
+      <el-table :data="tableData" style="width: 100%">
+        <el-table-column prop="messageName" label="标题" width="120"></el-table-column>
+        <el-table-column prop="messageText" label="内容" width="600"></el-table-column>
+        <el-table-column label="类型">
+          <template slot-scope="scope">
+            <div>{{ scope.row.messageType | type }}</div>
+          </template>
         </el-table-column>
-        <el-table-column
-          prop="name"
-          label="姓名"
-          width="180">
+        <el-table-column label="添加时间">
+          <template slot-scope="scope">
+            <div>{{ scope.row.createTime | timeChange }}</div>
+          </template>
         </el-table-column>
-        <el-table-column
-          prop="address"
-          label="地址">
+        <el-table-column label="操作" align="center" width="220">
+          <template slot-scope="scope">
+            <button class="edit" @click="edit(scope.row.messageId)">编辑</button>
+            <button class="edit" @click="del(scope.row.messageId)">删除</button>
+          </template>
         </el-table-column>
       </el-table>
     </div>
+    <!-- 短信添加 -->
+    <el-dialog :visible.sync="dialogFormVisible" width="770px">
+      <template>
+        <div class="header">
+          <span>短信模板</span>
+        </div>
+      </template>
+      <el-form :model="form">
+        <el-form-item label="短信标题：" :label-width="formLabelWidth">
+          <el-input v-model="form.messageName" auto-complete="off" placeholder="请输入短信标题"></el-input>
+        </el-form-item>
+        <el-form-item label="短信内容：" :label-width="formLabelWidth">
+          <el-input type="textarea" v-model="form.messageText" placeholder="请输入短信内容"></el-input>
+        </el-form-item>
+        <el-form-item label="类型：" :label-width="formLabelWidth">
+          <el-select v-model="form.messageType" placeholder="请选择短信类型">
+            <el-option label="渠道验证" :value="1"></el-option>
+            <el-option label="渠道申请通过" :value="2"></el-option>
+            <el-option label="渠道申请未通过" :value="3"></el-option>
+            <el-option label="个人车险到期" :value="4"></el-option>
+            <el-option label="企业车险到期" :value="5"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="签名：" :label-width="formLabelWidth">
+          <el-input v-model="form.messageTitle" auto-complete="off" placeholder="请输入签名"></el-input>
+        </el-form-item>
+        <el-form-item label="模板CODE：" :label-width="formLabelWidth">
+          <el-input v-model="form.messageCode" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="参数：" :label-width="formLabelWidth">
+          <el-input v-model="form.messageParams" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="默认发送模板：" :label-width="formLabelWidth">
+          <el-radio v-model="form.messageState" :label="1">是</el-radio>
+          <el-radio v-model="form.messageState" :label="2">否</el-radio>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button class="sub" type="primary" @click="addMessage">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -35,18 +80,132 @@ export default {
     return {
       list: ['短信模板', '更改合作协议', '权限分配'],
       num: 0,
-      tableData: [{
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }]
+      tableData: [],
+      dialogFormVisible: false,
+      form: {
+        'messageName': '',
+        'messageText': '',
+        'messageType': '',
+        'messageTitle': '',
+        'messageCode': '',
+        'messageParams': '',
+        'messageState': 2
+      },
+      formLabelWidth: '170px',
+      addOrEdit: 'add'
     }
   },
+  mounted () {
+    this.getData()
+  },
   methods: {
+    // 删除
+    del (id) {
+      console.log(id)
+      this.$confirm('确定要删除此项？', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消'
+      }).then(() => {
+        this.$fetch('/ad/message/delete', {'messageId': id}).then(res => {
+          console.log(res)
+          if (res.code === 0) {
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            })
+            this.getData()
+          }
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
+    },
+    add () {
+      this.dialogFormVisible = true
+      this.addOrEdit = 'add'
+      this.form = {
+        'messageName': '',
+        'messageText': '',
+        'messageType': '',
+        'messageTitle': '',
+        'messageCode': '',
+        'messageParams': '',
+        'messageState': 2
+      }
+    },
+    // 修改
+    edit (id) {
+      this.$fetch('/ad/message/selectMessageById', {'messageId': id}).then(res => {
+        console.log(res)
+        if (res.code === 0) {
+          this.dialogFormVisible = true
+          this.addOrEdit = 'edit'
+          this.form = res.data.message
+        }
+      })
+    },
+    // 添加短信
+    addMessage () {
+      if (this.addOrEdit === 'add') {
+        this.$post('/ad/message/insert', this.form).then(res => {
+          // console.log(res)
+          if (res.code === 0) {
+            this.dialogFormVisible = false
+            this.getData()
+          } else {
+            this.$message({
+              type: 'info',
+              message: res.msg
+            })
+          }
+        })
+      } else {
+        this.$post('/ad/message/changeMessage', this.form).then(res => {
+          // console.log(res)
+          if (res.code === 0) {
+            this.dialogFormVisible = false
+            this.getData()
+          } else {
+            this.$message({
+              type: 'info',
+              message: res.msg
+            })
+          }
+        })
+      }
+    },
+    // 获取短信列表数据
+    getData () {
+      this.$fetch('/ad/message/selectAllMessage').then(res => {
+        // console.log(res)
+        this.tableData = res.data
+      })
+    },
     tab (index) {
       this.num = index
     }
+  },
+  filters: {
+    type (data) {
+      if (data === 1) return '渠道验证'
+      if (data === 2) return '渠道申请通过'
+      if (data === 3) return '渠道申请未通过'
+      if (data === 4) return '个人车险到期'
+      if (data === 5) return '企业车险到期'
+      return '此状态未知'
+    },
+    timeChange (data) {
+      let date = new Date(data)
+      return date.getFullYear() + '-' + zero(date.getMonth() + 1) + '-' + zero(date.getDate())
+    }
   }
+}
+function zero (data) {
+  if (data < 10) return '0' + data
+  return data
 }
 </script>
 
@@ -82,6 +241,56 @@ export default {
       background:rgba(40,40,40,1);
       border-radius:5px;
       color: #fff;
+    }
+    .edit {
+      width:90px;
+      height:30px;
+      border:1px solid rgba(40,40,40,1);
+      border-radius:15px;
+      background: #fff;
+      color: rgba(40,40,40,1);
+      &:hover {
+        background: rgba(40,40,40,1);
+        color: #fff;
+      }
+    }
+  }
+  .el-dialog {
+    .el-input, .el-textarea {
+      width: 405px;
+    }
+    .header {
+      position: absolute;
+      top: 0;
+      left: 0;
+      background: #FFC107;
+      text-indent: 10px;
+      width: 100%;
+      height: 40px;
+      line-height: 40px;
+      font-size:18px;
+      font-family:MicrosoftYaHei-Bold;
+      font-weight:bold;
+      color:rgba(40,40,40,1);
+      span {
+        font-size: 18px;
+      }
+    }
+    .dialog-footer {
+      text-align: center;
+      button {
+        width:85px;
+        height:40px;
+        border:1px solid rgba(40,40,40,1);
+        border-radius:5px;
+      }
+      .sub {
+        width:85px;
+        height:40px;
+        background:rgba(40,40,40,1);
+        border-radius:5px;
+        margin-left: 160px;
+      }
     }
   }
 }

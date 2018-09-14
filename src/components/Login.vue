@@ -29,7 +29,7 @@
         <input type="text" v-model="user">
         <p>验证码</p>
         <input type="text" v-model="code" style="width: 175px;float:left;">
-        <button style="width: 160px;font-size: 16px;margin: 0 0 0 5px;;float:left;">获取验证码<span v-show="false">{{ count }}s</span></button>
+        <button style="width: 160px;font-size: 16px;margin: 0 0 0 5px;;float:left;" @click="getCode($event)">获取验证码<span v-show="jump">{{ count }}s</span></button>
         <p>密码</p>
         <div class="psd">
           <input type="password" v-model="forgetpsd">
@@ -60,19 +60,67 @@ export default {
       count: 60,
       code: '',
       forgetpsd: '',
-      forgetpsdconfirm: ''
+      forgetpsdconfirm: '',
+      clock: '',
+      jump: false
     }
   },
   mounted () {},
   methods: {
+    // 获取验证码
+    getCode (e) {
+      // /login/getCode
+      this.count = 60
+      if (this.jump === false) {
+        e.target.style.backgroundColor = '#ccc'
+        this.jump = true
+        this.clock = window.setInterval(() => {
+          this.count--
+          if (this.count < 1) {
+            this.jump = false
+            e.target.style.backgroundColor = '#f89b82'
+            clearInterval(this.clock)
+          }
+        }, 1000)
+        this.$fetch('/login/getCode', {
+          phone: this.user
+        }).then(res => {
+          if (res.code === 0) {
+            this.$message({type: 'success', message: res.msg})
+          } else {
+            this.$message(res.msg)
+          }
+        })
+      }
+    },
     // 回车键登录
     enter (e) {
       if (e.keyCode === 13) {
-        this.login()
+        if (this.forget === true) {
+          this.login()
+        } else {
+          this.changePsd()
+        }
       }
     },
     // 修改密码
     changePsd () {
+      if (this.forgetpsd === this.forgetpsdconfirm) {
+        this.$post('/login/changePW', {
+          phone: this.user,
+          code: this.code,
+          password: this.forgetpsd
+        }).then(res => {
+          if (res.code === 0) {
+            this.$message({type: 'success', message: res.msg})
+            this.forget = true
+          } else {
+            this.$message(res.msg)
+          }
+        })
+      } else {
+        this.$message.error('两次密码输入不一致')
+      }
     },
     // 显示密码
     showPsd (ev) {
