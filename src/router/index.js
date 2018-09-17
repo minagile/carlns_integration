@@ -19,9 +19,19 @@ import RetreatCenter from '@/components/RetreatCenter'
 import ChannelManagement from '@/components/ChannelManagement'
 import DecisionSupport from '@/components/DecisionSupport'
 import AccountManagement from '@/components/AccountManagement'
+// 后台管理
 import Home from '@/managementSystem/HomePage'
-import System from '@/managementSystem/System'
 import AllChannels from '@/managementSystem/AllChannels'
+import Obligations from '@/managementSystem/Obligations'
+import Amortized from '@/managementSystem/Amortized'
+import Surrender from '@/managementSystem/Surrender'
+import Trench from '@/managementSystem/Trench'
+import Port from '@/managementSystem/Port'
+import System from '@/managementSystem/System'
+import Rote from '@/managementSystem/System/Rote'
+import ChangeFile from '@/managementSystem/System/ChangeFile'
+import Jurisdiction from '@/managementSystem/System/Jurisdiction'
+import Journal from '@/managementSystem/System/Journal'
 import AuditC from '@/managementSystem/home/AuditC'
 import AuditP from '@/managementSystem/home/AuditP'
 import ObligationsP from '@/managementSystem/home/ObligationsP'
@@ -150,17 +160,64 @@ export default new Router({
       name: 'Home',
       component: Home,
       children: [
-        // 系统
-        {
-          path: '/m/System',
-          name: 'System',
-          component: System
-        },
         // 全部渠道
         {
           path: '/m/AllChannels',
           name: 'AllChannels',
           component: AllChannels
+        },
+        {
+          path: '/m/Obligations',
+          name: 'Obligations',
+          component: Obligations
+        },
+        {
+          path: '/m/Amortized',
+          name: 'Amortized',
+          component: Amortized
+        },
+        {
+          path: '/m/Surrender',
+          name: 'Surrender',
+          component: Surrender
+        },
+        {
+          path: '/m/Trench',
+          name: 'Trench',
+          component: Trench
+        },
+        {
+          path: '/m/Port',
+          name: 'Port',
+          component: Port
+        },
+        // 系统
+        {
+          path: '/m/System',
+          name: 'System',
+          component: System,
+          children: [
+            {
+              path: '/m/System/Rote',
+              name: 'Rote',
+              component: Rote
+            },
+            {
+              path: '/m/System/ChangeFile',
+              name: 'ChangeFile',
+              component: ChangeFile
+            },
+            {
+              path: '/m/System/Jurisdiction',
+              name: 'Jurisdiction',
+              component: Jurisdiction
+            },
+            {
+              path: '/m/System/Journal',
+              name: 'Journal',
+              component: Journal
+            }
+          ]
         },
         // 企业待审核
         {
@@ -168,16 +225,19 @@ export default new Router({
           name: 'AuditC',
           component: AuditC
         },
+        // 个人待审核
         {
           path: '/m/AuditP',
           name: 'AuditP',
           component: AuditP
         },
+        // 个人待付款
         {
           path: '/m/ObligationsP',
           name: 'ObligationsP',
           component: ObligationsP
         },
+        // 企业待付款
         {
           path: '/m/ObligationsC',
           name: 'ObligationsC',

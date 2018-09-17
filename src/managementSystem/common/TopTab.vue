@@ -33,7 +33,7 @@ export default {
   data () {
     return {
       list: ['全部渠道', '待付款', '已分期', '退保中心', '渠道', '报表', '系统'],
-      listLink: ['AllChannels', '待付款', '已分期', '退保中心', '渠道', '报表', 'System'],
+      listLink: ['AllChannels', 'Obligations', 'Amortized', 'Surrender', 'Trench', 'Port', 'System'],
       num: 0,
       retreats: false,
       all: false,

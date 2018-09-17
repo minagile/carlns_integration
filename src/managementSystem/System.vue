@@ -6,6 +6,7 @@
     </header>
     <!-- <a @click="$router.push({name: 'AccountManagement'})">12312</a> -->
     <div class="con">
+      <router-view></router-view>
       <button @click="add">添加</button>
       <el-table :data="tableData" style="width: 100%">
         <el-table-column prop="messageName" label="标题" width="120"></el-table-column>
@@ -78,7 +79,8 @@ export default {
   name: 'System',
   data () {
     return {
-      list: ['短信模板', '更改合作协议', '权限分配'],
+      list: ['短信模板', '更改协议', '权限分配', '日志', '费率模板'],
+      listHref: ['System', 'ChangeFile', 'Jurisdiction', 'Journal', 'Rote'],
       num: 0,
       tableData: [],
       dialogFormVisible: false,
@@ -101,7 +103,7 @@ export default {
   methods: {
     // 删除
     del (id) {
-      console.log(id)
+      // console.log(id)
       this.$confirm('确定要删除此项？', {
         confirmButtonText: '确定',
         cancelButtonText: '取消'
@@ -186,6 +188,7 @@ export default {
     },
     tab (index) {
       this.num = index
+      this.$router.push({name: this.listHref[index]})
     }
   },
   filters: {
@@ -235,6 +238,7 @@ function zero (data) {
     margin-top: 20px;
     height: calc(100% - 164px);
     padding: 34px 100px 0;
+    position: relative;
     button {
       width: 80px;
       height: 32px;

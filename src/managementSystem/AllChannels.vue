@@ -1,43 +1,28 @@
 <template>
   <!-- 首页 -->
   <div class="all_channels">
-    <el-row :gutter="14">
-      <el-col :span="4">
-        <div class="grid-content bg-purple">
-          <img src="../assets/img/rc_1.png" alt="">
-          <span>信息待审核</span>
-          <i>4</i>
-        </div>
-      </el-col>
-      <el-col :span="4">
-        <div class="grid-content bg-purple">
-          <img src="../assets/img/upload.png" alt="">
-          <span>待上传信息</span>
-          <i>4</i>
-        </div>
-      </el-col>
-      <el-col :span="4">
-        <div class="grid-content bg-purple">
-          <img src="../assets/img/waitfq.png" alt="">
-          <span>分期待付款</span>
-          <i>4</i>
-        </div>
-      </el-col>
-      <el-col :span="4">
-        <div class="grid-content bg-purple">
-          <img src="../assets/img/pag.png" alt="">
-          <span>逾期款</span>
-          <i>4</i>
-        </div>
-      </el-col>
-      <el-col :span="4">
-        <div class="grid-content bg-purple">
-          <img src="../assets/img/time.png" alt="">
-          <span>本月待还</span>
-          <i>4</i>
-        </div>
-      </el-col>
-    </el-row>
+    <div class="top" @mouseout="moveout($event)">
+      <el-row :gutter="14">
+        <el-col :span="4" v-for="(data, i) in list" :key="i" >
+          <div class="grid-content bg-purple width" @mousemove="shiftIn(i)">
+            <img :src="data.imgSrc" alt="">
+            <span>{{ data.text }}</span>
+            <i v-if="headerList.length > 0">{{ headerList[i].newCount }}</i>
+          </div>
+        </el-col>
+      </el-row>
+      <!-- 消息展示 -->
+      <div class="move" id="move" v-show="moveShow" @mousemove="mousemove">
+        <header>
+          <img src="../assets/mImg/msg.png" alt="">
+          <span>通知中心</span>
+        </header>
+        <p v-for="(o, i) in messageList" :key="i">
+          <a v-if="o.newState === 1" @click="statusChange(o.newId)">{{ o.newText }}<span>{{ o.createTime | time2 }}</span></a>
+          <a v-if="o.newState === 2" style="color:#B6B6B6;">{{ o.newText }}<span>{{ o.createTime | time2 }}</span></a>
+        </p>
+      </div>
+    </div>
 
     <el-row :gutter="20">
       <!-- 待审核 -->
@@ -140,6 +125,11 @@
 </template>
 
 <script>
+import img1 from '../assets/img/rc_1.png'
+import img2 from '../assets/img/upload.png'
+import img3 from '../assets/img/waitfq.png'
+import img4 from '../assets/img/pag.png'
+import img5 from '../assets/img/time.png'
 export default {
   name: 'AllChannels',
   data () {
@@ -155,7 +145,33 @@ export default {
       }],
       list1: [],
       list2: [],
-      list3: []
+      list3: [],
+      headerList: [],
+      list: [
+        {
+          imgSrc: img1,
+          text: '信息待审核'
+        },
+        {
+          imgSrc: img2,
+          text: '待上传信息'
+        },
+        {
+          imgSrc: img3,
+          text: '分期待付款'
+        },
+        {
+          imgSrc: img4,
+          text: '逾期款'
+        },
+        {
+          imgSrc: img5,
+          text: '本月待还'
+        }
+      ],
+      data: 1,
+      messageList: [],
+      moveShow: false
     }
   },
   mounted () {
@@ -167,7 +183,38 @@ export default {
     }
   },
   methods: {
+    statusChange (id) {
+      this.$post('/ad/news/changeNews', {newId: id}).then(res => {
+        // console.log(res)
+      })
+    },
+    mousemove () {
+      this.moveShow = true
+    },
+    moveout (e) {
+      this.moveShow = false
+    },
+    // 鼠标移入通知中心展示
+    shiftIn (e) {
+      this.moveShow = true
+      if (this.data !== e) {
+        this.data = e
+        console.log(document.body.clientWidth)
+        if (this.data === 4) {
+          document.getElementById('move').style.left = document.body.clientWidth - 621 + 'px'
+        } else {
+          document.getElementById('move').style.left = 20 + (document.body.clientWidth - 40) / 5 * e + 'px'
+        }
+        this.$fetch('/ad/news/selectNewAdByType', {
+          newsType: this.data + 1
+        }).then(res => {
+          // console.log(res)
+          this.messageList = res.data
+        })
+      }
+    },
     getData (data) {
+      // 待审核
       this.$fetch('/ad/index/countWorkAdAudit', {'channelId': data}).then(res => {
         console.log(res)
         this.list1 = res
@@ -178,6 +225,7 @@ export default {
           })
         }
       })
+      // 待付款
       this.$fetch('/ad/index/countWork', {
         'status': '2',
         'channelId': data
@@ -191,6 +239,7 @@ export default {
           })
         }
       })
+      // 投保中
       this.$fetch('/ad/index/countWork', {
         'status': '3',
         'channelId': data
@@ -203,6 +252,11 @@ export default {
             type: 'info'
           })
         }
+      })
+      // 消息
+      this.$fetch('/ad/news/selectCountByNewType').then(res => {
+        console.log(res)
+        this.headerList = res.data
       })
     }
   },
@@ -219,8 +273,16 @@ export default {
   filters: {
     time (data) {
       return data.split(' ')[0].replace('-', '.').replace('-', '.')
+    },
+    time2 (data) {
+      let date = new Date(data)
+      return date.getFullYear() + '-' + zero(date.getMonth() + 1) + '-' + zero(date.getDate()) + ' ' + date.getHours() + ':' + zero(date.getMinutes())
     }
   }
+}
+function zero (data) {
+  if (data < 10) return '0' + data
+  return data
 }
 </script>
 
@@ -231,6 +293,7 @@ export default {
   padding-bottom: 10px;
   .el-col-4 {
     width: 20%;
+    cursor: pointer;
     .grid-content {
       border-radius: 10px;
       min-height: 36px;
@@ -324,6 +387,43 @@ export default {
         justify-content: space-between;
         line-height: 30px;
         color: #666;
+      }
+    }
+  }
+}
+.all_channels .top {
+  position: relative;
+  .move {
+    position: absolute;
+    width:621px;
+    height:323px;
+    background:rgba(255,255,255,1);
+    border-radius:5px;
+    box-shadow:5px 10px 6px rgba(0,0,0,0.11);
+    z-index: 9999;
+    top: 94px;
+    left: 20px;
+    line-height: 65px;
+    header {
+      height: 65px;
+      border-bottom: 1px solid #E6E6E6;
+      img {
+        vertical-align: middle;
+        padding: 0 10px;
+      }
+    }
+    p {
+      height: 65px;
+      border-bottom: 1px solid #E6E6E6;
+      color: #333;
+      text-indent: 34px;
+      cursor: pointer;
+      span {
+        float: right;
+        padding-right: 11px;
+      }
+      &:hover {
+        background: #FFC107;
       }
     }
   }
