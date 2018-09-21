@@ -4,25 +4,96 @@
     <!-- 未通过 -->
     <router-view></router-view>
     <header>
-      <el-button type="primary">全部显示</el-button>
-      <el-button type="info">显示企业</el-button>
-      <el-button type="info">显示个人</el-button>
+      <el-button type="info" :class="{active: 1 == tabNum}" @click="tab(1)">全部显示</el-button>
+      <el-button type="info" :class="{active: 2 == tabNum}" @click="tab(2)">显示个人</el-button>
+      <el-button type="info" :class="{active: 3 == tabNum}" @click="tab(3)">显示企业</el-button>
     </header>
     <div class="con">
-      <el-table :data="tableData" :show-header="false" style="width: 100%" :row-style="{'height': '94px'}">
+      <el-table :data="tableData" :row-class-name="getRowClass" :show-header="false" style="width: 100%" :row-style="{'height': '94px'}">
         <el-table-column width="60">
           <template slot-scope="scope">
             <div class="index">{{ scope.$index + 1 }}</div>
           </template>
         </el-table-column>
-        <el-table-column align="center" prop="name" label="姓名"></el-table-column>
-        <el-table-column align="center" prop="address" label="地址"></el-table-column>
-        <el-table-column align="center" prop="address" label="地址"></el-table-column>
-        <el-table-column align="center" prop="address" label="地址"></el-table-column>
-        <el-table-column align="center" prop="address" label="地址"></el-table-column>
+        <el-table-column type="expand">
+          <template slot-scope="props" v-if="props.row.list">
+            <el-table :data="props.row.list" :show-header="false" style="width: 100%">
+              <el-table-column prop="car_nameplate">
+                <template slot-scope="scope">
+                  <div>车牌号：{{ scope.row.carNameplate }}</div>
+                </template>
+              </el-table-column>
+              <el-table-column prop="car_nameplate">
+                <template slot-scope="scope">
+                  <div>分期金额：{{ scope.row.insureAmount }}</div>
+                </template>
+              </el-table-column>
+              <el-table-column prop="car_nameplate">
+                <template slot-scope="scope">
+                  <div>分期期数：{{ scope.row.insureStages }}</div>
+                </template>
+              </el-table-column>
+              <el-table-column>
+                <template slot-scope="scope">
+                  <div>还款期数：{{ scope.row.insureNum }}</div>
+                </template>
+              </el-table-column>
+              <el-table-column align="center" label="状态：">
+                <template slot-scope="scope">
+                  <div style="color: #4B86FF">状态：未通过</div>
+                </template>
+              </el-table-column>
+              <el-table-column align="center">
+                <template slot-scope="scope">
+                  <div>时间：未通过</div>
+                </template>
+              </el-table-column>
+            </el-table>
+          </template>
+        </el-table-column>
+        <el-table-column prop="name">
+          <template slot-scope="scope">
+            <div v-if="scope.row.type === 2">企业名称：{{ scope.row.name }}({{ scope.row.carNum }}辆)</div>
+            <div v-if="scope.row.type === 1">姓名：{{ scope.row.name }}</div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="car_nameplate">
+          <template slot-scope="scope">
+            <div v-if="scope.row.type === 2">法人：{{ scope.row.personName }}</div>
+            <div v-if="scope.row.type === 1 && scope.row.carType === 1">合格证：{{ scope.row.carNameplate }}</div>
+            <div v-if="scope.row.type === 1 && scope.row.carType === 2">车牌号：{{ scope.row.carNameplate }}</div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="car_nameplate">
+          <template slot-scope="scope">
+            <div v-if="scope.row.type === 2">联系电话：{{ scope.row.phone }}</div>
+            <div v-if="scope.row.type === 1">分期金额：{{ scope.row.insureAmount }}</div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="car_nameplate">
+          <template slot-scope="scope">
+            <div v-if="scope.row.type === 1">分期期数：{{ scope.row.insureStages }}</div>
+          </template>
+        </el-table-column>
+        <el-table-column>
+          <template slot-scope="scope">
+            <div v-if="scope.row.type === 1">还款期数：{{ scope.row.insureNum }}</div>
+          </template>
+        </el-table-column>
+        <el-table-column align="center" label="状态：">
+          <template slot-scope="scope">
+            <div v-if="scope.row.type === 1" style="color: #4B86FF">状态：未通过</div>
+          </template>
+        </el-table-column>
+        <el-table-column align="center">
+          <template slot-scope="scope">
+            <div v-if="scope.row.type === 1">时间：未通过</div>
+          </template>
+        </el-table-column>
         <el-table-column align="center" width="120">
           <template slot-scope="scope">
-            <el-button type="primary" round plain size="small" @click="$router.push({name: 'ADetailC'})">查看详情</el-button>
+            <el-button type="primary" v-if="scope.row.type === 2" round plain size="small" @click="$router.push({name: 'NDetailC', query: {id: scope.row.id, batch: scope.row.batch}})">查看详情</el-button>
+            <el-button type="primary" v-if="scope.row.type === 1" round plain size="small" @click="$router.push({name: 'NDetailP', query: {id: scope.row.id}})">查看详情</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -35,15 +106,36 @@ export default {
   name: 'NotThrough',
   data () {
     return {
-      tableData: [{
-        date: '企业名称：锦上有限公司',
-        name: '车牌号：浙XXXXXX',
-        address: '分期金额：5600'
-      }]
+      tableData: [],
+      tabNum: 1,
+      activeNames: ['1']
     }
   },
-  mounted () {},
-  methods: {}
+  mounted () {
+    this.getData(this.tabNum)
+  },
+  methods: {
+    getRowClass ({row, index}) {
+      if (!row.list) {
+        return 'row-expand-cover'
+      }
+    },
+    getData (status) {
+      this.$fetch('/fd/index/selectNotPassByAd', {status: status}).then(res => {
+        console.log(res)
+        this.tableData = res.data.surrenderVO
+      })
+    },
+    tab (num) {
+      this.tabNum = num
+      this.getData(num)
+    }
+  },
+  filters: {
+    time (data) {
+      return data.split(' ')[0].replace('-', '.').replace('-', '.')
+    }
+  }
 }
 </script>
 
@@ -53,10 +145,17 @@ export default {
   height: 97%;
   // background: #fff;
   position: relative;
+  .row-expand-cover  .el-icon{
+    display: none;
+  }
   header {
     background: #fff;
     // height: 110px;
     padding: 30px 0 30px 25px;
+    .active {
+      background: #4B86FF;
+      border-color: #4B86FF;
+    }
   }
   .con {
     background: #fff;

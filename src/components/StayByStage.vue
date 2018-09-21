@@ -3,9 +3,9 @@
   <div class="stay_by_stage">
     <router-view></router-view>
     <header>
-      <el-button type="primary">全部显示</el-button>
-      <el-button type="info">显示企业</el-button>
-      <el-button type="info">显示个人</el-button>
+      <el-button type="info" :class="{active: 1 == tabNum}" @click="tab(1)">全部显示</el-button>
+      <el-button type="info" :class="{active: 2 == tabNum}" @click="tab(2)">显示个人</el-button>
+      <el-button type="info" :class="{active: 3 == tabNum}" @click="tab(3)">显示企业</el-button>
     </header>
     <div class="con">
       <el-table :data="tableData" :show-header="false" style="width: 100%" :row-style="{'height': '94px'}">
@@ -14,16 +14,44 @@
             <div class="index">{{ scope.$index + 1 }}</div>
           </template>
         </el-table-column>
-        <el-table-column align="center" prop="name" label="姓名"></el-table-column>
-        <el-table-column align="center" prop="address" label="地址"></el-table-column>
-        <el-table-column align="center" prop="address" label="地址"></el-table-column>
-        <el-table-column align="center" prop="address" label="地址"></el-table-column>
-        <el-table-column align="center" prop="address" label="地址"></el-table-column>
-        <el-table-column align="center" width="360">
+        <el-table-column prop="name" label="企业名称：锦上有限公司">
           <template slot-scope="scope">
-            <el-button type="primary" round plain size="small" @click="$router.push({name: 'DetailP'})">查看详情</el-button>
-            <el-button type="primary" round plain size="small" @click="$router.push({name: 'DetailC'})">上传付款计划表</el-button>
-            <el-button type="primary" round plain size="small">上传付款凭证</el-button>
+            <div v-if="scope.row.type === 1">姓名：{{ scope.row.name }}</div>
+            <div v-if="scope.row.type === 2">企业名称：{{ scope.row.name }}</div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="car_nameplate" label="车牌号：浙XXXXXX">
+          <template slot-scope="scope">
+            <div v-if="scope.row.carType ===  1">车牌号：{{ scope.row.carNameplate }}</div>
+            <div v-if="scope.row.carType ===  2">批次：{{ scope.row.batch }}</div>
+          </template>
+        </el-table-column>
+        <el-table-column align="center" prop="insure_amount" label="分期金额：5600">
+          <template slot-scope="scope">
+            <div>分期金额：{{ scope.row.insureAmount }}</div>
+          </template>
+        </el-table-column>
+        <el-table-column align="center" prop="insure_stages" label="分期期数：12">
+          <template slot-scope="scope">
+            <div>分期期数：{{ scope.row.insureStages }}</div>
+          </template>
+        </el-table-column>
+        <el-table-column align="center" label="状态：">
+          <template slot-scope="scope">
+            <div style="color: #4B86FF">状态：待付款</div>
+          </template>
+        </el-table-column>
+        <el-table-column align="center" prop="create_time" label="时间：2018.6.16">
+          <template slot-scope="scope">
+            <div>时间：{{ scope.row.createTime | timeChange }}</div>
+          </template>
+        </el-table-column>
+        <el-table-column align="center" width="340">
+          <template slot-scope="scope">
+            <el-button type="primary" round plain size="small" v-if="scope.row.type === 1" @click="$router.push({name: 'DetailP', query: {id: scope.row.id}})">查看详情</el-button>
+            <el-button type="primary" round plain size="small" v-if="scope.row.type === 2" @click="$router.push({name: 'DetailC', query: {id: scope.row.id, batch: scope.row.batch}})">查看详情</el-button>
+            <el-button type="primary" round plain size="small" v-if="scope.row.type === 2">上传付款计划表</el-button>
+            <el-button type="primary" round plain size="small" v-if="scope.row.type === 2">上传付款凭证</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -36,16 +64,38 @@ export default {
   name: 'StayByStage',
   data () {
     return {
-      tableData: [{
-        date: '企业名称：锦上有限公司',
-        name: '车牌号：浙XXXXXX',
-        address: '分期金额：5600'
-      }]
+      tableData: [],
+      tabNum: 1
     }
   },
-  mounted () {},
+  mounted () {
+    this.getData(this.tabNum)
+  },
   methods: {
+    getData (status) {
+      this.$fetch('/fd/index/selectSurrenderByPayAd', {status: status}).then(res => {
+        console.log(res.data.surrenderVO)
+        this.tableData = res.data.surrenderVO
+      })
+    },
+    tab (num) {
+      this.tabNum = num
+      this.getData(num)
+    }
+  },
+  filters: {
+    timeChange (data) {
+      let date = new Date(data)
+      return date.getFullYear() + '-' + zero(date.getMonth() + 1) + '-' + zero(date.getDate())
+    },
+    time (data) {
+      return data.split(' ')[0].replace('-', '.').replace('-', '.')
+    }
   }
+}
+function zero (data) {
+  if (data < 10) return '0' + data
+  return data
 }
 </script>
 
@@ -59,6 +109,10 @@ export default {
     background: #fff;
     // height: 110px;
     padding: 30px 0 30px 25px;
+    .active {
+      background: #4B86FF;
+      border-color: #4B86FF;
+    }
   }
   .con {
     background: #fff;

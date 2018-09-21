@@ -8,20 +8,20 @@
       </div>
       <div class="basic_info">
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" size="mini" label-width="167px" class="demo-ruleForm">
-          <el-form-item label="姓名：" prop="peoplename">
-            <el-input v-model="ruleForm.peoplename" placeholder="请输入负责人姓名" disabled></el-input>
+          <el-form-item label="姓名：" prop="customerName">
+            <el-input v-model="ruleForm.customer.customerName"></el-input>
           </el-form-item>
-          <el-form-item label="身份证号：" prop="phone">
-            <el-input v-model="ruleForm.phone" placeholder="请输入联系方式" disabled></el-input>
+          <el-form-item label="身份证号：" prop="customerIdcard">
+            <el-input v-model="ruleForm.customer.customerIdcard" ></el-input>
           </el-form-item>
-          <el-form-item label="联系方式：" prop="phone">
-            <el-input v-model="ruleForm.phone" placeholder="请输入联系方式" disabled></el-input>
+          <el-form-item label="联系方式：" prop="customerPhone">
+            <el-input v-model="ruleForm.customer.customerPhone" ></el-input>
           </el-form-item>
-          <el-form-item label="车架号：" prop="phone">
-            <el-input v-model="ruleForm.phone" placeholder="请输入联系方式" disabled></el-input>
+          <el-form-item label="车架号：" prop="carvin">
+            <el-input v-model="ruleForm.obj.carvin" ></el-input>
           </el-form-item>
-          <el-form-item label="车辆合格证：" prop="phone">
-            <el-input v-model="ruleForm.phone" placeholder="请输入联系方式" disabled></el-input>
+          <el-form-item label="车辆合格证：" prop="nameplate">
+            <el-input v-model="ruleForm.obj.nameplate" ></el-input>
           </el-form-item>
         </el-form>
       </div>
@@ -31,20 +31,20 @@
       </div>
       <div class="info">
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" size="mini" label-width="167px" class="demo-ruleForm">
-          <el-form-item label="商业险：" prop="peoplename">
-            <el-input v-model="ruleForm.peoplename" placeholder="请输入负责人姓名" disabled></el-input>
+          <el-form-item label="商业险：" prop="commercial">
+            <el-input v-model="ruleForm.obj.commercial"></el-input>
           </el-form-item>
-          <el-form-item label="交强险：" prop="phone">
-            <el-input v-model="ruleForm.phone" placeholder="请输入联系方式" disabled></el-input>
+          <el-form-item label="交强险：" prop="cartaffic">
+            <el-input v-model="ruleForm.obj.cartaffic" ></el-input>
           </el-form-item>
-          <el-form-item label="车船税：" prop="phone">
-            <el-input v-model="ruleForm.phone" placeholder="请输入联系方式" disabled></el-input>
+          <el-form-item label="车船税：" prop="carboat">
+            <el-input v-model="ruleForm.obj.carboat" ></el-input>
           </el-form-item>
-          <el-form-item label="选择保单：" prop="name">
+          <el-form-item label="选择保单：" prop="age">
             <template>
-              <el-button size="mini" plain>一年保单</el-button>
-              <el-button size="mini" plain>三年保单</el-button>
-              <span class="dai">
+              <el-button size="mini" plain :class="{active: 1 == ruleForm.obj.age}">一年保单</el-button>
+              <el-button size="mini" plain :class="{active: 3 == ruleForm.obj.age}">三年保单</el-button>
+              <span class="dai" v-if="ruleForm.obj.age === 3">
                 <span>是否有车贷：</span>
                 <el-radio v-model="radio" label="1">是</el-radio>
                 <el-radio v-model="radio" label="2">否</el-radio>
@@ -52,14 +52,7 @@
             </template>
           </el-form-item>
           <el-form-item label="月付期数：" prop="name">
-            <el-select v-model="value8" filterable placeholder="请选择">
-              <el-option
-                v-for="item in options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-select>
+            <div class="qishu">{{ruleForm.obj.stages}}</div>
           </el-form-item>
         </el-form>
       </div>
@@ -67,7 +60,7 @@
       <div class="tit">
         <img src="../../assets/img/img_info.png" alt="">
       </div>
-      <PicShow />
+      <PicShow :imgList="tableList" :from="'查看详情'"/>
     </div>
   </div>
 </template>
@@ -85,31 +78,57 @@ export default {
       }],
       value8: '',
       ruleForm: {
-        name: '',
-        peoplename: '',
-        phone: ''
+        customer: {
+          customerName: '',
+          customerIdcard: '',
+          customerPhone: ''
+        },
+        obj: {
+          carvin: '',
+          nameplate: '',
+          commercial: '',
+          cartaffic: '',
+          carboat: '',
+          age: 1,
+          stages: 12
+        }
       },
       rules: {
-        name: [
-          { required: true, message: '请输入企业名称', trigger: 'blur' },
-          { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
-        ],
-        peoplename: [
-          { required: true, message: '请输入法人姓名', trigger: 'blur' },
-          { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
-        ],
-        phone: [
-          { required: true, message: '请输入联系方式', trigger: 'blur' },
-          { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
-        ]
+        // name: [
+        //   { required: true, message: '请输入企业名称', trigger: 'blur' },
+        //   { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+        // ],
+        // peoplename: [
+        //   { required: true, message: '请输入法人姓名', trigger: 'blur' },
+        //   { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+        // ],
+        // phone: [
+        //   { required: true, message: '请输入联系方式', trigger: 'blur' },
+        //   { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+        // ]
       }
     }
   },
-  mounted () {},
+  mounted () {
+    // this.ruleForm = this.tableList
+  },
+  watch: {
+    tableList (val) {
+      this.ruleForm = val
+    }
+  },
   methods: {
   },
   components: {
     PicShow
+  },
+  props: {
+    tableList: {
+      type: Object,
+      default () {
+        return {}
+      }
+    }
   }
 }
 </script>
@@ -213,6 +232,19 @@ export default {
         }
       }
     }
+  }
+}
+.info {
+  .active {
+    border-color: #4e8fff;
+  }
+  .qishu {
+    width:87px;
+    height:28px;
+    background:rgba(255,255,255,1);
+    border:1px solid rgba(46,146,255,1);
+    border-radius:3px;
+    text-align: center;
   }
 }
 </style>

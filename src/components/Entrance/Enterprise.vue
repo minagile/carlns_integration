@@ -9,7 +9,12 @@
       <div class="msg">
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" size="mini" label-width="167px" class="demo-ruleForm">
           <el-form-item label="企业名称：" prop="companyName">
-            <el-select v-model="ruleForm.companyName" filterable placeholder="请选择">
+            <el-select
+              v-model="ruleForm.companyName"
+              filterable
+              allow-create
+              default-first-option
+              placeholder="请选择文章标签">
               <el-option
                 v-for="item in option"
                 :key="item.value"
@@ -128,6 +133,11 @@
                 <el-button size="mini" plain class="baodanBtn" :class="{active: 1 === num}" @click="baodan(1)">一年保单</el-button>
                 <el-button size="mini" plain class="baodanBtn" :class="{active: 3 === num}" @click="baodan(3)">三年保单</el-button>
               </div>
+              <span class="dai" style="margin-left: 20px;color: #606266;" v-show="isInsure">
+                <span>是否有车贷：</span>
+                <el-radio v-model="form.state" label="1">是</el-radio>
+                <el-radio v-model="form.state" label="2">否</el-radio>
+              </span>
             </template>
           </el-form-item>
           <el-form-item label="月付期数：" prop="insureStages">
@@ -159,6 +169,10 @@ export default {
       option: [{
         value: '12',
         label: '12'
+      },
+      {
+        value: '1212312',
+        label: '123123'
       }],
       options: [{
         value: '12',
@@ -181,7 +195,8 @@ export default {
         insureFic: '',
         insureCarBoatTax: '',
         insureAge: '1',
-        insureStages: ''
+        insureStages: '',
+        state: '1'
       },
       rules: {
         companyName: [
@@ -215,7 +230,8 @@ export default {
       singleShow: false,
       active: 'none',
       num: 1,
-      batchInsure: ''
+      batchInsure: '',
+      isInsure: false
     }
   },
   methods: {
@@ -283,6 +299,7 @@ export default {
           formData.append('insureType', '2')
           formData.append('batchInsure', this.batchInsure)
         } else {
+          // 单辆
           formData.append('insureType', '1')
           if (this.form.carVin === '') {
             this.$message.error('车架号不能为空')
@@ -298,22 +315,22 @@ export default {
             formData.append('insureFic', this.form.insureFic)
             formData.append('insureCarBoatTax', this.form.insureCarBoatTax)
             formData.append('insureAge', this.form.insureAge)
+            formData.append('state', this.form.state)
             formData.append('insureStages', this.form.insureStages)
           }
         }
         this.$http.post(Req + '/fd/insure/insertCompany', formData, config).then(res => {
-          // console.log(res)
           if (res.body.code === 101) {
             this.$router.push({
               path: '/Login',
               querry: { redirect: this.$router.currentRoute.fullPath }
             })
-          } else if (JSON.parse(res.body.msg).code === 0) {
-            this.$message(JSON.parse(res.body.msg).msg)
+          } else if (res.body.code === 0) {
+            this.$message(res.body.msg)
             this.$router.push({name: 'HomePage'})
           } else {
             // console.log(JSON.parse(res.body.msg))
-            this.$message.error(JSON.parse(res.body.msg).msg)
+            this.$message.error(res.body.msg)
           }
         })
       }
@@ -322,6 +339,7 @@ export default {
       this.num = num
       this.form.insureAge = num
       if (num === 3) {
+        this.isInsure = true
         this.options = [{
           value: '12',
           label: '12'
@@ -339,6 +357,7 @@ export default {
           value: '12',
           label: '12'
         }]
+        this.isInsure = false
       }
     },
     // 判断是批量还是单个

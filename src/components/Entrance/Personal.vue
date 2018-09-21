@@ -55,8 +55,8 @@
               <el-button size="mini" plain @click="baodan(3)">三年保单</el-button>
               <span class="dai" style="margin-left: 20px;color: #606266;" v-show="isInsure">
                 <span>是否有车贷：</span>
-                <el-radio v-model="ruleForm.insureAge" label="1">是</el-radio>
-                <el-radio v-model="ruleForm.insureAge" label="2">否</el-radio>
+                <el-radio v-model="ruleForm.state" label="1">是</el-radio>
+                <el-radio v-model="ruleForm.state" label="2">否</el-radio>
               </span>
             </template>
           </el-form-item>
@@ -91,7 +91,7 @@
             <p>支持jpg、jpeg、png等格式，体积在5M以下 </p>
           </div>
         </figure>
-        <figure>
+        <figure v-if="ruleForm.type === '1'">
           <div class="text"><span>购车发票：</span></div>
           <div class="right">
             <div class="box">
@@ -103,7 +103,7 @@
             <p>支持jpg、jpeg、png等格式，体积在5M以下 </p>
           </div>
         </figure>
-        <figure>
+        <figure v-if="ruleForm.type === '2'">
           <div class="text"><span>机动车行驶证：</span></div>
           <div class="right">
             <div class="box">
@@ -171,8 +171,7 @@ export default {
       },
       rules: {
         username: [
-          { required: true, message: '请输入负责人姓名', trigger: 'blur' },
-          { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+          { required: true, message: '请输入负责人姓名', trigger: 'blur' }
         ],
         idNumber: [
           { required: true, message: '请输入身份证号', trigger: 'blur' },
@@ -236,10 +235,6 @@ export default {
         this.$message.error('商业险不能为空')
       } else if (this.ruleForm.carPayBillUrl === '') {
         this.$message.error('请上传缴费通知单')
-      } else if (this.ruleForm.carInvoiceUrl === '') {
-        this.$message.error('请上传购车发票')
-      } else if (this.ruleForm.license === '') {
-        this.$message.error('请上传机动车行驶证')
       } else if (this.ruleForm.personUp === '') {
         this.$message.error('请上传身份证正面')
       } else if (this.ruleForm.personDown === '') {
@@ -259,10 +254,21 @@ export default {
         formData.append('state', this.ruleForm.state)
         formData.append('insureStages', this.ruleForm.insureStages)
         formData.append('carPayBillUrl', this.ruleForm.carPayBillUrl)
-        formData.append('carInvoiceUrl', this.ruleForm.carInvoiceUrl)
-        formData.append('license', this.ruleForm.license)
         formData.append('personUp', this.ruleForm.personUp)
         formData.append('personDown', this.ruleForm.personDown)
+        if (this.ruleForm.type === '1') {
+          if (this.ruleForm.carInvoiceUrl === '') {
+            this.$message.error('请上传购车发票')
+          } else {
+            formData.append('carInvoiceUrl', this.ruleForm.carInvoiceUrl)
+          }
+        } else {
+          if (this.ruleForm.license === '') {
+            this.$message.error('请上传机动车行驶证')
+          } else {
+            formData.append('license', this.ruleForm.license)
+          }
+        }
         let config = {
           headers: {
             'Content-Type': 'multipart/form-data',

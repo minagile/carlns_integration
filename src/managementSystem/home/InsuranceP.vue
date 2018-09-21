@@ -1,12 +1,12 @@
 <template>
-  <!-- 待付款-个人 -->
-  <div class="obligations_p">
+  <!-- 退保-个人 -->
+  <div class="insurance_p">
     <div class="con">
       <div class="body">
         <header>
           <div class="itm">
             <img src="../../assets/mImg/moneybag.png" alt="">
-            <span>状态：客户已付款</span>
+            <span v-if="ruleForm.customer.customerState === 1">状态：用户已上传资料，待审核</span>
           </div>
           <div class="itm">
             <img src="../../assets/mImg/time.png" alt="">
@@ -65,40 +65,20 @@
         <div class="tit">
           <img src="../../assets/mImg/picmsg.png" alt="">
         </div>
-        <PicShow  :imgList="ruleForm" :from="'个人审核'" />
+        <PicShow :imgList="ruleForm" :from="'个人审核'" />
         <div class="btn">
-          <button class="p" @click="dialogFormVisible = true">确定付款</button>
-          <button @click="$router.go(-1)">返回</button>
+          <button class="p" @click="exit">退保</button>
+          <button @click="$router.go(-1)">取消</button>
         </div>
       </div>
     </div>
-    <!-- 弹窗-上传付款凭证 -->
-    <el-dialog :show-close="false" :visible.sync="dialogFormVisible" :modal-append-to-body="false" width="770px">
-      <template>
-        <div class="header">
-          <span>上传付款凭证</span>
-        </div>
-      </template>
-      <div class="upload">
-        <img src="../../assets/mImg/upload.png" alt="">
-        <p>点击上传</p>
-        <div class="imgShow"></div>
-        <input type="file" @change="fileUpload($event)">
-      </div>
-      <p>付款计划表的格式为PDF/JPG、PNG</p>
-      <div slot="footer" class="dialog-footer">
-        <el-button class="btn" @click="dialogFormVisible = false">取消</el-button>
-        <el-button class="button" @click="commit">提交</el-button>
-      </div>
-    </el-dialog>
   </div>
 </template>
 
 <script>
 import PicShow from '../../components/common/PicShow'
-import { Req } from '../../assets/js/http.js'
 export default {
-  name: 'ObligationsP',
+  name: 'insurance_p',
   data () {
     return {
       ruleForm: {
@@ -121,51 +101,45 @@ export default {
         msg: '',
         errStates: 1
       },
-      labelList: ['资料有误', '车辆有误', '图片模糊'],
+      labelList: ['资料有误', '图片模糊', '车辆有误'],
       num: 0,
       baodan: 1,
-      radio: '1',
-      file: {}
+      radio: '1'
     }
   },
   mounted () {
     this.getData()
   },
   methods: {
-    commit () {
-      this.dialogFormVisible = false
-      // /ad/insure/uploadBill 上传付款凭证
-      if (this.file) {
-        let config = {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            'token': sessionStorage.getItem('token')
-          }
-        }
-        var formData = new FormData()
-        formData.append('id', this.$route.query.id)
-        formData.append('type', 1)
-        formData.append('uploadBill', this.file)
-        this.$http.post(Req + '/ad/insure/uploadBill', formData, config).then(res => {
-          if (res.body.code === 101) {
-            this.$router.push({
-              path: '/MLogin',
-              querry: { redirect: this.$router.currentRoute.fullPath }
-              // 从哪个页面跳转
+    exit () {
+      var that = this
+      this.$confirm('是否需要退保', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消'
+      }).then(() => {
+        that.$fetch('/ad/index/sureInsure', {
+          type: '1',
+          id: that.$route.query.id
+        }).then(res => {
+          if (res.code === 0) {
+            this.$message({
+              type: 'success',
+              message: '退保成功!'
             })
-          } else if (res.body.code === 0) {
-            this.$message(res.body.msg)
-            this.$router.push({name: 'AllChannels'})
           } else {
-            this.$message.error(res.body.msg)
+            this.$message.error(res.msg)
           }
         })
-      } else {
-        this.$message.error('请上传图片')
-      }
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
     },
     tab (i) {
       this.num = i
+      this.form.errStates = i + 1
     },
     getData () {
       this.$fetch('/ad/insure/select', {
@@ -175,34 +149,6 @@ export default {
         // console.log(res.data)
         this.ruleForm = res.data.result
       })
-    },
-    fileUpload (e) {
-      var that = this
-      var file = e.target.files[0]
-      if (file.name.split('.')[1] !== 'png' && file.name.split('.')[1] !== 'gif' && file.name.split('.')[1] !== 'jpg' && file.name.split('.')[1] !== 'jpeg' && file.name.split('.')[1] !== 'bmp' && file.name.split('.')[1] !== 'pdf') {
-        this.$message({
-          type: 'info',
-          message: '请上传图片'
-        })
-      } else {
-        var imgSize = file.size / 1024
-        if (imgSize > 5 * 1024) {
-          this.$message({
-            type: 'info',
-            message: '请上传大小不要超过5M的图片'
-          })
-        } else {
-          var reader = new FileReader()
-          reader.readAsDataURL(file) // 读出 base64
-          reader.onloadend = function () {
-            // 图片的 base64 格式, 可以直接当成 img 的 src 属性值
-            var dataURL = reader.result
-            var avatar = dataURL
-            e.target.previousElementSibling.style.backgroundImage = 'url(' + avatar + ')'
-            that.file = file
-          }
-        }
-      }
     }
   },
   components: {
@@ -213,7 +159,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="less" scoped>
-.obligations_p {
+.insurance_p {
    padding: 0 20px 20px;
   background: #E0E0E0;
   .con {
@@ -306,42 +252,7 @@ export default {
         font-weight: bold;
       }
     }
-    .upload {
-      width:342px;
-      height:186px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      text-align: center;
-      margin: 54px auto 0;
-      position: relative;
-      img {
-        vertical-align: middle;
-        margin-top: 60px;
-      }
-      p {
-        padding-top: 20px;
-      }
-      .imgShow {
-        background-size: 100% 100%;
-      }
-      input, .imgShow {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        top: 0;
-        left: 0;
-        cursor: pointer;
-      }
-      input {
-        opacity: 0;
-      }
-    }
-    p {
-      text-align: center;
-      padding-top: 15px;
-    }
     .dialog-footer {
-      margin-top: 60px;
       text-align: center;
       .btn {
         width:85px;

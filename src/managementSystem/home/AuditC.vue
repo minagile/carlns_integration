@@ -2,10 +2,23 @@
   <!-- 待审核-企业 -->
   <div class="audit_c">
     <header>
-      <el-table :data="tableData" style="width: 1127px;">
-        <el-table-column prop="date" label="日期" width="180" align="center"></el-table-column>
-        <el-table-column prop="name" label="姓名" width="180" align="center"></el-table-column>
-        <el-table-column prop="address" label="地址" align="center"></el-table-column>
+      <el-table :data="tableData" style="width: 1127px;" @cell-click="handleSelectionChange">
+        <el-table-column prop="carvin" label="车架号" width="180" align="center"></el-table-column>
+        <el-table-column prop="nameplate" label="车辆合格证/车牌号" width="180" align="center"></el-table-column>
+        <el-table-column prop="commercial" label="商业险" align="center"></el-table-column>
+        <el-table-column prop="cartaffic" label="交强险" align="center"></el-table-column>
+        <el-table-column prop="carboat" label="车船税" align="center"></el-table-column>
+        <el-table-column prop="age" label="保单" align="center"></el-table-column>
+        <el-table-column prop="stages" label="月付期数" align="center"></el-table-column>
+        <el-table-column label="审核不通过" align="center">
+          <template slot-scope="scope">
+            <div class="check">
+              <img src="../../assets/mImg/circle.png" alt="">
+              <!-- <img src="../../assets/mImg/delete.png" alt=""> -->
+              <input type="checkbox">
+            </div>
+          </template>
+        </el-table-column>
       </el-table>
     </header>
     <div class="con">
@@ -15,17 +28,14 @@
         </div>
         <div class="msg">
           <el-form :model="ruleForm" :rules="rules" ref="ruleForm" size="mini" label-width="167px" class="demo-ruleForm">
-            <el-form-item label="企业名称：" prop="peoplename">
-              <el-input v-model="ruleForm.peoplename" disabled></el-input>
+            <el-form-item label="企业名称：" prop="companyName">
+              <el-input v-model="ruleForm.companyName"></el-input>
             </el-form-item>
-            <el-form-item label="法人姓名：" prop="phone">
-              <el-input v-model="ruleForm.phone" disabled></el-input>
+            <el-form-item label="法人姓名：" prop="legalPersonName">
+              <el-input v-model="ruleForm.legalPersonName"></el-input>
             </el-form-item>
-            <el-form-item label="联系方式：" prop="phone">
-              <el-input v-model="ruleForm.phone" disabled></el-input>
-            </el-form-item>
-            <el-form-item label="联系地址：" prop="phone">
-              <el-input v-model="ruleForm.phone" disabled></el-input>
+            <el-form-item label="联系方式：" prop="companyTel">
+              <el-input v-model="ruleForm.companyTel"></el-input>
             </el-form-item>
           </el-form>
         </div>
@@ -33,11 +43,11 @@
           <img src="../../assets/mImg/user_msg.png" alt="">
         </div>
         <div class="pic">
-          <PicShow/>
+          <PicShow :imgList="ruleForm" :from="'企业待审核'"/>
         </div>
         <div class="btn">
-          <button class="p">通过审核</button>
-          <button @click="dialogFormVisible = true">审核不通过</button>
+          <button class="p" @click="pass('pass')">通过审核</button>
+          <button @click="pass('notpass')">审核不通过</button>
         </div>
       </div>
     </div>
@@ -53,12 +63,12 @@
           <el-button v-for="(o, index) in labelList" :key="index"  :class="{active:index == num}" @click="tab(index)">{{ o }}</el-button>
         </el-form-item>
         <el-form-item label="备注：" label-width="70px">
-          <el-input type="textarea" v-model="form.name"></el-input>
+          <el-input type="textarea" v-model="form.msg"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button class="btn" @click="dialogFormVisible = false">取消</el-button>
-        <el-button class="button" @click="dialogFormVisible = false">提交</el-button>
+        <el-button class="button" @click="commit">提交</el-button>
       </div>
     </el-dialog>
   </div>
@@ -70,15 +80,11 @@ export default {
   name: 'AuditC',
   data () {
     return {
-      tableData: [{
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }],
+      tableData: [],
       ruleForm: {
-        name: '',
-        peoplename: '',
-        phone: ''
+        companyName: '',
+        legalPersonName: '',
+        companyTel: ''
       },
       rules: {
         name: [
@@ -93,15 +99,89 @@ export default {
       },
       dialogFormVisible: false,
       form: {
-        name: ''
+        msg: '',
+        errStates: 1
       },
-      labelList: ['资料有误', '车辆有误', '图片模糊'],
-      num: 0
+      labelList: ['资料有误', '图片模糊', '车辆有误'],
+      num: 0,
+      arr: []
     }
   },
+  mounted () {
+    this.getData()
+  },
   methods: {
+    handleSelectionChange (row, column, cell, event) {
+      if (event.target.checked === true) {
+        this.arr.push(row.carId)
+      } else {
+        this.arr.forEach((v, k) => {
+          if (row.carId === v) {
+            this.arr.splice(k, 1)
+          }
+        })
+      }
+    },
+    commit () {
+      // console.log(this.arr)
+      var ids = ''
+      this.arr.forEach(v => {
+        ids += v + ','
+      })
+      this.$post('/ad/insure/update', {
+        id: this.$route.query.id,
+        type: 2,
+        batch: this.$route.query.batch,
+        state: 0,
+        errStates: this.form.errStates,
+        ids: ids,
+        msg: this.form.msg
+      }).then(res => {
+        console.log(res)
+        if (res.code === 0) {
+          this.$message({type: 'success', message: '成功'})
+          this.dialogFormVisible = false
+          this.$router.push({name: 'AllChannels'})
+        } else {
+          this.$message.error(res.msg)
+        }
+      })
+    },
+    pass (str) {
+      if (str === 'notpass') {
+        this.dialogFormVisible = true
+      } else {
+        this.$post('/ad/insure/update', {
+          id: this.$route.query.id,
+          type: 2,
+          batch: this.$route.query.batch,
+          state: 1
+        }).then(res => {
+          // console.log(res)
+          if (res.code === 0) {
+            this.$message({type: 'success', message: '成功'})
+            this.$router.push({name: 'AllChannels'})
+          } else {
+            this.$message.error(res.msg)
+          }
+        })
+      }
+    },
     tab (i) {
       this.num = i
+      this.form.errStates = i + 1
+    },
+    getData () {
+      // /ad/insure/select
+      this.$fetch('/ad/insure/select', {
+        id: this.$route.query.id,
+        batch: this.$route.query.batch,
+        type: '2'
+      }).then(res => {
+        // console.log(res.data)
+        this.tableData = res.data.result.obj
+        this.ruleForm = res.data.result.company
+      })
     }
   },
   components: {
@@ -116,12 +196,25 @@ export default {
   padding: 0 20px 20px;
   background: #E0E0E0;
   header {
-    height: 390px;
+    min-height: 100px;
     background: #fff;
     margin-bottom: 10px;
     padding-top: 50px;
     .el-table {
       margin: 0 auto 0;
+      .check {
+        position: relative;
+        input {
+          position: absolute;
+          top: 0;
+          left: calc(50% - 15px);
+          background: #FFC107;
+          width: 30px;
+          height: 30px;
+          opacity: 0.6;
+          cursor: pointer;
+        }
+      }
     }
   }
   .con {

@@ -4,7 +4,7 @@
       <figure v-for="(item, index) in list" :key="index">
         <div class="text"><span>{{ item }}</span></div>
         <div class="right">
-          <div class="box"></div>
+          <div class="box" :style="{'backgroundImage': 'url(' + listImg[index] + ')'}"></div>
           <p>支持jpg、jpeg、png等格式，体积在5M以下 </p>
         </div>
       </figure>
@@ -17,7 +17,43 @@ export default {
   name: 'PicShow',
   data () {
     return {
-      list: ['缴费通知单：', '购车发票：', '机动车行驶证：', '身份证正面：', '身份证反面：']
+      list: ['缴费通知单：', '购车发票：', '机动车行驶证：', '身份证正面：', '身份证反面：'],
+      listImg: []
+    }
+  },
+  mounted () {
+    // this.listImg = [this.imgList.companyLicenseUrl, this.imgList.legalPersonUp, this.imgList.legalPersonDown]
+  },
+  watch: {
+    imgList (val) {
+      if (this.from === '企业待审核') {
+        this.list = ['缴费通知单：', '身份证正面：', '身份证反面：']
+        this.listImg = [val.companyLicenseUrl, val.legalPersonUp, val.legalPersonDown]
+      }
+      if (this.from === '个人审核' || this.from === '查看详情') {
+        if (val.obj.type === 1) {
+          this.list = ['缴费通知单：', '购车发票：', '身份证正面：', '身份证反面：']
+          this.listImg = [val.obj.pay, val.obj.invoice, val.customer.customerIdcardUp, val.customer.customerIdcardDown]
+        }
+        if (val.obj.type === 2) {
+          this.list = ['缴费通知单：', '机动车行驶证：', '身份证正面：', '身份证反面：']
+          this.listImg = [val.obj.pay, val.obj.invoice, val.customer.customerIdcardUp, val.customer.customerIdcardDown]
+        }
+      }
+    }
+  },
+  props: {
+    imgList: {
+      type: Object,
+      default () {
+        return {}
+      }
+    },
+    from: {
+      type: String,
+      default () {
+        return ''
+      }
     }
   }
 }

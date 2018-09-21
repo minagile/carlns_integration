@@ -4,7 +4,6 @@
     <header>
       <button v-for="(data, index) in list" :key="index" :class="{active: index == num}" @click="tab(index)">{{ data }}</button>
     </header>
-    <!-- <a @click="$router.push({name: 'AccountManagement'})">12312</a> -->
     <div class="con">
       <router-view></router-view>
       <button @click="add">添加</button>

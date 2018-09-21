@@ -1,74 +1,15 @@
 <template>
-  <!-- 已分期--个人详情 -->
-  <div class="a_detail_p">
-    <!-- 已分期--个人详情 -->
-    <div class="table">
-      <div class="top" @mouseenter="isShowBox" @mouseleave="isShowBox2">
-        <li>
-          <img src="../../assets/img/calendar.png" />
-          <span>还款期数：第二期</span>
-        </li>
-        <li>
-          <img src="../../assets/img/money_package.png" />
-          <span>本期待还：500</span>
-        </li>
-        <li>
-          <img src="../../assets/img/clock_time.png" />
-          <span>还款时间：2018.6.4</span>
-        </li>
-        <li>
-          <img src="../../assets/img/order_msg.png" />
-          <span>分期详情</span>
-        </li>
-        <div class="list" id="show">
-          <header>
-            <h2>
-              <img src="../../assets/img/order_msg.png" alt="">
-              <span>分期详情</span>
-            </h2>
-            <span>公司：{{ ruleForm.customerName }}</span>
-            <span v-if="data.order">分期金额：{{ data.order.countnum }}</span>
-            <span v-if="data.obj">分期期数：{{ data.obj.stages }}</span>
-            <button v-if="data.obj">{{ data.obj.age }}年期</button>
-          </header>
-          <div class="stages">
-            <ul>
-              <li>期数</li>
-              <li v-for="(data, index) in detailList" :key="index">
-                <span v-if="data.stagesState !== 2">第{{ index + 1 }}期</span>
-                <span v-if="data.stagesState === 2" style="color: #999999;">第{{ index + 1 }}期</span>
-              </li>
-            </ul>
-            <ul>
-              <li>还款时间</li>
-              <li v-for="(data, index) in detailList" :key="index">
-                <span v-if="data.stagesState !== 2">{{ data.stagesCutoff }}</span>
-                <span v-if="data.stagesState === 2" style="color: #999999;">{{ data.stagesCutoff }}</span>
-              </li>
-            </ul>
-            <ul>
-              <li>还款金额</li>
-              <li v-for="(data, index) in detailList" :key="index">
-                <span v-if="data.stagesState !== 2">{{ data.stagesPrice }}</span>
-                <span v-if="data.stagesState === 2" style="color: #999999;">{{ data.stagesPrice }}</span>
-              </li>
-            </ul>
-            <ul>
-              <li>还款状态</li>
-              <li v-for="(data, index) in detailList" :key="index">
-                <span v-if="data.stagesState !== 2" style="color:#2E92FF;">待还款</span>
-                <span v-if="data.stagesState === 2" style="color: #999999;">已还款</span>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
+  <!-- 未通过--个人详情 -->
+  <div class="n_detail_p">
+    <!-- 未通过--个人详情 -->
+    <div class="no-through">
+      <div v-if="data.error">{{ data.error[0].errorMsg }}</div>
     </div>
     <div class="zujian">
       <PersonDetail :tableList="data"/>
     </div>
     <div class="btn">
-      <button class="save" @click="dialogFormVisible = true">去还款</button>
+      <button class="save" @click="$router.go(-1)">确定</button>
       <span style="padding: 0 115px;"></span>
       <button @click="$router.go(-1)">返回</button>
     </div>
@@ -112,7 +53,7 @@
 <script>
 import PersonDetail from '../common/PersonDetail'
 export default {
-  name: 'ADetailP',
+  name: 'NDetailP',
   data () {
     return {
       dialogFormVisible: false,
@@ -144,8 +85,7 @@ export default {
       count: 60,
       clock: '',
       second: false,
-      data: {},
-      detailList: []
+      data: {}
     }
   },
   mounted () {
@@ -163,20 +103,12 @@ export default {
         id: this.$route.query.id,
         type: 1
       }).then(res => {
-        console.log(res.data.result)
+        // console.log(res)
         this.data = res.data.result
         this.ruleForm = res.data.result.customer
         if (res.code !== 0) {
           this.$message.error(res.msg)
         }
-        this.$fetch('/fd/insure/selectStagesDetail', {
-          orderId: res.data.result.order.orderId
-        }).then(res => {
-          if (res.code === 0) {
-            console.log(res.data)
-            this.detailList = res.data
-          }
-        })
       })
     },
     // 获取验证码
@@ -234,7 +166,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.a_detail_p {
+.n_detail_p {
   position: absolute;
   top: 0;
   left: 0;
@@ -340,10 +272,6 @@ export default {
           li {
             line-height: 40px;
             font-size: 14px;
-            color: #333;
-            span {
-              color: #333;
-            }
             &:first-of-type {
               font-size: 16px;
               font-weight: bold;

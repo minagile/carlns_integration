@@ -6,11 +6,11 @@
         <header>
           <div class="itm">
             <img src="../../assets/mImg/moneybag.png" alt="">
-            <span>状态：123123</span>
+            <span v-if="ruleForm.customer.customerState === 1">状态：用户已上传资料，待审核</span>
           </div>
           <div class="itm">
             <img src="../../assets/mImg/time.png" alt="">
-            <span>提交时间：123123</span>
+            <span>提交时间：{{ ruleForm.customer.updateTime }}</span>
           </div>
         </header>
         <div class="tit">
@@ -18,20 +18,20 @@
         </div>
         <div class="msg">
           <el-form :model="ruleForm" :rules="rules" ref="ruleForm" size="mini" label-width="167px" class="demo-ruleForm">
-            <el-form-item label="姓名：" prop="peoplename">
-              <el-input v-model="ruleForm.peoplename" disabled></el-input>
+            <el-form-item label="姓名：" prop="customerName">
+              <el-input v-model="ruleForm.customer.customerName"></el-input>
             </el-form-item>
-            <el-form-item label="身份证号：" prop="phone">
-              <el-input v-model="ruleForm.phone" disabled></el-input>
+            <el-form-item label="身份证号：" prop="customerIdcard">
+              <el-input v-model="ruleForm.customer.customerIdcard"></el-input>
             </el-form-item>
-            <el-form-item label="联系方式：" prop="phone">
-              <el-input v-model="ruleForm.phone" disabled></el-input>
+            <el-form-item label="联系方式：" prop="customerPhone">
+              <el-input v-model="ruleForm.customer.customerPhone"></el-input>
             </el-form-item>
-            <el-form-item label="车架号：" prop="phone">
-              <el-input v-model="ruleForm.phone" disabled></el-input>
+            <el-form-item label="车架号：" prop="carvin">
+              <el-input v-model="ruleForm.obj.carvin"></el-input>
             </el-form-item>
-            <el-form-item label="车辆合格证:" prop="phone">
-              <el-input v-model="ruleForm.phone" disabled></el-input>
+            <el-form-item label="车辆合格证:" prop="nameplate">
+              <el-input v-model="ruleForm.obj.nameplate"></el-input>
             </el-form-item>
           </el-form>
         </div>
@@ -40,35 +40,35 @@
         </div>
         <div class="msg">
           <el-form :model="ruleForm" :rules="rules" ref="ruleForm" size="mini" label-width="167px" class="demo-ruleForm">
-            <el-form-item label="商业险：" prop="peoplename">
-              <el-input v-model="ruleForm.peoplename" disabled></el-input>
+            <el-form-item label="商业险：" prop="commercial">
+              <el-input v-model="ruleForm.obj.commercial"></el-input>
             </el-form-item>
-            <el-form-item label="交强险：" prop="phone">
-              <el-input v-model="ruleForm.phone" disabled></el-input>
+            <el-form-item label="交强险：" prop="cartaffic">
+              <el-input v-model="ruleForm.obj.cartaffic"></el-input>
             </el-form-item>
-            <el-form-item label="车船税：" prop="phone">
-              <el-input v-model="ruleForm.phone" disabled></el-input>
+            <el-form-item label="车船税：" prop="carboat">
+              <el-input v-model="ruleForm.obj.carboat"></el-input>
             </el-form-item>
-            <el-form-item label="选择保单：" prop="phone">
-              <el-button :class="{active: 1 == baodan}">一年保单</el-button>
-              <el-button :class="{active: 3 == baodan}">三年保单</el-button>
-              <el-button type="text">是否有车贷：
+            <el-form-item label="选择保单：" prop="age">
+              <el-button :class="{active: 1 == ruleForm.obj.age}">一年保单</el-button>
+              <el-button :class="{active: 3 == ruleForm.obj.age}">三年保单</el-button>
+              <el-button type="text" v-if="ruleForm.obj.age === 3">是否有车贷：
                 <el-radio v-model="radio" label="2">是</el-radio>
                 <el-radio v-model="radio" label="1">否</el-radio>
               </el-button>
             </el-form-item>
             <el-form-item label="月付期数：" prop="phone">
-              <el-button class="active">12</el-button>
+              <el-button class="active">{{ruleForm.obj.stages}}</el-button>
             </el-form-item>
           </el-form>
         </div>
         <div class="tit">
           <img src="../../assets/mImg/picmsg.png" alt="">
         </div>
-        <PicShow />
+        <PicShow :imgList="ruleForm" :from="'个人审核'" />
         <div class="btn">
-          <button class="p">通过审核</button>
-          <button @click="dialogFormVisible = true">审核不通过</button>
+          <button class="p" @click="pass('pass')">通过审核</button>
+          <button @click="pass('notpass')">审核不通过</button>
         </div>
       </div>
     </div>
@@ -84,12 +84,12 @@
           <el-button v-for="(o, index) in labelList" :key="index"  :class="{active:index == num}" @click="tab(index)">{{ o }}</el-button>
         </el-form-item>
         <el-form-item label="备注：" label-width="70px">
-          <el-input type="textarea" v-model="form.name"></el-input>
+          <el-input type="textarea" v-model="form.msg"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button class="btn" @click="dialogFormVisible = false">取消</el-button>
-        <el-button class="button" @click="dialogFormVisible = false">提交</el-button>
+        <el-button class="button" @click="commit">提交</el-button>
       </div>
     </el-dialog>
   </div>
@@ -102,9 +102,8 @@ export default {
   data () {
     return {
       ruleForm: {
-        name: '',
-        peoplename: '',
-        phone: ''
+        customer: {},
+        obj: {}
       },
       rules: {
         name: [
@@ -119,17 +118,70 @@ export default {
       },
       dialogFormVisible: false,
       form: {
-        name: ''
+        msg: '',
+        errStates: 1
       },
-      labelList: ['资料有误', '车辆有误', '图片模糊'],
+      labelList: ['资料有误', '图片模糊', '车辆有误'],
       num: 0,
       baodan: 1,
       radio: '1'
     }
   },
+  mounted () {
+    this.getData()
+  },
   methods: {
+    // 审核不通过提交
+    commit () {
+      this.$post('/ad/insure/update', {
+        id: this.$route.query.id,
+        type: 1,
+        state: 0,
+        errStates: this.form.errStates,
+        msg: this.form.msg
+      }).then(res => {
+        // console.log(res)
+        if (res.code === 0) {
+          this.$message({type: 'success', message: '成功'})
+          this.dialogFormVisible = false
+          this.$router.push({name: 'AllChannels'})
+        } else {
+          this.$message.error(res.msg)
+        }
+      })
+    },
+    // 审核
+    pass (str) {
+      if (str === 'notpass') {
+        this.dialogFormVisible = true
+      } else {
+        this.$post('/ad/insure/update', {
+          id: this.$route.query.id,
+          type: 1,
+          state: 1
+        }).then(res => {
+          // console.log(res)
+          if (res.code === 0) {
+            this.$message({type: 'success', message: '成功'})
+            this.$router.push({name: 'AllChannels'})
+          } else {
+            this.$message.error(res.msg)
+          }
+        })
+      }
+    },
     tab (i) {
       this.num = i
+      this.form.errStates = i + 1
+    },
+    getData () {
+      this.$fetch('/ad/insure/select', {
+        id: this.$route.query.id,
+        type: '1'
+      }).then(res => {
+        console.log(res.data)
+        this.ruleForm = res.data.result
+      })
     }
   },
   components: {

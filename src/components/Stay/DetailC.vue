@@ -13,7 +13,7 @@
             <img src="../../assets/img/uploadpic.png" alt="">
             <a>请上传图片</a>
             <div class="img_show"></div>
-            <input type="file" @change="fileImage($event)" accept="image/jpeg,image/x-png,image/gif" />
+            <input type="file" @change="fileImage($event, 1)" accept="image/jpeg,image/x-png,image/gif" />
           </div>
           <button>下载</button>
           <p>请先下载付款计划表，盖章后以图片形式上传</p>
@@ -25,7 +25,7 @@
             <img src="../../assets/img/uploadpic.png" alt="">
             <a>请上传图片</a>
             <div class="img_show"></div>
-            <input type="file" @change="fileImage($event)" accept="image/jpeg,image/x-png,image/gif" />
+            <input type="file" @change="fileImage($event, 2)" accept="image/jpeg,image/x-png,image/gif" />
           </div>
           <p>请上传付款凭证</p>
           <p class="gey">支持jpg、jpeg、png等格式，体积在5M以下 </p>
@@ -37,17 +37,14 @@
       </div>
       <div class="basic">
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" size="mini" label-width="167px" class="demo-ruleForm">
-          <el-form-item label="姓名：" prop="peoplename">
-            <el-input v-model="ruleForm.peoplename" placeholder="请输入负责人姓名" disabled></el-input>
+          <el-form-item label="企业名称：" prop="companyName">
+            <el-input v-model="ruleForm.companyName"></el-input>
           </el-form-item>
-          <el-form-item label="联系方式：" prop="phone">
-            <el-input v-model="ruleForm.phone" placeholder="请输入联系方式" disabled></el-input>
+          <el-form-item label="法人姓名：" prop="legalPersonName">
+            <el-input v-model="ruleForm.legalPersonName"></el-input>
           </el-form-item>
-          <el-form-item label="联系方式：" prop="phone">
-            <el-input v-model="ruleForm.phone" placeholder="请输入联系方式" disabled></el-input>
-          </el-form-item>
-          <el-form-item label="联系方式：" prop="phone">
-            <el-input v-model="ruleForm.phone" placeholder="请输入联系方式" disabled></el-input>
+          <el-form-item label="联系方式：" prop="companyTel">
+            <el-input v-model="ruleForm.companyTel"></el-input>
           </el-form-item>
         </el-form>
       </div>
@@ -56,88 +53,90 @@
         <img src="../../assets/img/img_info.png" alt="">
       </div>
       <div class="pic">
-        <figure>
-          <div class="text"><span>营业执照：</span></div>
-          <div class="right">
-            <div class="box">
-              <!-- <img src="../../assets/img/uploadpic.png" alt=""> -->
-            </div>
-            <p>支持jpg、jpeg、png等格式，体积在5M以下 </p>
-          </div>
-        </figure>
-        <figure>
-          <div class="text"><span>法人身份证：</span></div>
-          <div class="right">
-            <div class="box">
-              <!-- <img src="../../assets/img/uploadpic.png" alt=""> -->
-            </div>
-            <p>支持jpg、jpeg、png等格式，体积在5M以下 </p>
-          </div>
-        </figure>
-        <figure>
-          <div class="text"><span>法人身份证：</span></div>
-          <div class="right">
-            <div class="box">
-              <!-- <img src="../../assets/img/uploadpic.png" alt=""> -->
-            </div>
-            <p>支持jpg、jpeg、png等格式，体积在5M以下 </p>
-          </div>
-        </figure>
+        <PicShow :imgList="ruleForm" :from="'企业待审核'"/>
       </div>
       <!-- 车险投保信息 -->
       <div class="tit">
         <img src="../../assets/img/car_msg.png" alt="">
       </div>
       <el-table :data="tableData" style="width: 100%">
-        <el-table-column align="center" prop="name" label="姓名"></el-table-column>
-        <el-table-column align="center" prop="address" label="地址"></el-table-column>
-        <el-table-column align="center" prop="address" label="地址"></el-table-column>
-        <el-table-column align="center" prop="address" label="地址"></el-table-column>
-        <el-table-column align="center" prop="address" label="地址"></el-table-column>
+        <el-table-column prop="carvin" label="车架号" width="180" align="center"></el-table-column>
+        <el-table-column prop="nameplate" label="车辆合格证/车牌号" width="180" align="center"></el-table-column>
+        <el-table-column prop="commercial" label="商业险" align="center"></el-table-column>
+        <el-table-column prop="cartaffic" label="交强险" align="center"></el-table-column>
+        <el-table-column prop="carboat" label="车船税" align="center"></el-table-column>
+        <el-table-column prop="age" label="保单" align="center"></el-table-column>
+        <el-table-column prop="stages" label="月付期数" align="center"></el-table-column>
       </el-table>
       <div class="btn">
-        <button class="save">保存</button>
+        <button class="save" @click="save">保存</button>
         <span style="padding: 0 115px;"></span>
-        <button>返回</button>
+        <button @click="$router.go(-1)">返回</button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import PicShow from '../../components/common/PicShow'
 export default {
   name: 'DetailC',
   data () {
     return {
       ruleForm: {
-        name: '',
-        peoplename: '',
-        phone: ''
+        companyName: '',
+        legalPersonName: '',
+        companyTel: ''
       },
       rules: {
-        name: [
-          { required: true, message: '请输入企业名称', trigger: 'blur' },
-          { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+        companyName: [
+          { required: true, message: '请输入企业名称', trigger: 'blur' }
         ],
-        peoplename: [
-          { required: true, message: '请输入法人姓名', trigger: 'blur' },
-          { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+        legalPersonName: [
+          { required: true, message: '请输入法人姓名', trigger: 'blur' }
         ],
-        phone: [
-          { required: true, message: '请输入联系方式', trigger: 'blur' },
-          { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+        companyTel: [
+          { required: true, message: '请输入联系方式', trigger: 'blur' }
         ]
       },
-      tableData: [{
-        date: '企业名称：锦上有限公司',
-        name: '车牌号：浙XXXXXX',
-        address: '分期金额：5600'
-      }]
+      tableData: [],
+      companyPlan: '',
+      payBill: ''
     }
   },
-  mounted () {},
+  mounted () {
+    this.getData()
+  },
   methods: {
-    fileImage (e) {
+    save () {
+      this.$post('/fd/insure/upload', {
+        companyId: this.$route.query.id,
+        batch: this.$route.query.batch,
+        companyPlan: this.companyPlan,
+        payBill: this.payBill
+      }).then(res => {
+        console.log(res)
+        if (res.code === 0) {
+          res.$message({type: 'success', message: '成功'})
+          this.$router.go(-1)
+        } else {
+          this.$message(res.msg)
+        }
+      })
+    },
+    getData () {
+      this.$fetch('/fd/insure/selectDetail', {
+        id: this.$route.query.id,
+        batch: this.$route.query.batch,
+        type: '2'
+      }).then(res => {
+        console.log(res.data)
+        this.tableData = res.data.result.obj
+        this.ruleForm = res.data.result.company
+      })
+    },
+    fileImage (e, i) {
+      var that = this
       var file = e.target.files[0]
       if (file.name.split('.')[1] !== 'png' && file.name.split('.')[1] !== 'gif' && file.name.split('.')[1] !== 'jpg' && file.name.split('.')[1] !== 'jpeg' && file.name.split('.')[1] !== 'bmp' && file.name.split('.')[1] !== 'pdf') {
         this.$message({
@@ -159,10 +158,18 @@ export default {
             var dataURL = reader.result
             var avatar = dataURL
             e.target.previousElementSibling.style.backgroundImage = 'url(' + avatar + ')'
+            if (i === 1) {
+              that.companyPlan = file
+            } else {
+              that.payBill = file
+            }
           }
         }
       }
     }
+  },
+  components: {
+    PicShow
   }
 }
 </script>

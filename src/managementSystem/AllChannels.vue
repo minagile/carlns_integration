@@ -25,21 +25,21 @@
     </div>
 
     <el-row :gutter="20">
-      <!-- 待审核 -->
+      <!-- 投保待审核 -->
       <el-col :span="12">
         <el-card class="box-card" :body-style="{ padding: '0px' }">
           <div slot="header" class="clearfix">
             <img src="../assets/img/lock.png" alt="">
-            <span>待审核</span>
+            <span>投保待审核</span>
             <el-button style="float: right; padding: 3px 0" type="text" icon="el-icon-d-arrow-right"></el-button>
           </div>
           <div v-for="(o, i) in list1" :key="i" class="text item">
             <p class="name">
-              <span v-if="o.type === '2'">姓名：{{ o.name }}</span>
-              <span v-if="o.type === '1'">企业：{{ o.name }}</span>
+              <span v-if="o.type === '1'">姓名：{{ o.name }}</span>
+              <span v-if="o.type === '2'">企业：{{ o.name }}</span>
               <span v-if="o.type === '3'">渠道：{{ o.name }}</span>
-              <el-button size="mini" type="primary" plain round @click="$router.push({name: 'AuditC'})">通过审核</el-button>
-              <el-button size="mini" type="primary" plain round @click="$router.push({name: 'AuditP'})">通过审核P</el-button>
+              <el-button size="mini" type="primary" v-if="o.type === '2'" plain round @click="$router.push({name: 'AuditC', query: {batch: o.car_batch, id: o.id}})">通过审核</el-button>
+              <el-button size="mini" type="primary" v-if="o.type === '1'" plain round @click="$router.push({name: 'AuditP', query: {id: o.id}})">通过审核</el-button>
             </p>
             <p v-if="o.type !== '3'">
               <span v-if="o.car_type ===  2">车牌：{{ o.car_nameplate }}</span>
@@ -67,10 +67,10 @@
           </div>
           <div v-for="(o, i) in list2" :key="i" class="text item">
             <p class="name">
-              <span v-if="o.type === '2'">姓名：{{ o.name }}</span>
-              <span v-if="o.type === '1'">企业：{{ o.name }}</span>
-              <el-button size="mini" type="primary" plain round @click="$router.push({name: 'ObligationsC'})">确认付款</el-button>
-              <el-button size="mini" type="primary" plain round @click="$router.push({name: 'ObligationsP'})">确认付款P</el-button>
+              <span v-if="o.type === '1'">姓名：{{ o.name }}</span>
+              <span v-if="o.type === '2'">企业：{{ o.name }}</span>
+              <el-button size="mini" type="primary" plain round v-if="o.type === '1'" @click="$router.push({name: 'ObligationsP', query: {id: o.id}})">确认付款</el-button>
+              <el-button size="mini" type="primary" plain round v-if="o.type === '2'" @click="$router.push({name: 'ObligationsC', query: {batch: o.car_batch, id: o.id}})">确认付款</el-button>
             </p>
             <p>
               <span v-if="o.car_type ===  2">车牌：{{ o.car_nameplate }}</span>
@@ -85,19 +85,19 @@
     </el-row>
 
     <el-row :gutter="20">
-      <!-- 投保中 -->
+      <!-- 已承保 -->
       <el-col :span="12">
         <el-card class="box-card" :body-style="{ padding: '0px' }">
           <div slot="header" class="clearfix">
             <img src="../assets/img/fq-sf.png" alt="">
-            <span>投保中</span>
+            <span>已承保</span>
             <el-button style="float: right; padding: 3px 0" type="text" icon="el-icon-d-arrow-right"></el-button>
           </div>
           <div v-for="(o, i) in list3" :key="i" class="text item">
             <p class="name">
-              <span v-if="o.type === '2'">姓名：{{ o.name }}</span>
-              <span v-if="o.type === '1'">企业：{{ o.name }}</span>
-              <el-button size="mini" type="primary" plain round>还款计划表</el-button>
+              <span v-if="o.type === '1'">姓名：{{ o.name }}</span>
+              <span v-if="o.type === '2'">企业：{{ o.name }}</span>
+              <el-button size="mini" type="primary" plain round @click="dialogFormVisible = true">还款计划表</el-button>
             </p>
             <p>
               <span v-if="o.car_type ===  2">车牌：{{ o.car_nameplate }}</span>
@@ -121,6 +121,19 @@
         </el-card>
       </el-col>
     </el-row>
+
+    <!-- 还款计划表 -->
+    <el-dialog :show-close="false" :visible.sync="dialogFormVisible" :modal-append-to-body="false" width="770px">
+      <template>
+        <div class="header">
+          <span>还款计划表</span>
+        </div>
+      </template>
+      <div slot="footer" class="dialog-footer">
+        <el-button class="btn" @click="dialogFormVisible = false">取消</el-button>
+        <el-button class="button">提交</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -171,7 +184,8 @@ export default {
       ],
       data: 1,
       messageList: [],
-      moveShow: false
+      moveShow: false,
+      dialogFormVisible: false
     }
   },
   mounted () {
@@ -199,7 +213,7 @@ export default {
       this.moveShow = true
       if (this.data !== e) {
         this.data = e
-        console.log(document.body.clientWidth)
+        // console.log(document.body.clientWidth)
         if (this.data === 4) {
           document.getElementById('move').style.left = document.body.clientWidth - 621 + 'px'
         } else {
@@ -216,7 +230,7 @@ export default {
     getData (data) {
       // 待审核
       this.$fetch('/ad/index/countWorkAdAudit', {'channelId': data}).then(res => {
-        console.log(res)
+        // console.log(res)
         this.list1 = res
         if (res.code === 101) {
           this.$message({
@@ -245,7 +259,7 @@ export default {
         'channelId': data
       }).then(res => {
         // console.log(res)
-        // this.list3 = res
+        this.list3 = res
         if (res.code === 101) {
           this.$message({
             message: res.msg,
@@ -255,7 +269,7 @@ export default {
       })
       // 消息
       this.$fetch('/ad/news/selectCountByNewType').then(res => {
-        console.log(res)
+        // console.log(res)
         this.headerList = res.data
       })
     }
@@ -387,6 +401,95 @@ function zero (data) {
         justify-content: space-between;
         line-height: 30px;
         color: #666;
+      }
+    }
+  }
+  .el-dialog {
+    .el-input {
+      width: 90%;
+    }
+    .el-form-item {
+      button {
+        background:rgba(255,255,255,1);
+        border:1px solid rgba(238,238,238,1);
+        border-radius:3px;
+        color: #333333;
+        margin: 0 16px;
+      }
+      button.active {
+        border:1px solid rgba(40,40,40,1);
+      }
+    }
+    .header {
+      position: absolute;
+      top: 0;
+      left: 0;
+      background: #FFC107;
+      color: #282828;
+      text-indent: 35px;
+      width: 100%;
+      height: 40px;
+      line-height: 40px;
+      img {
+        vertical-align:  middle;
+        padding: 0 10px;
+      }
+      span {
+        font-size: 18px;
+        font-weight: bold;
+      }
+    }
+    .upload {
+      width:342px;
+      height:186px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      text-align: center;
+      margin: 54px auto 0;
+      position: relative;
+      img {
+        vertical-align: middle;
+        margin-top: 60px;
+      }
+      p {
+        padding-top: 20px;
+      }
+      .imgShow {
+        background-size: 100% 100%;
+      }
+      input, .imgShow {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        cursor: pointer;
+      }
+      input {
+        opacity: 0;
+      }
+    }
+    p {
+      text-align: center;
+      padding-top: 15px;
+    }
+    .dialog-footer {
+      margin-top: 60px;
+      text-align: center;
+      .btn {
+        width:85px;
+        height:40px;
+        border:1px solid rgba(0,0,0,1);
+        border-radius:5px;
+        color: #282828;
+      }
+      .button {
+        width:85px;
+        height:40px;
+        background:rgba(40,40,40,1);
+        border-radius:5px;
+        color: #fff;
+        margin-left: 160px;
       }
     }
   }

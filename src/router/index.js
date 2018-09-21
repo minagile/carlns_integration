@@ -14,6 +14,8 @@ import DetailP from '@/components/Stay/DetailP'
 import AlreadyByStage from '@/components/AlreadyByStage'
 import ADetailC from '@/components/Already/ADetailC'
 import ADetailP from '@/components/Already/ADetailP'
+import NDetailC from '@/components/NotPass/NDetailC'
+import NDetailP from '@/components/NotPass/NDetailP'
 import NotThrough from '@/components/NotThrough'
 import RetreatCenter from '@/components/RetreatCenter'
 import ChannelManagement from '@/components/ChannelManagement'
@@ -36,6 +38,9 @@ import AuditC from '@/managementSystem/home/AuditC'
 import AuditP from '@/managementSystem/home/AuditP'
 import ObligationsP from '@/managementSystem/home/ObligationsP'
 import ObligationsC from '@/managementSystem/home/ObligationsC'
+import InsuranceC from '@/managementSystem/home/InsuranceC'
+import InsuranceP from '@/managementSystem/home/InsuranceP'
+import ChannelDetail from '@/managementSystem/channel/ChannelDetail'
 import MLogin from '@/managementSystem/MLogin'
 
 Vue.use(Router)
@@ -112,7 +117,19 @@ export default new Router({
         {
           path: '/NotThrough',
           name: 'NotThrough',
-          component: NotThrough
+          component: NotThrough,
+          children: [
+            {
+              path: '/NotThrough/NDetailC',
+              name: 'NDetailC',
+              component: NDetailC
+            },
+            {
+              path: '/NotThrough/NDetailP',
+              name: 'NDetailP',
+              component: NDetailP
+            }
+          ]
         },
         // 退保中心
         {
@@ -242,6 +259,21 @@ export default new Router({
           path: '/m/ObligationsC',
           name: 'ObligationsC',
           component: ObligationsC
+        },
+        {
+          path: '/m/InsuranceC',
+          name: 'InsuranceC',
+          component: InsuranceC
+        },
+        {
+          path: '/m/InsuranceP',
+          name: 'InsuranceP',
+          component: InsuranceP
+        },
+        {
+          path: '/m/ChannelDetail',
+          name: 'ChannelDetail',
+          component: ChannelDetail
         }
       ]
     },

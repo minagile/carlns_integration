@@ -2,7 +2,9 @@
   <div class="home">
     <TopTab @channelId="channelId" />
     <div class="con">
-      <router-view :channelId="channel_id"></router-view>
+      <keep-alive>
+        <router-view :channelId="channel_id"></router-view>
+      </keep-alive>
     </div>
   </div>
 </template>

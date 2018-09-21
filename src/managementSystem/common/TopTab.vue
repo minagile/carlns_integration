@@ -5,11 +5,11 @@
         <li v-for="(data, index) in list" :key="index" :class="{active: index == num}" @click="tab(index)" @mousemove="tabmove(index)">
           <a>{{ data }}</a>
         </li>
-        <div class="tuibao position" v-show="retreats">
-          <div class="li"><a>退保中</a></div>
-          <div class="li"><a>已退保</a></div>
+        <div class="tuibao position" v-show="retreats" @mouseleave="leave">
+          <div class="li"><a @click="tuibao(1)">退保中</a></div>
+          <div class="li"><a @click="tuibao(2)">已退保</a></div>
         </div>
-        <div class="all position" v-show="all">
+        <div class="all position" v-show="all" @mouseleave="leave">
           <li v-for="o in qudaoList" :key="o.channelId"><a @click="channel(o.channelId)">{{ o.channelName }}</a></li>
         </div>
       </ul>
@@ -17,9 +17,9 @@
     <div class="user">
       <a>
         <img src="../../assets/mImg/user.png" alt="">
-        用户名
+        {{ name }}
       </a>
-      <a>
+      <a @click="out">
         <img src="../../assets/mImg/out.png" alt="">
         退出登录
       </a>
@@ -37,22 +37,30 @@ export default {
       num: 0,
       retreats: false,
       all: false,
-      qudaoList: []
+      qudaoList: [],
+      name: ''
     }
   },
   mounted () {
+    this.name = sessionStorage.getItem('username')
     this.$fetch('/ad/channel/findAll').then(res => {
-      // console.log(res)
       this.qudaoList = res.data.channel
     })
   },
   methods: {
+    out () {
+      sessionStorage.clear()
+      this.$router.push({name: 'MLogin'})
+    },
+    tuibao (data) {
+      this.$router.push({name: 'Surrender', query: {status: data}})
+    },
+    leave (e) {
+      this.all = false
+      this.retreats = false
+    },
     channel (id) {
       this.$emit('channelId', id)
-      // this.$router.push({
-      //   name: 'AllChannels',
-      //   query: {id: id}
-      // })
     },
     tabmove (i) {
       if (i === 0) {
@@ -167,7 +175,10 @@ export default {
     }
   }
   .user {
-    width: 240px;
+    min-width: 240px;
+    position: absolute;
+    right: 0;
+    top: 0;
     a {
       padding: 0 10px;
     }
