@@ -62,7 +62,7 @@ export default {
   name: 'Amortized',
   data () {
     return {
-      list: ['全部显示', '显示企业', '显示个人'],
+      list: ['全部显示', '显示个人', '显示企业'],
       num: 0,
       tableData: [],
       dialogFormVisible: false,

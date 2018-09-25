@@ -95,7 +95,10 @@ export default {
         if (res.code === 0) {
           this.tableData = res.data.channel
         } else {
-          this.$message({type: 'info', message: res.msg})
+          if (res.code === 1005) {
+            this.tableData = []
+          }
+          // this.$message({type: 'info', message: res.msg})
         }
       })
     },

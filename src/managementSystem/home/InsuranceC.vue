@@ -2,7 +2,7 @@
   <!-- 退保-企业 -->
   <div class="insurance_c">
     <header>
-      <div class="tabline" @click="payDetail">
+      <div class="tabline" @click="payDetail" v-show="$route.query.tuibao !== true">
         <li>本期待还总计：56236元</li>
         <li>还款期数：第2期</li>
         <li>还款时间：2018.6.4</li>
@@ -46,7 +46,8 @@
           <PicShow :imgList="ruleForm" :from="'企业待审核'"/>
         </div>
         <div class="btn">
-          <button class="p" @click="exit">退保</button>
+          <button class="p" @click="exit" v-show="$route.query.tuibao !== true">退保</button>
+          <button class="p" v-show="$route.query.tuibao === true" @click="$router.go(-1)">确定</button>
           <button @click="$router.go(-1)">取消</button>
         </div>
       </div>
@@ -62,7 +63,7 @@
           <span>公司：{{ ruleForm.legalPersonName }}</span>
           <span>分期金额：{{ data.countnum }}</span>
           <span v-if="tableData.length > 0">分期期数：{{ tableData[0].stages }}</span>
-          <button v-if="tableData.length > 0">{{ tableData[0].age }}年期</button>
+          <button v-if="tableData.length > 0">{{ tableData[0].age | upToCase }}年期</button>
         </div>
       </template>
       <div class="stages">
@@ -138,6 +139,7 @@ export default {
     this.getData()
   },
   methods: {
+    // 确认付款并修改状态
     changeStates (id) {
       this.$confirm('是否确认还款', {
         confirmButtonText: '确定',
@@ -161,32 +163,35 @@ export default {
         })
       })
     },
+    // 付款详情
     payDetail () {
       this.$fetch('/fd/insure/selectStagesDetail', {
         orderId: this.data.orderId
       }).then(res => {
         if (res.code === 0) {
-          console.log(res.data)
+          // console.log(res.data)
           this.detailList = res.data
           this.dialogFormVisible = true
         }
       })
     },
+    // 退保按钮
     exit () {
       this.$confirm('是否需要退保', {
         confirmButtonText: '确定',
         cancelButtonText: '取消'
       }).then(() => {
-        this.$fetch('/ad/index/sureInsure', {
+        this.$post('/ad/insure/surrender', {
           type: '2',
           id: this.$route.query.id,
-          carBatch: this.$route.query.batch
+          batch: this.$route.query.batch
         }).then(res => {
           if (res.code === 0) {
             this.$message({
               type: 'success',
               message: '退保成功!'
             })
+            this.$router.go(-1)
           } else {
             this.$message.error(res.msg)
           }
@@ -205,7 +210,7 @@ export default {
         batch: this.$route.query.batch,
         type: '2'
       }).then(res => {
-        console.log(res.data)
+        // console.log(res.data)
         this.data = res.data.result.order
         this.tableData = res.data.result.obj
         this.ruleForm = res.data.result.company
@@ -214,6 +219,12 @@ export default {
   },
   components: {
     PicShow
+  },
+  filters: {
+    upToCase (data) {
+      if (data === 1) return '一'
+      if (data === 3) return '三'
+    }
   }
 }
 </script>

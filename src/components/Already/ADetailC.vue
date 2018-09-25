@@ -7,12 +7,9 @@
         <button @click="payDetail">付款详情</button>
       </p>
       <div class="tabline">
-        <li>
-          <img src="" alt="">
-          <span>首期总计:{{ data.firstpaynum }}</span>
-          <span>渠道总计:{{ data.channelpaynum }}</span>
-          <span>时间:{{ data.channelpaynum }}</span>
-        </li>
+        <div><img src="../../assets/img/bagP.png" alt="">首期总计:{{ data.firstpaynum }}</div>
+        <div><img src="../../assets/img/order_msg.png" alt="">渠道总计:{{ data.channelpaynum }}</div>
+        <div><img src="../../assets/img/clock_time.png" alt="">时间:{{ data.channelpaynum }}</div>
       </div>
     </div>
     <div class="table">
@@ -68,7 +65,7 @@
           <span>公司：{{ ruleForm.legalPersonName }}</span>
           <span>分期金额：{{ data.countnum }}</span>
           <span v-if="tableData.length > 0">分期期数：{{ tableData[0].stages }}</span>
-          <button v-if="tableData.length > 0">{{ tableData[0].age }}年期</button>
+          <button v-if="tableData.length > 0">{{ tableData[0].age | upToCase }}年期</button>
         </div>
       </template>
       <div class="stages">
@@ -82,8 +79,8 @@
         <ul>
           <li>还款时间</li>
           <li v-for="(data, index) in detailList" :key="index">
-            <span v-if="data.stagesState !== 2">{{ data.stagesCutoff }}</span>
-            <span v-if="data.stagesState === 2" style="color: #999999;">{{ data.stagesCutoff }}</span>
+            <span v-if="data.stagesState !== 2">{{ data.stagesCutoff | timeChange }}</span>
+            <span v-if="data.stagesState === 2" style="color: #999999;">{{ data.stagesCutoff | timeChange }}</span>
           </li>
         </ul>
         <ul>
@@ -161,14 +158,30 @@ export default {
         console.log(res.data)
         this.data = res.data.result.order
         this.tableData = res.data.result.obj
-        this.error = res.data.result.error[0].errorMsg
+        if (res.data.result.error) {
+          this.error = res.data.result.error[0].errorMsg
+        }
         this.ruleForm = res.data.result.company
       })
     }
   },
   components: {
     PicShow
+  },
+  filters: {
+    timeChange (data) {
+      let date = new Date(data)
+      return date.getFullYear() + '.' + zero(date.getMonth() + 1) + '.' + zero(date.getDate())
+    },
+    upToCase (data) {
+      if (data === 1) return '一'
+      if (data === 3) return '三'
+    }
   }
+}
+function zero (data) {
+  if (data < 10) return '0' + data
+  return data
 }
 </script>
 
@@ -182,7 +195,7 @@ export default {
   min-height: 100%;
   z-index: 99999;
   .top {
-    width:1240px;
+    width:1200px;
     height: 173px;
     margin: 0 auto;
     p {
@@ -208,7 +221,7 @@ export default {
       }
     }
     .tabline {
-      width:1240px;
+      width:1200px;
       height:50px;
       line-height:50px;
       background:rgba(243,247,255,1);
@@ -218,6 +231,12 @@ export default {
       font-size: 16px;
       // margin: 0 auto;
       color: #447BED;
+      display: flex;
+      justify-content: space-around;
+      img {
+        vertical-align: middle;
+        padding-right: 10px;
+      }
     }
   }
   .el-form-item--mini.el-form-item, .el-form-item--small.el-form-item {

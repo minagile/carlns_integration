@@ -76,7 +76,8 @@
             <p class="name">
               <span v-if="o.type === '1'">姓名：{{ o.name }}</span>
               <span v-if="o.type === '2'">企业：{{ o.name }}</span>
-              <el-button size="mini" type="primary" plain round @click="$router.push({name: 'DetailP', query: {id: o.id}})">付款</el-button>
+              <el-button v-if="o.type === '1'" size="mini" type="primary" plain round @click="$router.push({name: 'DetailP', query: {id: o.id}})">付款</el-button>
+              <el-button v-if="o.type === '2'" size="mini" type="primary" plain round @click="$router.push({name: 'DetailC', query: {id: o.id, batch: o.car_batch}})">付款</el-button>
             </p>
             <p>
               <span v-if="o.car_type ===  1">车牌：{{ o.car_nameplate }}</span>
@@ -103,7 +104,7 @@
             <p class="name">
               <span v-if="o.type === '1'">姓名：{{ o.name }}</span>
               <span v-if="o.type === '2'">企业：{{ o.name }}</span>
-              <el-button size="mini" type="primary" plain round>还款计划表</el-button>
+              <el-button size="mini" type="primary" plain round @click="payDetail(o.order_id, o.id, o.type, o.car_batch)">还款计划表</el-button>
             </p>
             <p>
               <span v-if="o.car_type ===  1">车牌：{{ o.car_nameplate }}</span>
@@ -127,6 +128,59 @@
         </el-card>
       </el-col>
     </el-row>
+
+    <!-- 还款计划表 -->
+    <el-dialog :visible.sync="dialogFormVisible" :modal-append-to-body="false" width="915px">
+      <template>
+        <div class="header" v-if="data.obj">
+          <h2>
+            <!-- <img src="../../assets/img/order_msg.png" alt=""> -->
+            <span>还款计划表</span>
+          </h2>
+          <span>公司：{{ data.company.companyName }}</span>
+          <span>分期金额：{{ data.order.countnum }}</span>
+          <span>分期期数：{{ data.obj[0].stages }}</span>
+          <button>{{ data.obj[0].age | upToCase }}年期</button>
+        </div>
+      </template>
+      <div class="stages">
+        <ul>
+          <li>期数</li>
+          <li v-for="(data, index) in detailList" :key="index">
+            <span v-if="data.stagesState !== 2">第{{ index + 1 }}期</span>
+            <span v-if="data.stagesState === 2" style="color: #999999;">第{{ index + 1 }}期</span>
+          </li>
+        </ul>
+        <ul>
+          <li>还款时间</li>
+          <li v-for="(data, index) in detailList" :key="index">
+            <span v-if="data.stagesState !== 2">{{ data.stagesCutoff | timeChange }}</span>
+            <span v-if="data.stagesState === 2" style="color: #999999;">{{ data.stagesCutoff | timeChange }}</span>
+          </li>
+        </ul>
+        <ul>
+          <li>还款金额</li>
+          <li v-for="(data, index) in detailList" :key="index">
+            <span v-if="data.stagesState !== 2">{{ data.stagesPrice }}</span>
+            <span v-if="data.stagesState === 2" style="color: #999999;">{{ data.stagesPrice }}</span>
+          </li>
+        </ul>
+        <ul>
+          <li>到账金额</li>
+          <li v-for="(data, index) in detailList" :key="index">
+            <span v-if="data.stagesState !== 2">{{ data.stagesPrice }}</span>
+            <span v-if="data.stagesState === 2" style="color: #999999;">{{ data.stagesPrice }}</span>
+          </li>
+        </ul>
+        <ul>
+          <li>还款状态</li>
+          <li v-for="(data, index) in detailList" :key="index">
+            <span v-if="data.stagesState !== 2" >未还款</span>
+            <span v-if="data.stagesState === 2" style="color: #999999;">已还款</span>
+          </li>
+        </ul>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -146,20 +200,23 @@ export default {
       }],
       list1: [],
       list2: [],
-      list3: []
+      list3: [],
+      dialogFormVisible: false,
+      detailList: [],
+      data: {}
     }
   },
   mounted () {
     this.$fetch('/fd/index/countWork', {
       status: '1'
     }).then(res => {
-      console.log(res)
+      // console.log(res)
       this.list1 = res
     })
     this.$fetch('/fd/index/countWork', {
       status: '2'
     }).then(res => {
-      console.log(res)
+      // console.log(res)
       this.list2 = res
     })
     this.$fetch('/fd/index/countWork', {
@@ -170,14 +227,49 @@ export default {
     })
   },
   methods: {
+    // 付款计划表弹窗
+    payDetail (id, did, type, batch) {
+      console.log(did)
+      this.$fetch('/fd/insure/selectDetail', {
+        id: did,
+        batch: batch,
+        type: type
+      }).then(res => {
+        console.log(res.data)
+        this.data = res.data.result
+      })
+      this.$fetch('/fd/insure/selectStagesDetail', {
+        orderId: id
+      }).then(res => {
+        // console.log(res)
+        if (res.code === 0) {
+          this.detailList = res.data
+          this.dialogFormVisible = true
+        } else {
+          this.$message(res.msg)
+        }
+      })
+    }
   },
   components: {
   },
   filters: {
+    timeChange (data) {
+      let date = new Date(data)
+      return date.getFullYear() + '.' + zero(date.getMonth() + 1) + '.' + zero(date.getDate())
+    },
     time (data) {
       return data.split(' ')[0].replace('-', '.').replace('-', '.')
+    },
+    upToCase (data) {
+      if (data === 1) return '一'
+      if (data === 3) return '三'
     }
   }
+}
+function zero (data) {
+  if (data < 10) return '0' + data
+  return data
 }
 </script>
 
@@ -275,6 +367,124 @@ export default {
         padding-right: 20px;
         justify-content: space-between;
         line-height: 30px;
+      }
+    }
+  }
+  .el-dialog {
+    z-index: 999999999;
+    .el-input {
+      width: 90%;
+    }
+    .el-form-item {
+      button {
+        background:rgba(255,255,255,1);
+        border:1px solid rgba(238,238,238,1);
+        border-radius:3px;
+        color: #333333;
+        margin: 0 16px;
+      }
+      button.active {
+        border:1px solid rgba(40,40,40,1);
+      }
+    }
+    .header {
+      position: absolute;
+      top: 0;
+      left: 0;
+      background: #DFEBFF;
+      color: #447BED;
+      text-indent: 35px;
+      width: 100%;
+      height: 50px;
+      line-height: 50px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      img {
+        vertical-align:  middle;
+        padding: 0 10px;
+      }
+      span {
+        font-size: 18px;
+      }
+      h2 {
+        padding-left: 10px;
+        img {
+          vertical-align: middle;
+        }
+        span {
+          font-size:18px;
+          font-family:MicrosoftYaHei-Bold;
+          font-weight:bold;
+          color:#2E92FF;
+        }
+      }
+      span {
+        font-size:12px;
+        font-family:MicrosoftYaHei;
+        font-weight:400;
+        color:#2E92FF;
+      }
+      button {
+        margin-right: 10px;
+        width:50px;
+        height:20px;
+        background: #ffffff;;
+        border-radius:10px;
+        color: #2E92FF;
+      }
+    }
+    .stages {
+      max-height: 600px;
+      overflow-y: scroll;
+      padding: 20px 0;
+      ul {
+        float: left;
+        width: 20%;
+        text-align: center;
+        button {
+          width:72px;
+          height:26px;
+          background:rgba(224,224,224,1);
+          border-radius:13px;
+          color: #666666;
+        }
+        .sure {
+          width:72px;
+          height:26px;
+          background:rgba(40,40,40,1);
+          border-radius:13px;
+          font-size:12px;
+          font-family:MicrosoftYaHei;
+          font-weight:400;
+          color:rgba(255,255,255,1);
+        }
+        li {
+          line-height: 40px;
+          font-size: 14px;
+          &:first-of-type {
+            font-size: 16px;
+            font-weight: bold;
+          }
+        }
+      }
+    }
+    .dialog-footer {
+      text-align: center;
+      .btn {
+        width:85px;
+        height:40px;
+        border:1px solid rgba(0,0,0,1);
+        border-radius:5px;
+        color: #282828;
+      }
+      .button {
+        width:85px;
+        height:40px;
+        background:rgba(40,40,40,1);
+        border-radius:5px;
+        color: #fff;
+        margin-left: 160px;
       }
     }
   }

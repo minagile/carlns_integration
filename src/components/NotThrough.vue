@@ -59,14 +59,13 @@
         </el-table-column>
         <el-table-column prop="car_nameplate">
           <template slot-scope="scope">
-            <div v-if="scope.row.type === 2">法人：{{ scope.row.personName }}</div>
             <div v-if="scope.row.type === 1 && scope.row.carType === 1">合格证：{{ scope.row.carNameplate }}</div>
             <div v-if="scope.row.type === 1 && scope.row.carType === 2">车牌号：{{ scope.row.carNameplate }}</div>
           </template>
         </el-table-column>
         <el-table-column prop="car_nameplate">
           <template slot-scope="scope">
-            <div v-if="scope.row.type === 2">联系电话：{{ scope.row.phone }}</div>
+            <div v-if="scope.row.type === 2">法人：{{ scope.row.personName }}</div>
             <div v-if="scope.row.type === 1">分期金额：{{ scope.row.insureAmount }}</div>
           </template>
         </el-table-column>
@@ -77,6 +76,7 @@
         </el-table-column>
         <el-table-column>
           <template slot-scope="scope">
+            <div v-if="scope.row.type === 2">联系电话：{{ scope.row.phone }}</div>
             <div v-if="scope.row.type === 1">还款期数：{{ scope.row.insureNum }}</div>
           </template>
         </el-table-column>
@@ -122,7 +122,7 @@ export default {
     },
     getData (status) {
       this.$fetch('/fd/index/selectNotPassByAd', {status: status}).then(res => {
-        console.log(res)
+        // console.log(res)
         this.tableData = res.data.surrenderVO
       })
     },

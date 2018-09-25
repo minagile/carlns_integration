@@ -16,6 +16,8 @@ import ADetailC from '@/components/Already/ADetailC'
 import ADetailP from '@/components/Already/ADetailP'
 import NDetailC from '@/components/NotPass/NDetailC'
 import NDetailP from '@/components/NotPass/NDetailP'
+import CenDetailC from '@/components/Center/CenDetailC'
+import CenDetailP from '@/components/Center/CenDetailP'
 import NotThrough from '@/components/NotThrough'
 import RetreatCenter from '@/components/RetreatCenter'
 import ChannelManagement from '@/components/ChannelManagement'
@@ -27,6 +29,7 @@ import AllChannels from '@/managementSystem/AllChannels'
 import Obligations from '@/managementSystem/Obligations'
 import Amortized from '@/managementSystem/Amortized'
 import Surrender from '@/managementSystem/Surrender'
+import SurrenderA from '@/managementSystem/surrender/SurrenderA'
 import Trench from '@/managementSystem/Trench'
 import Port from '@/managementSystem/Port'
 import System from '@/managementSystem/System'
@@ -135,7 +138,19 @@ export default new Router({
         {
           path: '/RetreatCenter',
           name: 'RetreatCenter',
-          component: RetreatCenter
+          component: RetreatCenter,
+          children: [
+            {
+              path: '/RetreatCenter/CenDetailC',
+              name: 'CenDetailC',
+              component: CenDetailC
+            },
+            {
+              path: '/RetreatCenter/CenDetailP',
+              name: 'CenDetailP',
+              component: CenDetailP
+            }
+          ]
         },
         // 渠道管理
         {
@@ -197,6 +212,11 @@ export default new Router({
           path: '/m/Surrender',
           name: 'Surrender',
           component: Surrender
+        },
+        {
+          path: '/m/SurrenderA',
+          name: 'SurrenderA',
+          component: SurrenderA
         },
         {
           path: '/m/Trench',

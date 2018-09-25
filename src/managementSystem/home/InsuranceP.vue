@@ -3,10 +3,10 @@
   <div class="insurance_p">
     <div class="con">
       <div class="body">
-        <header>
+        <header @click="payDetail">
           <div class="itm">
             <img src="../../assets/mImg/moneybag.png" alt="">
-            <span v-if="ruleForm.customer.customerState === 1">状态：用户已上传资料，待审核</span>
+            <span>状态：用户已上传资料，待审核</span>
           </div>
           <div class="itm">
             <img src="../../assets/mImg/time.png" alt="">
@@ -72,6 +72,58 @@
         </div>
       </div>
     </div>
+    <!-- 分期详情 -->
+    <el-dialog :visible.sync="dialogFormVisible" :modal-append-to-body="false" width="915px">
+      <template>
+        <div class="header">
+          <h2>
+            <img src="../../assets/mImg/package.png" alt="">
+            <span>分期详情</span>
+          </h2>
+          <span>姓名：{{ ruleForm.customer.customerName }}</span>
+          <span v-if="ruleForm.order">分期金额：{{ ruleForm.order.countnum }}</span>
+          <span>分期期数：{{ ruleForm.obj.stages }}</span>
+          <button>{{ ruleForm.obj.age | upToCase }}年期</button>
+        </div>
+      </template>
+      <div class="stages">
+        <ul>
+          <li>期数</li>
+          <li v-for="(data, index) in detailList" :key="index">
+            <span v-if="data.stagesState !== 2">第{{ index + 1 }}期</span>
+            <span v-if="data.stagesState === 2" style="color: #999999;">第{{ index + 1 }}期</span>
+          </li>
+        </ul>
+        <ul>
+          <li>还款时间</li>
+          <li v-for="(data, index) in detailList" :key="index">
+            <span v-if="data.stagesState !== 2">{{ data.stagesCutoff | timeChange }}</span>
+            <span v-if="data.stagesState === 2" style="color: #999999;">{{ data.stagesCutoff | timeChange }}</span>
+          </li>
+        </ul>
+        <ul>
+          <li>还款金额</li>
+          <li v-for="(data, index) in detailList" :key="index">
+            <span v-if="data.stagesState !== 2">{{ data.stagesPrice }}</span>
+            <span v-if="data.stagesState === 2" style="color: #999999;">{{ data.stagesPrice }}</span>
+          </li>
+        </ul>
+        <ul>
+          <li>到账金额</li>
+          <li v-for="(data, index) in detailList" :key="index">
+            <span v-if="data.stagesState !== 2">{{ data.stagesPrice }}</span>
+            <span v-if="data.stagesState === 2" style="color: #999999;">{{ data.stagesPrice }}</span>
+          </li>
+        </ul>
+        <ul>
+          <li>还款状态</li>
+          <li v-for="(data, index) in detailList" :key="index">
+            <button v-if="data.stagesState !== 2" class="sure" @click="changeStates(data.stagesId)">确定还款</button>
+            <button v-if="data.stagesState === 2" style="color: #999999;">已还款</button>
+          </li>
+        </ul>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -104,28 +156,67 @@ export default {
       labelList: ['资料有误', '图片模糊', '车辆有误'],
       num: 0,
       baodan: 1,
-      radio: '1'
+      radio: '1',
+      detailList: [],
+      data: {}
     }
   },
   mounted () {
     this.getData()
   },
   methods: {
+    // 确认付款并修改状态
+    changeStates (id) {
+      this.$confirm('是否确认还款', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消'
+      }).then(() => {
+        this.$post('/fd/insure/uploadStages', {stagesId: id}).then(res => {
+          if (res.code === 0) {
+            this.payDetail()
+            this.$message({
+              type: 'success',
+              message: '还款成功!'
+            })
+          } else {
+            this.$message.error(res.msg)
+          }
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消确定还款'
+        })
+      })
+    },
+    // 付款详情
+    payDetail () {
+      this.$fetch('/fd/insure/selectStagesDetail', {
+        orderId: this.data.orderId
+      }).then(res => {
+        if (res.code === 0) {
+          // console.log(res.data)
+          this.detailList = res.data
+          this.dialogFormVisible = true
+        }
+      })
+    },
     exit () {
       var that = this
       this.$confirm('是否需要退保', {
         confirmButtonText: '确定',
         cancelButtonText: '取消'
       }).then(() => {
-        that.$fetch('/ad/index/sureInsure', {
+        that.$post('/ad/insure/surrender', {
           type: '1',
-          id: that.$route.query.id
+          id: this.$route.query.id
         }).then(res => {
           if (res.code === 0) {
             this.$message({
               type: 'success',
               message: '退保成功!'
             })
+            this.$router.go(-1)
           } else {
             this.$message.error(res.msg)
           }
@@ -146,14 +237,29 @@ export default {
         id: this.$route.query.id,
         type: '1'
       }).then(res => {
-        // console.log(res.data)
+        console.log(res.data)
+        this.data = res.data.result.order
         this.ruleForm = res.data.result
       })
     }
   },
   components: {
     PicShow
+  },
+  filters: {
+    timeChange (data) {
+      let date = new Date(data)
+      return date.getFullYear() + '.' + zero(date.getMonth() + 1) + '.' + zero(date.getDate())
+    },
+    upToCase (data) {
+      if (data === 1) return '一'
+      if (data === 3) return '三'
+    }
   }
+}
+function zero (data) {
+  if (data < 10) return '0' + data
+  return data
 }
 </script>
 
@@ -180,6 +286,7 @@ export default {
         border-radius:5px;
         display: flex;
         justify-content: space-around;
+        cursor: pointer;
         img {
           vertical-align: middle;
         }
@@ -241,15 +348,79 @@ export default {
       color: #282828;
       text-indent: 35px;
       width: 100%;
-      height: 40px;
-      line-height: 40px;
+      height: 50px;
+      line-height: 50px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       img {
         vertical-align:  middle;
         padding: 0 10px;
       }
       span {
         font-size: 18px;
-        font-weight: bold;
+      }
+      h2 {
+        padding-left: 10px;
+        img {
+          vertical-align: middle;
+        }
+        span {
+          font-size:18px;
+          font-family:MicrosoftYaHei-Bold;
+          font-weight:bold;
+          color:#61432D;
+        }
+      }
+      span {
+        font-size:12px;
+        font-family:MicrosoftYaHei;
+        font-weight:400;
+        color:#61432D;
+      }
+      button {
+        margin-right: 10px;
+        // width:50px;
+        // height:20px;
+        background:rgba(40,40,40,1);
+        border-radius:20px;
+        color: #fff;
+        padding: 5px 10px;
+      }
+    }
+    .stages {
+      max-height: 600px;
+      overflow-y: scroll;
+      padding: 20px 0;
+      ul {
+        float: left;
+        width: 20%;
+        text-align: center;
+        button {
+          width:72px;
+          height:26px;
+          background:rgba(224,224,224,1);
+          border-radius:13px;
+          color: #666666;
+        }
+        .sure {
+          width:72px;
+          height:26px;
+          background:rgba(40,40,40,1);
+          border-radius:13px;
+          font-size:12px;
+          font-family:MicrosoftYaHei;
+          font-weight:400;
+          color:rgba(255,255,255,1);
+        }
+        li {
+          line-height: 40px;
+          font-size: 14px;
+          &:first-of-type {
+            font-size: 16px;
+            font-weight: bold;
+          }
+        }
       }
     }
     .dialog-footer {

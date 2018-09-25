@@ -4,17 +4,17 @@
     <!-- 已分期--个人详情 -->
     <div class="table">
       <div class="top" @mouseenter="isShowBox" @mouseleave="isShowBox2">
-        <li>
+        <!-- <li>
           <img src="../../assets/img/calendar.png" />
           <span>还款期数：第二期</span>
         </li>
         <li>
           <img src="../../assets/img/money_package.png" />
           <span>本期待还：500</span>
-        </li>
+        </li> -->
         <li>
           <img src="../../assets/img/clock_time.png" />
-          <span>还款时间：2018.6.4</span>
+          <span>还款时间：{{ ruleForm.createTime | timeChange }}</span>
         </li>
         <li>
           <img src="../../assets/img/order_msg.png" />
@@ -29,7 +29,7 @@
             <span>公司：{{ ruleForm.customerName }}</span>
             <span v-if="data.order">分期金额：{{ data.order.countnum }}</span>
             <span v-if="data.obj">分期期数：{{ data.obj.stages }}</span>
-            <button v-if="data.obj">{{ data.obj.age }}年期</button>
+            <button v-if="data.obj">{{ data.obj.age | upToCase }}年期</button>
           </header>
           <div class="stages">
             <ul>
@@ -42,8 +42,8 @@
             <ul>
               <li>还款时间</li>
               <li v-for="(data, index) in detailList" :key="index">
-                <span v-if="data.stagesState !== 2">{{ data.stagesCutoff }}</span>
-                <span v-if="data.stagesState === 2" style="color: #999999;">{{ data.stagesCutoff }}</span>
+                <span v-if="data.stagesState !== 2">{{ data.stagesCutoff | timeChange }}</span>
+                <span v-if="data.stagesState === 2" style="color: #999999;">{{ data.stagesCutoff | timeChange }}</span>
               </li>
             </ul>
             <ul>
@@ -68,8 +68,8 @@
       <PersonDetail :tableList="data"/>
     </div>
     <div class="btn">
-      <button class="save" @click="dialogFormVisible = true">去还款</button>
-      <span style="padding: 0 115px;"></span>
+      <!-- <button class="save" @click="dialogFormVisible = true">去还款</button> -->
+      <!-- <span style="padding: 0 115px;"></span> -->
       <button @click="$router.go(-1)">返回</button>
     </div>
     <!-- 支付弹窗 -->
@@ -203,18 +203,18 @@ export default {
     // 支付
     pay () {
       this.dialogFormVisible = false
-      // this.$fetch('/fd/pay/firstPay', {
-      //   orderId: this.data.order.orderId,
-      //   code: this.ruleForm.code
-      // }).then(res => {
-      //   // console.log(res)
-      //   if (res.code === 0) {
-      //     this.$message({type: 'success', message: res.msg})
-      //     this.$router.push({name: 'HomePage'})
-      //   } else {
-      //     this.$message.error(res.msg)
-      //   }
-      // })
+      this.$fetch('/fd/pay/firstPay', {
+        orderId: this.data.order.orderId,
+        code: this.ruleForm.code
+      }).then(res => {
+        // console.log(res)
+        if (res.code === 0) {
+          this.$message({type: 'success', message: res.msg})
+          this.$router.push({name: 'HomePage'})
+        } else {
+          this.$message.error(res.msg)
+        }
+      })
     },
     // 倒计时
     countDown () {
@@ -229,7 +229,21 @@ export default {
   },
   components: {
     PersonDetail
+  },
+  filters: {
+    timeChange (data) {
+      let date = new Date(data)
+      return date.getFullYear() + '.' + zero(date.getMonth() + 1) + '.' + zero(date.getDate())
+    },
+    upToCase (data) {
+      if (data === 1) return '一'
+      if (data === 3) return '三'
+    }
   }
+}
+function zero (data) {
+  if (data < 10) return '0' + data
+  return data
 }
 </script>
 
@@ -267,7 +281,7 @@ export default {
     border-radius:5px;
     margin: 44px auto 0;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
     position: relative;
     cursor: pointer;
     z-index: 1;

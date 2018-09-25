@@ -17,7 +17,7 @@
           <img src="../assets/mImg/msg.png" alt="">
           <span>通知中心</span>
         </header>
-        <p v-for="(o, i) in messageList" :key="i">
+        <p v-for="(o, i) in messageList" :key="i" @click="jump(o)">
           <a v-if="o.newState === 1" @click="statusChange(o.newId)">{{ o.newText }}<span>{{ o.createTime | time2 }}</span></a>
           <a v-if="o.newState === 2" style="color:#B6B6B6;">{{ o.newText }}<span>{{ o.createTime | time2 }}</span></a>
         </p>
@@ -97,7 +97,7 @@
             <p class="name">
               <span v-if="o.type === '1'">姓名：{{ o.name }}</span>
               <span v-if="o.type === '2'">企业：{{ o.name }}</span>
-              <el-button size="mini" type="primary" plain round @click="dialogFormVisible = true">还款计划表</el-button>
+              <el-button size="mini" type="primary" plain round @click="payDetail(o.order_id)">还款计划表</el-button>
             </p>
             <p>
               <span v-if="o.car_type ===  2">车牌：{{ o.car_nameplate }}</span>
@@ -123,15 +123,55 @@
     </el-row>
 
     <!-- 还款计划表 -->
-    <el-dialog :show-close="false" :visible.sync="dialogFormVisible" :modal-append-to-body="false" width="770px">
+    <el-dialog :visible.sync="dialogFormVisible" :modal-append-to-body="false" width="915px">
       <template>
         <div class="header">
-          <span>还款计划表</span>
+          <h2>
+            <!-- <img src="../../assets/img/order_msg.png" alt=""> -->
+            <span>还款计划表</span>
+          </h2>
+          <!-- <span>公司：{{ ruleForm.legalPersonName }}</span>
+          <span>分期金额：{{ data.countnum }}</span>
+          <span v-if="tableData.length > 0">分期期数：{{ tableData[0].stages }}</span>
+          <button v-if="tableData.length > 0">{{ tableData[0].age }}年期</button> -->
         </div>
       </template>
-      <div slot="footer" class="dialog-footer">
-        <el-button class="btn" @click="dialogFormVisible = false">取消</el-button>
-        <el-button class="button">提交</el-button>
+      <div class="stages">
+        <ul>
+          <li>期数</li>
+          <li v-for="(data, index) in detailList" :key="index">
+            <span v-if="data.stagesState !== 2">第{{ index + 1 }}期</span>
+            <span v-if="data.stagesState === 2" style="color: #999999;">第{{ index + 1 }}期</span>
+          </li>
+        </ul>
+        <ul>
+          <li>还款时间</li>
+          <li v-for="(data, index) in detailList" :key="index">
+            <span v-if="data.stagesState !== 2">{{ data.stagesCutoff | timeChange }}</span>
+            <span v-if="data.stagesState === 2" style="color: #999999;">{{ data.stagesCutoff | timeChange }}</span>
+          </li>
+        </ul>
+        <ul>
+          <li>还款金额</li>
+          <li v-for="(data, index) in detailList" :key="index">
+            <span v-if="data.stagesState !== 2">{{ data.stagesPrice }}</span>
+            <span v-if="data.stagesState === 2" style="color: #999999;">{{ data.stagesPrice }}</span>
+          </li>
+        </ul>
+        <ul>
+          <li>到账金额</li>
+          <li v-for="(data, index) in detailList" :key="index">
+            <span v-if="data.stagesState !== 2">{{ data.stagesPrice }}</span>
+            <span v-if="data.stagesState === 2" style="color: #999999;">{{ data.stagesPrice }}</span>
+          </li>
+        </ul>
+        <ul>
+          <li>还款状态</li>
+          <li v-for="(data, index) in detailList" :key="index">
+            <span v-if="data.stagesState !== 2" >未还款</span>
+            <span v-if="data.stagesState === 2" style="color: #999999;">已还款</span>
+          </li>
+        </ul>
       </div>
     </el-dialog>
   </div>
@@ -163,7 +203,7 @@ export default {
       list: [
         {
           imgSrc: img1,
-          text: '信息待审核'
+          text: '渠道待审核'
         },
         {
           imgSrc: img2,
@@ -185,7 +225,8 @@ export default {
       data: 1,
       messageList: [],
       moveShow: false,
-      dialogFormVisible: false
+      dialogFormVisible: false,
+      detailList: []
     }
   },
   mounted () {
@@ -197,9 +238,34 @@ export default {
     }
   },
   methods: {
+    // 消息跳转
+    jump (o, i) {
+      // console.log(o, this.data)
+      if (this.data === 0) {
+        this.$router.push({name: 'ChannelDetail', query: {id: o.channelId}})
+      } else if (this.data === 1) {
+        this.$router.push({name: 'ObligationsC', query: {id: o.channelId, batch: o.batch}})
+      } else if (this.data === 2) {
+        this.$router.push({name: 'ObligationsP', query: {id: o.channelId}})
+      }
+    },
+    // 付款计划表弹窗
+    payDetail (id) {
+      this.$fetch('/fd/insure/selectStagesDetail', {
+        orderId: id
+      }).then(res => {
+        if (res.code === 0) {
+          this.detailList = res.data
+          this.dialogFormVisible = true
+        } else {
+          this.$message(res.msg)
+        }
+      })
+    },
+    // 修改消息状态 已读未读
     statusChange (id) {
       this.$post('/ad/news/changeNews', {newId: id}).then(res => {
-        // console.log(res)
+        console.log(res)
       })
     },
     mousemove () {
@@ -285,6 +351,10 @@ export default {
     }
   },
   filters: {
+    timeChange (data) {
+      let date = new Date(data)
+      return date.getFullYear() + '.' + zero(date.getMonth() + 1) + '.' + zero(date.getDate())
+    },
     time (data) {
       return data.split(' ')[0].replace('-', '.').replace('-', '.')
     },
@@ -405,6 +475,7 @@ function zero (data) {
     }
   }
   .el-dialog {
+    z-index: 999999999;
     .el-input {
       width: 90%;
     }
@@ -428,53 +499,81 @@ function zero (data) {
       color: #282828;
       text-indent: 35px;
       width: 100%;
-      height: 40px;
-      line-height: 40px;
+      height: 50px;
+      line-height: 50px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       img {
         vertical-align:  middle;
         padding: 0 10px;
       }
       span {
         font-size: 18px;
-        font-weight: bold;
+      }
+      h2 {
+        padding-left: 10px;
+        img {
+          vertical-align: middle;
+        }
+        span {
+          font-size:18px;
+          font-family:MicrosoftYaHei-Bold;
+          font-weight:bold;
+          color:#61432D;
+        }
+      }
+      span {
+        font-size:12px;
+        font-family:MicrosoftYaHei;
+        font-weight:400;
+        color:#61432D;
+      }
+      button {
+        margin-right: 10px;
+        width:50px;
+        height:20px;
+        background:rgba(40,40,40,1);
+        border-radius:10px;
+        color: #fff;
       }
     }
-    .upload {
-      width:342px;
-      height:186px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      text-align: center;
-      margin: 54px auto 0;
-      position: relative;
-      img {
-        vertical-align: middle;
-        margin-top: 60px;
+    .stages {
+      max-height: 600px;
+      overflow-y: scroll;
+      padding: 20px 0;
+      ul {
+        float: left;
+        width: 20%;
+        text-align: center;
+        button {
+          width:72px;
+          height:26px;
+          background:rgba(224,224,224,1);
+          border-radius:13px;
+          color: #666666;
+        }
+        .sure {
+          width:72px;
+          height:26px;
+          background:rgba(40,40,40,1);
+          border-radius:13px;
+          font-size:12px;
+          font-family:MicrosoftYaHei;
+          font-weight:400;
+          color:rgba(255,255,255,1);
+        }
+        li {
+          line-height: 40px;
+          font-size: 14px;
+          &:first-of-type {
+            font-size: 16px;
+            font-weight: bold;
+          }
+        }
       }
-      p {
-        padding-top: 20px;
-      }
-      .imgShow {
-        background-size: 100% 100%;
-      }
-      input, .imgShow {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        top: 0;
-        left: 0;
-        cursor: pointer;
-      }
-      input {
-        opacity: 0;
-      }
-    }
-    p {
-      text-align: center;
-      padding-top: 15px;
     }
     .dialog-footer {
-      margin-top: 60px;
       text-align: center;
       .btn {
         width:85px;

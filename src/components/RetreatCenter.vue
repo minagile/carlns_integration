@@ -9,7 +9,7 @@
       <el-button type="info" :class="{active: 3 == tabNum}" @click="tab(3)">显示个人</el-button>
     </header>
     <div class="con">
-      <el-table :data="tableData" :show-header="false" style="width: 100%" :row-style="{'height': '94px'}">
+      <!-- <el-table :data="tableData" :show-header="false" style="width: 100%" :row-style="{'height': '94px'}">
         <el-table-column width="60">
           <template slot-scope="scope">
             <div class="index">{{ scope.$index + 1 }}</div>
@@ -17,27 +17,123 @@
         </el-table-column>
         <el-table-column prop="name" label="企业名称：锦上有限公司">
           <template slot-scope="scope">
-            <div>企业名称：{{ scope.row.name }}</div>
-          </template>
-        </el-table-column>
-        <el-table-column prop="name" label="企业名称：锦上有限公司">
-          <template slot-scope="scope">
-            <div>姓名：{{ scope.row.personName }}</div>
+            <div v-if="scope.row.type === 1">姓名：{{ scope.row.name }}</div>
+            <div v-if="scope.row.type === 2">企业名称：{{ scope.row.name }}</div>
           </template>
         </el-table-column>
         <el-table-column prop="car_nameplate" label="车牌号：浙XXXXXX">
           <template slot-scope="scope">
-            <div>批次：{{ scope.row.carNum }}</div>
+            <div v-if="scope.row.carType ===  1">车牌号：{{ scope.row.carNameplate }}</div>
+            <div v-if="scope.row.carType ===  2">批次：{{ scope.row.batch }}</div>
+          </template>
+        </el-table-column>
+        <el-table-column align="center" prop="insure_amount" label="分期金额：5600">
+          <template slot-scope="scope">
+            <div>分期金额：{{ scope.row.insureAmount }}</div>
+          </template>
+        </el-table-column>
+        <el-table-column align="center" prop="insure_stages" label="分期期数：12">
+          <template slot-scope="scope">
+            <div>分期期数：{{ scope.row.insureStages }}</div>
           </template>
         </el-table-column>
         <el-table-column align="center" label="状态：">
           <template slot-scope="scope">
-            <div style="color: #4B86FF">状态：退保中</div>
+            <div style="color: #4B86FF">状态：待付款</div>
+          </template>
+        </el-table-column>
+        <el-table-column align="center" prop="create_time" label="时间：2018.6.16">
+          <template slot-scope="scope">
+            <div>时间：{{ scope.row.createTime | timeChange }}</div>
           </template>
         </el-table-column>
         <el-table-column align="center" width="120">
           <template slot-scope="scope">
-            <el-button type="primary" round plain size="small" @click="$router.push({name: 'ADetailC'})">查看详情</el-button>
+            <el-button type="primary" v-if="scope.row.type === 2" round plain size="small" @click="$router.push({name: 'CenDetailC', query: {id: scope.row.id, batch: scope.row.batch}})">查看详情</el-button>
+            <el-button type="primary" v-if="scope.row.type === 1" round plain size="small" @click="$router.push({name: 'CenDetailP', query: {id: scope.row.id}})">查看详情</el-button>
+          </template>
+        </el-table-column>
+      </el-table> -->
+      <el-table :data="tableData" :row-class-name="getRowClass" :show-header="false" style="width: 100%" :row-style="{'height': '94px'}">
+        <el-table-column width="60">
+          <template slot-scope="scope">
+            <div class="index">{{ scope.$index + 1 }}</div>
+          </template>
+        </el-table-column>
+        <el-table-column type="expand">
+          <template slot-scope="props" v-if="props.row.list">
+            <el-table :data="props.row.list" :show-header="false" style="width: 100%">
+              <el-table-column prop="car_nameplate">
+                <template slot-scope="scope">
+                  <div>车牌号：{{ scope.row.carNameplate }}</div>
+                </template>
+              </el-table-column>
+              <el-table-column prop="car_nameplate">
+                <template slot-scope="scope">
+                  <div>分期金额：{{ scope.row.insureAmount }}</div>
+                </template>
+              </el-table-column>
+              <el-table-column prop="car_nameplate">
+                <template slot-scope="scope">
+                  <div>分期期数：{{ scope.row.insureStages }}</div>
+                </template>
+              </el-table-column>
+              <el-table-column>
+                <template slot-scope="scope">
+                  <div>还款期数：{{ scope.row.insureNum }}</div>
+                </template>
+              </el-table-column>
+              <el-table-column align="center" label="状态：">
+                <template slot-scope="scope">
+                  <div style="color: #4B86FF">状态：未通过</div>
+                </template>
+              </el-table-column>
+              <el-table-column align="center">
+                <template slot-scope="scope">
+                  <div>时间：未通过</div>
+                </template>
+              </el-table-column>
+            </el-table>
+          </template>
+        </el-table-column>
+        <el-table-column prop="name">
+          <template slot-scope="scope">
+            <div v-if="scope.row.type === 2">企业名称：{{ scope.row.name }}({{ scope.row.carNum }}辆)</div>
+            <div v-if="scope.row.type === 1">姓名：{{ scope.row.name }}</div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="car_nameplate">
+          <template slot-scope="scope">
+            <div v-if="scope.row.type === 1 && scope.row.carType === 1">合格证：{{ scope.row.carNameplate }}</div>
+            <div v-if="scope.row.type === 1 && scope.row.carType === 2">车牌号：{{ scope.row.carNameplate }}</div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="car_nameplate">
+          <template slot-scope="scope">
+            <div v-if="scope.row.type === 2">法人：{{ scope.row.personName }}</div>
+            <div v-if="scope.row.type === 1">分期金额：{{ scope.row.insureAmount }}</div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="car_nameplate">
+          <template slot-scope="scope">
+            <div v-if="scope.row.type === 1">分期期数：{{ scope.row.insureStages }}</div>
+          </template>
+        </el-table-column>
+        <el-table-column align="center" label="状态：">
+          <template slot-scope="scope">
+            <div v-if="scope.row.type === 2">联系电话：{{ scope.row.phone }}</div>
+            <div v-if="scope.row.type === 1" style="color: #4B86FF">状态：未通过</div>
+          </template>
+        </el-table-column>
+        <el-table-column align="center">
+          <template slot-scope="scope">
+            <div v-if="scope.row.type === 1">时间：{{ scope.row.createTime | timeChange }}</div>
+          </template>
+        </el-table-column>
+        <el-table-column align="center" width="120">
+          <template slot-scope="scope">
+            <el-button type="primary" v-if="scope.row.type === 2" round plain size="small" @click="$router.push({name: 'CenDetailC', query: {id: scope.row.id, batch: scope.row.batch}})">查看详情</el-button>
+            <el-button type="primary" v-if="scope.row.type === 1" round plain size="small" @click="$router.push({name: 'CenDetailP', query: {id: scope.row.id}})">查看详情</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -51,13 +147,19 @@ export default {
   data () {
     return {
       tableData: [],
-      tabNum: 1
+      tabNum: 1,
+      activeNames: ['1']
     }
   },
   mounted () {
     this.getData(this.tabNum)
   },
   methods: {
+    getRowClass ({row, index}) {
+      if (!row.list) {
+        return 'row-expand-cover'
+      }
+    },
     getData (status) {
       this.$fetch('/fd/index/findSurrenderIng', {status: status}).then(res => {
         console.log(res)
@@ -70,10 +172,18 @@ export default {
     }
   },
   filters: {
+    timeChange (data) {
+      let date = new Date(data)
+      return date.getFullYear() + '-' + zero(date.getMonth() + 1) + '-' + zero(date.getDate())
+    },
     time (data) {
       return data.split(' ')[0].replace('-', '.').replace('-', '.')
     }
   }
+}
+function zero (data) {
+  if (data < 10) return '0' + data
+  return data
 }
 </script>
 

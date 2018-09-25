@@ -12,6 +12,26 @@
         <div class="all position" v-show="all" @mouseleave="leave">
           <li v-for="o in qudaoList" :key="o.channelId"><a @click="channel(o.channelId)">{{ o.channelName }}</a></li>
         </div>
+        <!-- <el-menu
+          :default-active="activeIndex2"
+          class="el-menu-demo"
+          mode="horizontal"
+          @select="handleSelect"
+          background-color="#FFC107"
+          text-color="#282828"
+          active-text-color="#FFC107">
+          <el-menu-item index="1"><a>全部渠道</a></el-menu-item>
+          <el-menu-item index="2"><a>待付款</a></el-menu-item>
+          <el-menu-item index="3"><a>已分期</a></el-menu-item>
+          <el-submenu index="4">
+            <template slot="title">退保中心</template>
+            <el-menu-item index="4-1">退保中</el-menu-item>
+            <el-menu-item index="4-2">已退保</el-menu-item>
+          </el-submenu>
+          <el-menu-item index="5"><a>渠道</a></el-menu-item>
+          <el-menu-item index="6"><a>报表</a></el-menu-item>
+          <el-menu-item index="7"><a>系统</a></el-menu-item>
+        </el-menu> -->
       </ul>
     </div>
     <div class="user">
@@ -32,13 +52,15 @@ export default {
   name: 'TopTab',
   data () {
     return {
-      list: ['全部渠道', '待付款', '已分期', '退保中心', '渠道', '报表', '系统'],
-      listLink: ['AllChannels', 'Obligations', 'Amortized', 'Surrender', 'Trench', 'Port', 'System'],
+      list: ['全部渠道', '待付款', '已分期', '退保中心', '渠道', '系统'],
+      listLink: ['AllChannels', 'Obligations', 'Amortized', 'Surrender', 'Trench', 'System'],
       num: 0,
       retreats: false,
       all: false,
       qudaoList: [],
-      name: ''
+      name: '',
+      activeIndex: '1',
+      activeIndex2: '1'
     }
   },
   mounted () {
@@ -48,12 +70,26 @@ export default {
     })
   },
   methods: {
+    handleSelect (key, keyPath) {
+      console.log(key, keyPath)
+      if (key === '4-1') {
+        this.$router.push({name: 'Surrender', query: {qqq: 1}})
+      } else if (key === '4-2') {
+        this.$router.push({name: 'Surrender', query: {qqq: 2}})
+      } else {
+        this.$router.push({name: this.listLink[key - 1]})
+      }
+    },
     out () {
       sessionStorage.clear()
       this.$router.push({name: 'MLogin'})
     },
     tuibao (data) {
-      this.$router.push({name: 'Surrender', query: {status: data}})
+      if (data === 1) {
+        this.$router.push({name: 'Surrender'})
+      } else {
+        this.$router.push({name: 'SurrenderA'})
+      }
     },
     leave (e) {
       this.all = false
@@ -91,6 +127,14 @@ export default {
   display: flex;
   justify-content: center;
   min-width: 1170px;
+  .el-submenu.is-active .el-menu-item.is-active {
+    background-color: #282828 !important;
+    border-bottom-color: #282828 !important;
+  }
+  .el-menu-item.is-active {
+    background-color: #282828 !important;
+    border-bottom-color: #282828 !important;
+  }
   .tab {
     height: 60px;
     width: 90%;

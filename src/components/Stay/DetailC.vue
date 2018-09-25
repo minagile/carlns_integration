@@ -78,6 +78,7 @@
 </template>
 
 <script>
+import { Req } from '../../assets/js/http.js'
 import PicShow from '../../components/common/PicShow'
 export default {
   name: 'DetailC',
@@ -109,18 +110,29 @@ export default {
   },
   methods: {
     save () {
-      this.$post('/fd/insure/upload', {
-        companyId: this.$route.query.id,
-        batch: this.$route.query.batch,
-        companyPlan: this.companyPlan,
-        payBill: this.payBill
-      }).then(res => {
-        console.log(res)
-        if (res.code === 0) {
-          res.$message({type: 'success', message: '成功'})
+      var formData = new FormData()
+      formData.append('companyId', this.$route.query.id)
+      formData.append('batch', this.$route.query.batch)
+      formData.append('companyPlan', this.companyPlan)
+      formData.append('payBill', this.payBill)
+      let config = {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'token': sessionStorage.getItem('token')
+        }
+      }
+      this.$http.post(Req + '/fd/insure/upload', formData, config).then(res => {
+        if (res.body.code === 101) {
+          this.$router.push({
+            path: '/Login',
+            querry: { redirect: this.$router.currentRoute.fullPath }
+            // 从哪个页面跳转
+          })
+        } else if (res.body.code === 0) {
+          this.$message(res.body.msg)
           this.$router.go(-1)
         } else {
-          this.$message(res.msg)
+          this.$message.error(res.body.msg)
         }
       })
     },

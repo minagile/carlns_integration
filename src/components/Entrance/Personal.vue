@@ -167,7 +167,8 @@ export default {
         insureFic: '',
         insureCarBoatTax: '',
         insureAge: '1',
-        insureStages: ''
+        insureStages: '',
+        state: '1'
       },
       rules: {
         username: [
@@ -216,10 +217,12 @@ export default {
       if (val === 3) {
         this.isInsure = true
         this.ruleForm.insureAge = val
+        this.options = [{value: '12'}, {value: '18'}, {value: '24'}, {value: '36'}]
       } else {
         this.isInsure = false
         this.ruleForm.insureAge = val
         this.ruleForm.state = '1'
+        this.options = [{value: '12'}]
       }
     },
     save () {
