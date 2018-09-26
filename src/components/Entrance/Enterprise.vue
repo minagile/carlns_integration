@@ -135,8 +135,8 @@
               </div>
               <span class="dai" style="margin-left: 20px;color: #606266;" v-show="isInsure">
                 <span>是否有车贷：</span>
-                <el-radio v-model="form.state" label="1">是</el-radio>
-                <el-radio v-model="form.state" label="2">否</el-radio>
+                <el-radio v-model="form.state" label="2">是</el-radio>
+                <el-radio v-model="form.state" label="1">否</el-radio>
               </span>
             </template>
           </el-form-item>

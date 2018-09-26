@@ -22,8 +22,9 @@
         </el-table-column>
         <el-table-column prop="car_nameplate" label="车牌号：浙XXXXXX">
           <template slot-scope="scope">
-            <div v-if="scope.row.carType ===  1">车牌号：{{ scope.row.carNameplate }}</div>
-            <div v-if="scope.row.carType ===  2">批次：{{ scope.row.batch }}</div>
+            <div v-if="scope.row.type === 1 && scope.row.carType ===  1">车辆合格证：{{ scope.row.carNameplate }}</div>
+            <div v-if="scope.row.type === 1 && scope.row.carType ===  2">车牌号：{{ scope.row.carNameplate }}</div>
+            <div v-if="scope.row.type === 2">批次：{{ scope.row.batch }}</div>
           </template>
         </el-table-column>
         <el-table-column align="center" prop="insure_amount" label="分期金额：5600">
@@ -50,8 +51,8 @@
           <template slot-scope="scope">
             <el-button type="primary" round plain size="small" v-if="scope.row.type === 1" @click="$router.push({name: 'DetailP', query: {id: scope.row.id}})">查看详情</el-button>
             <el-button type="primary" round plain size="small" v-if="scope.row.type === 2" @click="$router.push({name: 'DetailC', query: {id: scope.row.id, batch: scope.row.batch}})">查看详情</el-button>
-            <el-button type="primary" round plain size="small" v-if="scope.row.type === 2">上传付款计划表</el-button>
-            <el-button type="primary" round plain size="small" v-if="scope.row.type === 2">上传付款凭证</el-button>
+            <el-button type="primary" round plain size="small" v-if="scope.row.type === 2" @click="$router.push({name: 'DetailC', query: {id: scope.row.id, batch: scope.row.batch}})">上传付款计划表</el-button>
+            <el-button type="primary" round plain size="small" v-if="scope.row.type === 2" @click="$router.push({name: 'DetailC', query: {id: scope.row.id, batch: scope.row.batch}})">上传付款凭证</el-button>
           </template>
         </el-table-column>
       </el-table>

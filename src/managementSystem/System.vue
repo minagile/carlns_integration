@@ -7,7 +7,7 @@
     <div class="con">
       <router-view></router-view>
       <button @click="add">添加</button>
-      <el-table :data="tableData" style="width: 100%">
+      <el-table :data="tableData" height="95%" style="width: 100%">
         <el-table-column prop="messageName" label="标题" width="120"></el-table-column>
         <el-table-column prop="messageText" label="内容" width="600"></el-table-column>
         <el-table-column label="类型">

@@ -211,7 +211,7 @@ export default {
           background: #FFC107;
           width: 30px;
           height: 30px;
-          opacity: 0.6;
+          // opacity: 0.6;
           cursor: pointer;
         }
       }

@@ -20,7 +20,7 @@
           <el-form-item label="车架号：" prop="carvin">
             <el-input v-model="ruleForm.obj.carvin" ></el-input>
           </el-form-item>
-          <el-form-item label="车辆合格证：" prop="nameplate">
+          <el-form-item :label="ruleForm.obj.type === 1 ? '车辆合格证：' : '车牌号：'" prop="nameplate">
             <el-input v-model="ruleForm.obj.nameplate" ></el-input>
           </el-form-item>
         </el-form>
@@ -46,8 +46,8 @@
               <el-button size="mini" plain :class="{active: 3 == ruleForm.obj.age}">三年保单</el-button>
               <span class="dai" v-if="ruleForm.obj.age === 3">
                 <span>是否有车贷：</span>
-                <el-radio v-model="radio" label="1">是</el-radio>
-                <el-radio v-model="radio" label="2">否</el-radio>
+                <el-radio v-model="ruleForm.obj.state" :label="2">是</el-radio>
+                <el-radio v-model="ruleForm.obj.state" :label="1">否</el-radio>
               </span>
             </template>
           </el-form-item>
@@ -90,27 +90,15 @@ export default {
           cartaffic: '',
           carboat: '',
           age: 1,
-          stages: 12
+          stages: 12,
+          state: 2
         }
       },
       rules: {
-        // name: [
-        //   { required: true, message: '请输入企业名称', trigger: 'blur' },
-        //   { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
-        // ],
-        // peoplename: [
-        //   { required: true, message: '请输入法人姓名', trigger: 'blur' },
-        //   { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
-        // ],
-        // phone: [
-        //   { required: true, message: '请输入联系方式', trigger: 'blur' },
-        //   { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
-        // ]
       }
     }
   },
   mounted () {
-    // this.ruleForm = this.tableList
   },
   watch: {
     tableList (val) {

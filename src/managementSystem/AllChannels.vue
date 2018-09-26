@@ -18,8 +18,8 @@
           <span>通知中心</span>
         </header>
         <p v-for="(o, i) in messageList" :key="i" @click="jump(o)">
-          <a v-if="o.newState === 1" @click="statusChange(o.newId)">{{ o.newText }}<span>{{ o.createTime | time2 }}</span></a>
-          <a v-if="o.newState === 2" style="color:#B6B6B6;">{{ o.newText }}<span>{{ o.createTime | time2 }}</span></a>
+          <a v-if="o.newState === 1" @click="statusChange(o.newId)"><span class="newsWidth">{{ o.newText }}</span><span>{{ o.createTime | time2 }}</span></a>
+          <a v-if="o.newState === 2" style="color:#B6B6B6;"><span class="newsWidth">{{ o.newText }}</span><span>{{ o.createTime | time2 }}</span></a>
         </p>
       </div>
     </div>
@@ -620,6 +620,14 @@ function zero (data) {
       color: #333;
       text-indent: 34px;
       cursor: pointer;
+      .newsWidth {
+        display: block;
+        float: left;
+        width: 400px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
       span {
         float: right;
         padding-right: 11px;

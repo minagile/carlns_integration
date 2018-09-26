@@ -2,7 +2,7 @@
   <!-- 系统--更该协议 -->
   <div class="change_file">
     <div class="con">
-      <el-table :data="tableData" style="width: 100%">
+      <el-table :data="tableData" height="100%" style="width: 100%">
         <el-table-column prop="resourceName" label="协议名称" align="center"></el-table-column>
         <el-table-column prop="resourceUrl" label="内容" width="400"></el-table-column>
         <el-table-column label="类型">
@@ -142,6 +142,7 @@ function zero (data) {
   z-index: 10;
   .con {
     padding: 40px 100px 0;
+    height: calc(100% - 40px);
     .edit {
       width:90px;
       height:30px;

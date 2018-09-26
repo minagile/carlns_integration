@@ -38,14 +38,14 @@
           <span slot="title">退保中心</span>
         </a>
       </li>
-      <li>
+      <!-- <li>
         <a :class="{active:7 == num}"  @click="tab(7)">
           <img src="../../assets/img/juece.png" alt="">
           <span slot="title">决策支持</span>
         </a>
-      </li>
+      </li> -->
       <li>
-        <a :class="{active:8 == num}"  @click="tab(8)">
+        <a :class="{active:7 == num}"  @click="tab(7)">
           <img src="../../assets/img/zhanghao.png" alt="">
           <span slot="title">账号管理</span>
         </a>
@@ -60,8 +60,8 @@ export default {
   data () {
     return {
       num: 1,
-      list: ['/HomePage', '/ApplicationEntrance', '/StayByStage', '/AlreadyByStage', '/NotThrough', '/RetreatCenter', '/DecisionSupport', '/AccountManagement'],
-      list2: ['首页', '申请入口', '待分期', '已分期', '未通过', '退保中心', '决策支持', '账号管理'],
+      list: ['/HomePage', '/ApplicationEntrance', '/StayByStage', '/AlreadyByStage', '/NotThrough', '/RetreatCenter', '/AccountManagement'],
+      list2: ['首页', '申请入口', '待分期', '已分期', '未通过', '退保中心', '账号管理'],
       navArr: []
     }
   },

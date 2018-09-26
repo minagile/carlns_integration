@@ -30,7 +30,7 @@
             <el-form-item label="车架号：" prop="carvin">
               <el-input v-model="ruleForm.obj.carvin"></el-input>
             </el-form-item>
-            <el-form-item label="车辆合格证:" prop="nameplate">
+            <el-form-item :label="ruleForm.obj.type === 1 ? '车辆合格证：' : '车牌号：'" prop="nameplate">
               <el-input v-model="ruleForm.obj.nameplate"></el-input>
             </el-form-item>
           </el-form>
@@ -53,8 +53,8 @@
               <el-button :class="{active: 1 == ruleForm.obj.age}">一年保单</el-button>
               <el-button :class="{active: 3 == ruleForm.obj.age}">三年保单</el-button>
               <el-button type="text" v-if="ruleForm.obj.age === 3">是否有车贷：
-                <el-radio v-model="radio" label="2">是</el-radio>
-                <el-radio v-model="radio" label="1">否</el-radio>
+                <el-radio v-model="ruleForm.obj.state" :label="2">是</el-radio>
+                <el-radio v-model="ruleForm.obj.state" :label="1">否</el-radio>
               </el-button>
             </el-form-item>
             <el-form-item label="月付期数：" prop="phone">

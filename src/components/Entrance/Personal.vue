@@ -55,8 +55,8 @@
               <el-button size="mini" plain @click="baodan(3)">三年保单</el-button>
               <span class="dai" style="margin-left: 20px;color: #606266;" v-show="isInsure">
                 <span>是否有车贷：</span>
-                <el-radio v-model="ruleForm.state" label="1">是</el-radio>
-                <el-radio v-model="ruleForm.state" label="2">否</el-radio>
+                <el-radio v-model="ruleForm.state" label="2">是</el-radio>
+                <el-radio v-model="ruleForm.state" label="1">否</el-radio>
               </span>
             </template>
           </el-form-item>
@@ -91,7 +91,7 @@
             <p>支持jpg、jpeg、png等格式，体积在5M以下 </p>
           </div>
         </figure>
-        <figure v-if="ruleForm.type === '1'">
+        <figure>
           <div class="text"><span>购车发票：</span></div>
           <div class="right">
             <div class="box">
@@ -270,6 +270,7 @@ export default {
             this.$message.error('请上传机动车行驶证')
           } else {
             formData.append('license', this.ruleForm.license)
+            formData.append('carInvoiceUrl', this.ruleForm.carInvoiceUrl)
           }
         }
         let config = {

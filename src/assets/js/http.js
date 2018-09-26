@@ -35,7 +35,8 @@ axios.interceptors.response.use(
         querry: { redirect: router.currentRoute.fullPath }
         // 从哪个页面跳转
       })
-    } else if (response.data.code === 102) {
+    }
+    if (response.data.code === 102) {
       Message({
         message: response.data.msg,
         type: 'info'

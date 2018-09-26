@@ -6,8 +6,8 @@
           <a>{{ data }}</a>
         </li>
         <div class="tuibao position" v-show="retreats" @mouseleave="leave">
-          <div class="li"><a @click="tuibao(1)">退保中</a></div>
-          <div class="li"><a @click="tuibao(2)">已退保</a></div>
+          <div class="li" @click="tuibao(1)"><a>退保中</a></div>
+          <div class="li" @click="tuibao(2)"><a>已退保</a></div>
         </div>
         <div class="all position" v-show="all" @mouseleave="leave">
           <li v-for="o in qudaoList" :key="o.channelId"><a @click="channel(o.channelId)">{{ o.channelName }}</a></li>
@@ -71,7 +71,7 @@ export default {
   },
   methods: {
     handleSelect (key, keyPath) {
-      console.log(key, keyPath)
+      // console.log(key, keyPath)
       if (key === '4-1') {
         this.$router.push({name: 'Surrender', query: {qqq: 1}})
       } else if (key === '4-2') {
@@ -80,9 +80,16 @@ export default {
         this.$router.push({name: this.listLink[key - 1]})
       }
     },
+    // 退出登录
     out () {
-      sessionStorage.clear()
-      this.$router.push({name: 'MLogin'})
+      this.$fetch('/login/logout').then(res => {
+        if (res.code === 0) {
+          sessionStorage.clear()
+          this.$router.push({name: 'MLogin'})
+        } else {
+          this.$message(res.msg)
+        }
+      })
     },
     tuibao (data) {
       if (data === 1) {
