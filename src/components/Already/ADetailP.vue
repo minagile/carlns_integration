@@ -163,7 +163,7 @@ export default {
         id: this.$route.query.id,
         type: 1
       }).then(res => {
-        console.log(res.data.result)
+        // console.log(res.data.result)
         this.data = res.data.result
         this.ruleForm = res.data.result.customer
         if (res.code !== 0) {
@@ -173,7 +173,7 @@ export default {
           orderId: res.data.result.order.orderId
         }).then(res => {
           if (res.code === 0) {
-            console.log(res.data)
+            // console.log(res.data)
             this.detailList = res.data
           }
         })

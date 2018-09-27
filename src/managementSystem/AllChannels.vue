@@ -266,7 +266,7 @@ export default {
     // 修改消息状态 已读未读
     statusChange (id) {
       this.$post('/ad/news/changeNews', {newId: id}).then(res => {
-        console.log(res)
+        // console.log(res)
       })
     },
     mousemove () {

@@ -137,14 +137,14 @@ export default {
     },
     getData () {
       this.$fetch('/ad/channel/select', {id: this.$route.query.id}).then(res => {
-        console.log(res)
+        // console.log(res)
         this.ruleForm = res.data.channel
         this.$fetch('/template/selectCTemplate').then(res => {
-          console.log(res)
+          // console.log(res)
           this.form.componay = res
         })
         this.$fetch('/template/selectPTemplate').then(res => {
-          console.log(res)
+          // console.log(res)
           this.form.person = res
         })
       })

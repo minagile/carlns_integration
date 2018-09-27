@@ -142,7 +142,7 @@ export default {
         batch: this.$route.query.batch,
         type: '2'
       }).then(res => {
-        console.log(res.data)
+        // console.log(res.data)
         this.tableData = res.data.result.obj
         this.ruleForm = res.data.result.company
       })

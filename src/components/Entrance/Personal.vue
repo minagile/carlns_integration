@@ -318,7 +318,7 @@ export default {
             var dataURL = reader.result
             var avatar = dataURL
             e.target.previousElementSibling.style.backgroundImage = 'url(' + avatar + ')'
-            console.log(i)
+            // console.log(i)
             if (i === 1) {
               that.ruleForm.carPayBillUrl = file
             }

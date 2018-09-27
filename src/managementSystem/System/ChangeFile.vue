@@ -77,7 +77,7 @@ export default {
         token: sessionStorage.getItem('token')
       }
       this.$http.post(Req + '/ad/resource/update', formData, config).then(res => {
-        console.log(res)
+        // console.log(res)
         if (res.body.code === 101) {
           this.$router.push({
             path: '/MLogin',

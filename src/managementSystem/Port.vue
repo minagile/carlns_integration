@@ -59,7 +59,7 @@ export default {
   },
   methods: {
     arraySpanMethod ({ row, column, rowIndex, columnIndex }) {
-      console.log(row, column, rowIndex, columnIndex)
+      // console.log(row, column, rowIndex, columnIndex)
       if (rowIndex % 2 === 0) {
         if (columnIndex === 0) {
           return [1, 4]

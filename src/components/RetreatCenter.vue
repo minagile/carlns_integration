@@ -162,7 +162,7 @@ export default {
     },
     getData (status) {
       this.$fetch('/fd/index/findSurrenderIng', {status: status}).then(res => {
-        console.log(res)
+        // console.log(res)
         this.tableData = res
       })
     },

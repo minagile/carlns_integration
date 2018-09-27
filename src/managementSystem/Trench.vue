@@ -91,7 +91,7 @@ export default {
       this.$fetch('/ad/channel/selectBySate', {
         channelState: data
       }).then(res => {
-        console.log(res)
+        // console.log(res)
         if (res.code === 0) {
           this.tableData = res.data.channel
         } else {

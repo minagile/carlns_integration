@@ -188,7 +188,7 @@ export default {
         cancelButtonText: '取消'
       }).then(() => {
         this.$fetch('/fd/RAM/removeRAM', {id: id}).then(res => {
-          console.log(res)
+          // console.log(res)
           if (res.code === 0) {
             this.getData()
             this.$message({

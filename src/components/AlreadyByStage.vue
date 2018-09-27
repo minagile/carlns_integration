@@ -73,7 +73,7 @@ export default {
   methods: {
     getData (status) {
       this.$fetch('/fd/index/selectSurrenderByStagesAd', {status: status}).then(res => {
-        console.log(res.data.surrenderVO)
+        // console.log(res.data.surrenderVO)
         this.tableData = res.data.surrenderVO
       })
     },

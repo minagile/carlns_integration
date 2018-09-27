@@ -137,7 +137,7 @@ export default {
         ids: ids,
         msg: this.form.msg
       }).then(res => {
-        console.log(res)
+        // console.log(res)
         if (res.code === 0) {
           this.$message({type: 'success', message: '成功'})
           this.dialogFormVisible = false

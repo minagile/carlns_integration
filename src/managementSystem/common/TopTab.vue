@@ -132,7 +132,7 @@ export default {
     leave (e) {
       this.all = false
       this.retreats = false
-      console.log(this.list.indexOf('退保中心'))
+      // console.log(this.list.indexOf('退保中心'))
     },
     channel (id) {
       this.$emit('channelId', id)

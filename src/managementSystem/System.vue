@@ -182,7 +182,7 @@ export default {
     // 修改
     edit (id) {
       this.$fetch('/ad/message/selectMessageById', {'messageId': id}).then(res => {
-        console.log(res)
+        // console.log(res)
         if (res.code === 0) {
           this.dialogFormVisible = true
           this.addOrEdit = 'edit'

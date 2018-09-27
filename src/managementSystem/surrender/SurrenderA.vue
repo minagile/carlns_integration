@@ -163,7 +163,7 @@ export default {
       this.$fetch('/ad/index/findSurrenderEd', {
         status: data
       }).then(res => {
-        console.log(res.data)
+        // console.log(res.data)
         this.tableData = res.data
       })
     },
