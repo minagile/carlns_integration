@@ -54,7 +54,7 @@
                 <div class="img_show">{{ pdfName }}</div>
                 <input type="file" @change="filePdf($event)" accept=".pdf">
               </div>
-              <button>下载</button>
+              <button @click="down">下载</button>
               <p>请先下载代理合作协议，签字后以PDF格式上传</p>
             </div>
           </figure>
@@ -110,7 +110,17 @@ export default {
       pdfName: ''
     }
   },
+  mounted () {
+  },
   methods: {
+    down () {
+      this.$fetch('/login/resource/show', {
+        type: '1'
+      }).then(res => {
+        // console.log(res.data.fileurl)
+        window.open(res.data.fileurl)
+      })
+    },
     submit () {
       if (this.msg.channelLicenseUrl.__ob__) {
         this.$message({

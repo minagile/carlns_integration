@@ -46,7 +46,7 @@ export default {
   },
   methods: {
     router () {
-      this.$router.push('/login')
+      this.$router.push('/')
       clearInterval(this.clock)
     },
     countDown () {
@@ -55,7 +55,7 @@ export default {
         this.total--
         if (this.total < 1) {
           clearInterval(this.clock)
-          this.$router.push('/login')
+          this.$router.push('/')
         }
       }, 1000)
     }

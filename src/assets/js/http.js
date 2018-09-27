@@ -31,7 +31,7 @@ axios.interceptors.response.use(
         type: 'info'
       })
       router.push({
-        path: '/Login',
+        path: '/',
         querry: { redirect: router.currentRoute.fullPath }
         // 从哪个页面跳转
       })

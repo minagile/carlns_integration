@@ -11,6 +11,7 @@
           </div>
         </el-col>
       </el-row>
+
       <!-- 消息展示 -->
       <div class="move" id="move" v-show="moveShow" @mousemove="mousemove">
         <header>
@@ -276,10 +277,29 @@ export default {
     },
     // 鼠标移入通知中心展示
     shiftIn (e) {
-      this.moveShow = true
+      let permissionData = JSON.parse(sessionStorage.getItem('permission'))
+      // console.log(permissionData)
+      // this.moveShow = true
+      // console.log(e)
+      permissionData.forEach(v => {
+        if (v === '渠道待审核') {
+          if (e === 0) this.moveShow = true
+        }
+        if (v === '待上传信息') {
+          if (e === 1) this.moveShow = true
+        }
+        if (v === '分期待付款') {
+          if (e === 2) this.moveShow = true
+        }
+        if (v === '逾期款') {
+          if (e === 3) this.moveShow = true
+        }
+        if (v === '本月待还') {
+          if (e === 4) this.moveShow = true
+        }
+      })
       if (this.data !== e) {
         this.data = e
-        // console.log(document.body.clientWidth)
         if (this.data === 4) {
           document.getElementById('move').style.left = document.body.clientWidth - 621 + 'px'
         } else {
@@ -288,7 +308,6 @@ export default {
         this.$fetch('/ad/news/selectNewAdByType', {
           newsType: this.data + 1
         }).then(res => {
-          // console.log(res)
           this.messageList = res.data
         })
       }

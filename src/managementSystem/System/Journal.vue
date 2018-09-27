@@ -9,10 +9,14 @@
     </header>
     <section>
       <el-table :data="tableData" height="100%" style="width: 100%">
-        <el-table-column prop="phone" label="账号"></el-table-column>
-        <el-table-column prop="phone" label="姓名"></el-table-column>
-        <el-table-column prop="logTime" label="时间"></el-table-column>
-        <el-table-column prop="methodName" label="操作"></el-table-column>
+        <el-table-column prop="admin_phone" label="账号"></el-table-column>
+        <el-table-column prop="admin_name" label="姓名"></el-table-column>
+        <el-table-column prop="log_time" label="时间">
+          <template slot-scope="scope">
+            <div>{{ scope.row.log_time | timeChange }}</div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="log_text" label="操作"></el-table-column>
       </el-table>
     </section>
   </div>
@@ -45,7 +49,20 @@ export default {
       this.num = i
       this.getData(this.num)
     }
+  },
+  filters: {
+    timeChange (data) {
+      let date = new Date(data)
+      return date.getFullYear() + '-' + zero(date.getMonth() + 1) + '-' + zero(date.getDate())
+    },
+    time (data) {
+      return data.split(' ')[0].replace('-', '.').replace('-', '.')
+    }
   }
+}
+function zero (data) {
+  if (data < 10) return '0' + data
+  return data
 }
 </script>
 

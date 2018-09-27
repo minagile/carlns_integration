@@ -23,7 +23,7 @@ export default {
   name: 'MLogin',
   data () {
     return {
-      user: '12345678901',
+      user: '',
       psd: ''
     }
   },
@@ -65,7 +65,14 @@ export default {
           if (response.code === 0) {
             sessionStorage.setItem('token', response.data.token)
             sessionStorage.setItem('username', response.data.username)
-            this.$router.push({name: 'AllChannels'})
+            this.$fetch('/ad/limit/findPermission').then(res => {
+              let arr = []
+              res.data.forEach(v => {
+                arr.push(v.adauthName)
+              })
+              sessionStorage.setItem('permission', JSON.stringify(arr))
+              this.$router.push({name: 'AllChannels'})
+            })
           } else {
             this.$message({
               type: 'error',

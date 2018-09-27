@@ -39,9 +39,9 @@
         </el-table-column>
         <el-table-column align="center">
           <template slot-scope="scope">
-            <el-button type="primary" v-if="num === 1" round plain size="small" @click="$router.push({name: 'ChannelDetail', query: {id: scope.row.channelId}})">通过审核</el-button>
+            <el-button type="primary" v-if="num === 1" round plain size="small" @click="$router.push({name: 'ChannelDetail', query: {id: scope.row.channelId, look: 1}})">通过审核</el-button>
             <el-button type="primary" v-if="num === 1" round plain size="small" @click="notpass(scope.row.channelId)">不通过审核</el-button>
-            <el-button type="primary" v-if="num !== 1" round plain size="small">查看详情</el-button>
+            <el-button type="primary" v-if="num !== 1" round plain size="small" @click="$router.push({name: 'ChannelDetail', query: {id: scope.row.channelId}})">查看详情</el-button>
           </template>
         </el-table-column>
       </el-table>

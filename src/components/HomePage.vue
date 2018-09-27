@@ -2,39 +2,11 @@
   <!-- 首页 -->
   <div class="home_page">
     <el-row :gutter="14">
-      <el-col :span="4">
+      <el-col :span="4" v-for="(o, i) in msgList" :key="i">
         <div class="grid-content bg-purple">
-          <img src="../assets/img/rc_1.png" alt="">
-          <span>信息待审核</span>
-          <i>4</i>
-        </div>
-      </el-col>
-      <el-col :span="4">
-        <div class="grid-content bg-purple">
-          <img src="../assets/img/upload.png" alt="">
-          <span>待上传信息</span>
-          <i>4</i>
-        </div>
-      </el-col>
-      <el-col :span="4">
-        <div class="grid-content bg-purple">
-          <img src="../assets/img/waitfq.png" alt="">
-          <span>分期待付款</span>
-          <i>4</i>
-        </div>
-      </el-col>
-      <el-col :span="4">
-        <div class="grid-content bg-purple">
-          <img src="../assets/img/pag.png" alt="">
-          <span>逾期款</span>
-          <i>4</i>
-        </div>
-      </el-col>
-      <el-col :span="4">
-        <div class="grid-content bg-purple">
-          <img src="../assets/img/time.png" alt="">
-          <span>本月待还</span>
-          <i>4</i>
+          <img :src="o.imgSrc" alt="">
+          <span>{{ o.text }}</span>
+          <i v-if="msgNum.length > 0">{{ msgNum[i].newCount }}</i>
         </div>
       </el-col>
     </el-row>
@@ -185,6 +157,11 @@
 </template>
 
 <script>
+import img1 from '../assets/img/rc_1.png'
+import img2 from '../assets/img/upload.png'
+import img3 from '../assets/img/waitfq.png'
+import img4 from '../assets/img/pag.png'
+import img5 from '../assets/img/time.png'
 export default {
   name: 'HomePage',
   data () {
@@ -203,39 +180,69 @@ export default {
       list3: [],
       dialogFormVisible: false,
       detailList: [],
-      data: {}
+      data: {},
+      msgList: [
+        {
+          imgSrc: img1,
+          text: '信息待审核'
+        },
+        {
+          imgSrc: img2,
+          text: '待上传信息'
+        },
+        {
+          imgSrc: img3,
+          text: '分期待付款'
+        },
+        {
+          imgSrc: img4,
+          text: '逾期款'
+        },
+        {
+          imgSrc: img5,
+          text: '本月待还'
+        }
+      ],
+      msgNum: []
     }
   },
   mounted () {
-    this.$fetch('/fd/index/countWork', {
-      status: '1'
-    }).then(res => {
-      // console.log(res)
-      this.list1 = res
-    })
-    this.$fetch('/fd/index/countWork', {
-      status: '2'
-    }).then(res => {
-      // console.log(res)
-      this.list2 = res
-    })
-    this.$fetch('/fd/index/countWork', {
-      status: '3'
-    }).then(res => {
-      console.log(res)
-      this.list3 = res
-    })
+    this.getData()
   },
   methods: {
+    getData () {
+      this.$fetch('/fd/index/selectCountByNewsFd').then(res => {
+        // console.log(res)
+        this.msgNum = res.data
+      })
+      this.$fetch('/fd/index/countWork', {
+        status: '1'
+      }).then(res => {
+        // console.log(res)
+        this.list1 = res
+      })
+      this.$fetch('/fd/index/countWork', {
+        status: '2'
+      }).then(res => {
+        // console.log(res)
+        this.list2 = res
+      })
+      this.$fetch('/fd/index/countWork', {
+        status: '3'
+      }).then(res => {
+        // console.log(res)
+        this.list3 = res
+      })
+    },
     // 付款计划表弹窗
     payDetail (id, did, type, batch) {
-      console.log(did)
+      // console.log(did)
       this.$fetch('/fd/insure/selectDetail', {
         id: did,
         batch: batch,
         type: type
       }).then(res => {
-        console.log(res.data)
+        // console.log(res.data)
         this.data = res.data.result
       })
       this.$fetch('/fd/insure/selectStagesDetail', {

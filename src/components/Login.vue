@@ -54,7 +54,7 @@ export default {
   name: 'Login',
   data () {
     return {
-      user: '14763775886',
+      user: '',
       psd: '',
       forget: true,
       count: 60,
@@ -150,7 +150,7 @@ export default {
           if (response.code === 0) {
             sessionStorage.setItem('token', response.data.token)
             sessionStorage.setItem('username', response.data.username)
-            this.$router.push('/HomePage')
+            this.$router.push({name: 'HomePage'})
           } else {
             this.$message({
               type: 'error',

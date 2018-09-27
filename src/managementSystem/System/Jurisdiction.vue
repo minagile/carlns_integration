@@ -3,7 +3,7 @@
   <div class="jurisdiction">
     <div class="manage" v-show="detail">
       <div class="button">
-        <el-button @click="dialogFormVisible = true, title = '添加账号'">+ 添加账号</el-button>
+        <el-button @click="add">+ 添加账号</el-button>
         <el-button>删除</el-button>
       </div>
       <el-table :data="tableData" height="95%" style="width: 100%">
@@ -140,6 +140,16 @@ export default {
     this.getData()
   },
   methods: {
+    add () {
+      this.dialogFormVisible = true
+      this.title = '添加账号'
+      this.form = {
+        user: '',
+        phone: '',
+        psd: '',
+        con: ''
+      }
+    },
     // 选择
     checkBox (id, status) {
       // console.log(id, status)

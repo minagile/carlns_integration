@@ -49,25 +49,25 @@
       </template>
       <el-form :model="form">
         <el-form-item label="模板名称：" :label-width="formLabelWidth">
-          <el-input v-model="form.templateName" auto-complete="off" placeholder="请输入短信标题"></el-input>
+          <el-input v-model="form.templateName" auto-complete="off" placeholder="请输入模板名称"></el-input>
         </el-form-item>
         <el-form-item label="首付比例：" :label-width="formLabelWidth">
-          <el-input v-model="form.downPayment" placeholder="请输入短信内容"></el-input>
+          <el-input v-model="form.downPayment" placeholder="请输入首付比例"></el-input>
         </el-form-item>
         <el-form-item label="平台服务率：" :label-width="formLabelWidth">
-          <el-input v-model="form.fee" auto-complete="off" placeholder="请输入签名"></el-input>
+          <el-input v-model="form.fee" auto-complete="off" placeholder="请输入平台服务率"></el-input>
         </el-form-item>
         <el-form-item label="12期服务费率:" :label-width="formLabelWidth">
-          <el-input v-model="form.twelveFee" auto-complete="off"></el-input>
+          <el-input v-model="form.twelveFee" auto-complete="off"  placeholder="请输入12期服务费率"></el-input>
         </el-form-item>
         <el-form-item label="18期服务费率:" :label-width="formLabelWidth">
-          <el-input v-model="form.eighteenFee" auto-complete="off"></el-input>
+          <el-input v-model="form.eighteenFee" auto-complete="off"  placeholder="请输入18期服务费率"></el-input>
         </el-form-item>
         <el-form-item label="24期服务费率:" :label-width="formLabelWidth">
-          <el-input v-model="form.twentyFourFee" auto-complete="off"></el-input>
+          <el-input v-model="form.twentyFourFee" auto-complete="off"  placeholder="请输入24期服务费率"></el-input>
         </el-form-item>
         <el-form-item label="36期服务费率:" :label-width="formLabelWidth">
-          <el-input v-model="form.thirtySixFee" auto-complete="off"></el-input>
+          <el-input v-model="form.thirtySixFee" auto-complete="off"  placeholder="请输入36期服务费率"></el-input>
         </el-form-item>
         <el-form-item label="是否首付：" :label-width="formLabelWidth">
           <el-radio v-model="form.ifDownPayment" :label="1">是</el-radio>

@@ -60,7 +60,7 @@ export default {
     },
     loginout () {
       sessionStorage.clear()
-      this.$router.push('/Login')
+      this.$router.push('/')
     }
   },
   components: {
@@ -77,6 +77,12 @@ export default {
       if (data === 'StayByStage') return '待分期'
       if (data === 'DetailC') return '企业详情查看'
       if (data === 'DetailP') return '个人详情查看'
+      if (data === 'ADetailC') return '企业详情查看'
+      if (data === 'ADetailP') return '个人详情查看'
+      if (data === 'NDetailC') return '企业详情查看'
+      if (data === 'NDetailP') return '个人详情查看'
+      if (data === 'CenDetailC') return '企业详情查看'
+      if (data === 'CenDetailP') return '个人详情查看'
       if (data === 'AlreadyByStage') return '已分期'
       if (data === 'NotThrough') return '未通过'
       if (data === 'RetreatCenter') return '退保中心'

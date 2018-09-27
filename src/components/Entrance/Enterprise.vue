@@ -322,7 +322,7 @@ export default {
         this.$http.post(Req + '/fd/insure/insertCompany', formData, config).then(res => {
           if (res.body.code === 101) {
             this.$router.push({
-              path: '/Login',
+              path: '/',
               querry: { redirect: this.$router.currentRoute.fullPath }
             })
           } else if (res.body.code === 0) {

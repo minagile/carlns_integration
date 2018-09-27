@@ -28,14 +28,14 @@
         <figure>
           <div class="text"><span>营业执照：</span></div>
           <div class="right">
-            <a class="box" :style="{'backgroundImage': 'url(' + ruleForm.channelProtocolUrl + ')'}" :href="ruleForm.channelProtocolUrl" target="_blank"></a>
+            <a class="box" :style="{'backgroundImage': 'url(' + ruleForm.channelLicenseUrl + ')'}" :href="ruleForm.channelLicenseUrl" target="_blank"></a>
             <p>支持jpg、jpeg、png等格式，体积在5M以下 </p>
           </div>
         </figure>
         <figure>
           <div class="text"><span>代理商合作协议：</span></div>
           <div class="right">
-            <div class="box"></div>
+            <a class="box" style="background-image: url(../../assets/mImg/download.png)"></a>
             <button @click="download">下载</button>
           </div>
         </figure>
@@ -55,8 +55,8 @@
         </figure>
       </div>
       <div class="btn">
-        <button class="p" @click="dialogFormVisible = true">提交</button>
-        <button @click="$router.go(-1)">取消</button>
+        <button v-if="$route.query.look === 1" class="p" @click="dialogFormVisible = true">提交</button>
+        <button @click="$router.back(-1)">取消</button>
       </div>
     </div>
     <!-- 弹窗 -->
@@ -133,7 +133,7 @@ export default {
       }
     },
     download () {
-      window.open(this.ruleForm.channelLicenseUrl)
+      window.open(this.ruleForm.channelProtocolUrl)
     },
     getData () {
       this.$fetch('/ad/channel/select', {id: this.$route.query.id}).then(res => {
@@ -214,7 +214,7 @@ export default {
           position: relative;
           overflow: hidden;
           display: block;
-          // background-image: url(../../assets/img/uploadpic.png);
+          background-image: url(../../assets/mImg/download.png);
           background-repeat: no-repeat;
           background-size: 100% 100%;
           img {

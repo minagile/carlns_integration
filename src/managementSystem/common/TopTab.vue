@@ -2,10 +2,10 @@
   <div class="top">
     <div class="tab">
       <ul>
-        <li v-for="(data, index) in list" :key="index" :class="{active: index == num}" @click="tab(index)" @mousemove="tabmove(index)">
+        <li v-for="(data, index) in list" :key="index" :class="{active: index == num}" @click="tab(index)" @mousemove="tabmove(index, $event)">
           <a>{{ data }}</a>
         </li>
-        <div class="tuibao position" v-show="retreats" @mouseleave="leave">
+        <div class="tuibao position" id="tuibao" v-show="retreats" @mouseleave="leave">
           <div class="li" @click="tuibao(1)"><a>退保中</a></div>
           <div class="li" @click="tuibao(2)"><a>已退保</a></div>
         </div>
@@ -52,8 +52,10 @@ export default {
   name: 'TopTab',
   data () {
     return {
-      list: ['全部渠道', '待付款', '已分期', '退保中心', '渠道', '系统'],
-      listLink: ['AllChannels', 'Obligations', 'Amortized', 'Surrender', 'Trench', 'System'],
+      // list: ['全部渠道', '待付款', '已分期', '退保中心', '渠道', '系统'],
+      // listLink: ['AllChannels', 'Obligations', 'Amortized', 'Surrender', 'Trench', 'System'],
+      list: ['全部渠道'],
+      listLink: ['AllChannels'],
       num: 0,
       retreats: false,
       all: false,
@@ -64,6 +66,35 @@ export default {
     }
   },
   mounted () {
+    let permissionData = JSON.parse(sessionStorage.getItem('permission'))
+    permissionData.forEach(v => {
+      if (v === '待付款') {
+        this.list.push(v)
+        this.listLink.push('Obligations')
+      }
+      if (v === '已分期') {
+        this.list.push(v)
+        this.listLink.push('Amortized')
+      }
+      if (v === '退保中心') {
+        this.list.push(v)
+        this.listLink.push('Surrender')
+      }
+      if (v === '渠道') {
+        this.list.push(v)
+        this.listLink.push('Trench')
+      }
+      if (v === '系统') {
+        this.list.push(v)
+        this.listLink.push('System')
+      }
+    })
+    let path = this.$router.history.current.fullPath
+    this.listLink.forEach((v, k) => {
+      if (path.split('/')[2] === v) {
+        this.num = k
+      }
+    })
     this.name = sessionStorage.getItem('username')
     this.$fetch('/ad/channel/findAll').then(res => {
       this.qudaoList = res.data.channel
@@ -101,17 +132,19 @@ export default {
     leave (e) {
       this.all = false
       this.retreats = false
+      console.log(this.list.indexOf('退保中心'))
     },
     channel (id) {
       this.$emit('channelId', id)
     },
-    tabmove (i) {
+    tabmove (i, e) {
       if (i === 0) {
         this.all = true
         this.retreats = false
-      } else if (i === 3) {
+      } else if (i === this.list.indexOf('退保中心')) {
         this.retreats = true
         this.all = false
+        document.getElementById('tuibao').style.left = e.target.offsetLeft + 'px'
       } else {
         this.all = false
         this.retreats = false

@@ -282,7 +282,7 @@ export default {
         this.$http.post(Req + '/fd/insure/insert', formData, config).then(res => {
           if (res.body.code === 101) {
             this.$router.push({
-              path: '/Login',
+              path: '/',
               querry: { redirect: this.$router.currentRoute.fullPath }
               // 从哪个页面跳转
             })
