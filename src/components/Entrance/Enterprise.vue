@@ -14,12 +14,13 @@
               filterable
               allow-create
               default-first-option
-              placeholder="请选择文章标签">
+              placeholder="请选择/输入公司名称"
+              @change="changeCompany">
               <el-option
                 v-for="item in option"
                 :key="item.value"
                 :label="item.label"
-                :value="item.value">
+                :value="item.obj">
               </el-option>
             </el-select>
           </el-form-item>
@@ -32,6 +33,7 @@
         </el-form>
       </div>
     </div>
+
     <!-- 上传图片信息 -->
     <div class="con">
       <div class="tit">
@@ -44,7 +46,7 @@
             <div class="box">
               <img src="../../assets/img/uploadpic.png" alt="">
               <a>点击上传</a>
-              <div class="img_show"></div>
+              <div class="img_show" :style="{'backgroundImage': 'url(' + ruleForm.companyLicenseUrl + ')'}"></div>
               <input type="file" @change="fileImage($event, 1)" accept="image/jpeg,image/x-png,image/gif" />
             </div>
             <p>支持jpg、jpeg、png等格式，体积在5M以下 </p>
@@ -56,7 +58,7 @@
             <div class="box">
               <img src="../../assets/img/uploadpic.png" alt="">
               <a>请上传身份证正面</a>
-              <div class="img_show"></div>
+              <div class="img_show" :style="{'backgroundImage': 'url(' + ruleForm.legalPersonUp + ')'}"></div>
               <input type="file" @change="fileImage($event, 2)" accept="image/jpeg,image/x-png,image/gif" />
             </div>
             <p>支持jpg、jpeg、png等格式，体积在5M以下 </p>
@@ -68,7 +70,7 @@
             <div class="box">
               <img src="../../assets/img/uploadpic.png" alt="">
               <a>请上传身份证反面</a>
-              <div class="img_show"></div>
+              <div class="img_show" :style="{'backgroundImage': 'url(' + ruleForm.legalPersonDown + ')'}"></div>
               <input type="file" @change="fileImage($event, 3)" accept="image/jpeg,image/x-png,image/gif" />
             </div>
             <p>支持jpg、jpeg、png等格式，体积在5M以下 </p>
@@ -76,6 +78,7 @@
         </figure>
       </div>
     </div>
+
     <!-- 车险投保信息 -->
     <div class="con">
       <div class="tit">
@@ -86,6 +89,7 @@
         <span style="padding: 0 62px;"></span>
         <button :class="{active:'single' === active}" @click="toubao('single')">单辆投保</button>
       </div>
+
       <!-- 批量投保 -->
       <div class="batch" v-show="batchShow">
         <div class="import">
@@ -102,6 +106,7 @@
         <span style="padding: 0 115px;"></span>
         <button @click="$router.push({name: 'ApplicationEntrance'})">返回</button>
       </div>
+
       <!-- 单辆投保 -->
       <div class="single" v-show="singleShow">
         <el-form :model="form" :rules="formrules" ref="form" size="mini" label-width="167px" class="demo-ruleForm">
@@ -166,14 +171,7 @@ export default {
   data () {
     return {
       radio: '1',
-      option: [{
-        value: '12',
-        label: '12'
-      },
-      {
-        value: '1212312',
-        label: '123123'
-      }],
+      option: [],
       options: [{
         value: '12',
         label: '12'
@@ -207,7 +205,7 @@ export default {
         ],
         tel: [
           { required: true, message: '请输入联系方式', trigger: 'blur' },
-          { pattern: /^[1][3,4,5,7,8][0-9]{9}$/, message: '请输入正确的手机号', trigger: 'blur' }
+          { pattern: /^[1][0-9][0-9]{9}$/, message: '请输入正确的手机号', trigger: 'blur' }
         ]
       },
       formrules: {
@@ -217,13 +215,13 @@ export default {
         ],
         insureCommercial: [
           { required: true, message: '请输入企业名称', trigger: 'blur' },
-          { pattern: /^[0-9]+$/, message: '请输入金额', trigger: 'blur' }
+          { pattern: /(^[1-9](\d+)?(\.\d{1,2})?$)|(^0$)|(^\d\.\d{1,2}$)/, message: '请输入金额', trigger: 'blur' }
         ],
         insureFic: [
-          { pattern: /^[0-9]+$/, message: '请输入金额', trigger: 'blur' }
+          { pattern: /(^[1-9](\d+)?(\.\d{1,2})?$)|(^0$)|(^\d\.\d{1,2}$)/, message: '请输入金额', trigger: 'blur' }
         ],
         insureCarBoatTax: [
-          { pattern: /^[0-9]+$/, message: '请输入金额', trigger: 'blur' }
+          { pattern: /(^[1-9](\d+)?(\.\d{1,2})?$)|(^0$)|(^\d\.\d{1,2}$)/, message: '请输入金额', trigger: 'blur' }
         ]
       },
       batchShow: false,
@@ -234,7 +232,26 @@ export default {
       isInsure: false
     }
   },
+  mounted () {
+    this.$fetch('/fd/insure/selectCompany').then(res => {
+      // console.log(res.data)
+      if (res.code === 1005) {
+        this.option = []
+      } else if (res.code === 0) {
+        res.data.forEach(v => {
+          this.option.push({value: v.companyId, label: v.companyName, obj: v})
+        })
+      }
+    })
+  },
   methods: {
+    changeCompany (e) {
+      this.ruleForm.legalPersonName = e.legalPersonName
+      this.ruleForm.tel = e.companyTel
+      this.ruleForm.companyLicenseUrl = e.companyLicenseUrl
+      this.ruleForm.legalPersonUp = e.legalPersonUp
+      this.ruleForm.legalPersonDown = e.legalPersonDown
+    },
     fileUpload (e) {
       var file = e.target.files[0]
       if (file.name.split('.')[1] !== 'xls' && file.name.split('.')[1] !== 'xlsx') {
@@ -283,6 +300,7 @@ export default {
         // console.log(this.form)
         var formData = new FormData()
         formData.append('companyName', this.ruleForm.companyName)
+        // formData.append('companyId', this.ruleForm.companyName)
         formData.append('legalPersonName', this.ruleForm.legalPersonName)
         formData.append('tel', this.ruleForm.tel)
         formData.append('companyLicenseUrl', this.ruleForm.companyLicenseUrl)

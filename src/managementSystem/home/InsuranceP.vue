@@ -10,7 +10,7 @@
           </div>
           <div class="itm">
             <img src="../../assets/mImg/time.png" alt="">
-            <span>提交时间：{{ ruleForm.customer.updateTime }}</span>
+            <span>提交时间：{{ ruleForm.customer.updateTime | timeChange }}</span>
           </div>
         </header>
         <div class="tit">
@@ -237,14 +237,21 @@ export default {
         id: this.$route.query.id,
         type: '1'
       }).then(res => {
-        // console.log(res.data)
-        this.data = res.data.result.order
-        this.ruleForm = res.data.result
+        if (res.code === 0) {
+          this.data = res.data.result.order
+          this.ruleForm = res.data.result
+        } else {
+          this.$message(res.msg)
+          this.$router.back(-1)
+        }
       })
     }
   },
   components: {
     PicShow
+  },
+  deactivated () {
+    this.$destroy()
   },
   filters: {
     timeChange (data) {

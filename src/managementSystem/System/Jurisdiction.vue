@@ -119,7 +119,7 @@ export default {
         ],
         phone: [
           { required: true, message: '请输入手机号', trigger: 'blur' },
-          { pattern: /^[1][3,4,5,7,8][0-9]{9}$/, message: '请输入正确的手机号', trigger: 'blur' }
+          { pattern: /^[1][0-9][0-9]{9}$/, message: '请输入正确的手机号', trigger: 'blur' }
         ],
         psd: [
           { required: true, message: '请输入密码', trigger: 'blur' }
@@ -179,6 +179,8 @@ export default {
         if (res.code === 0) {
           this.$message.success(res.msg)
           this.detail = true
+        } else {
+          this.$message(res.msg)
         }
       })
     },

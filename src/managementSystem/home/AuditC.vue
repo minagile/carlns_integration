@@ -51,6 +51,7 @@
         </div>
       </div>
     </div>
+
     <!-- 弹窗-审核不通过 -->
     <el-dialog :show-close="false" :visible.sync="dialogFormVisible" :modal-append-to-body="false" width="770px">
       <template>
@@ -71,11 +72,32 @@
         <el-button class="button" @click="commit">提交</el-button>
       </div>
     </el-dialog>
+
+    <!-- 弹窗-审核通过-上传付款计划表 -->
+    <el-dialog :show-close="false" :visible.sync="dialog" :modal-append-to-body="false" width="770px">
+      <template>
+        <div class="header">
+          <span>上传付款计划表</span>
+        </div>
+      </template>
+      <div class="upload">
+        <img src="../../assets/mImg/upload.png" alt="">
+        <p>点击上传</p>
+        <div class="imgShow"></div>
+        <input type="file" @change="fileUpload($event)">
+      </div>
+      <p>付款计划表的格式为PDF/JPG、PNG</p>
+      <div slot="footer" class="dialog-footer">
+        <el-button class="btn" @click="dialog = false">取消</el-button>
+        <el-button class="button" @click="fileUp">提交</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import PicShow from '../../components/common/PicShow'
+import { Req } from '../../assets/js/http.js'
 export default {
   name: 'AuditC',
   data () {
@@ -104,13 +126,88 @@ export default {
       },
       labelList: ['资料有误', '图片模糊', '车辆有误'],
       num: 0,
-      arr: []
+      arr: [],
+      dialog: false,
+      file: {}
     }
   },
   mounted () {
     this.getData()
   },
+  deactivated () {
+    this.$destroy()
+  },
   methods: {
+    fileUp () {
+      if (this.file) {
+        let config = {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            'token': sessionStorage.getItem('token')
+          }
+        }
+        var formData = new FormData()
+        formData.append('companyId', this.ruleForm.companyId)
+        formData.append('batch', this.$route.query.batch)
+        formData.append('companyPlan', this.file)
+        this.$http.post(Req + '/ad/insure/uploadPlan', formData, config).then(res => {
+          if (res.body.code === 102) {
+            this.$router.push({
+              path: '/MLogin',
+              querry: { redirect: this.$router.currentRoute.fullPath }
+              // 从哪个页面跳转
+            })
+          } else if (res.body.code === 0) {
+            this.$post('/ad/insure/update', {
+              id: this.$route.query.id,
+              type: 2,
+              batch: this.$route.query.batch,
+              state: 1
+            }).then(res => {
+              if (res.code === 0) {
+                this.dialog = false
+                this.$message({type: 'success', message: '成功'})
+                this.$router.push({name: 'AllChannels'})
+              } else {
+                this.$message.error(res.msg)
+              }
+            })
+          } else {
+            this.$message.error(res.body.msg)
+          }
+        })
+      } else {
+        this.$message.error('请上传图片')
+      }
+    },
+    fileUpload (e) {
+      var that = this
+      var file = e.target.files[0]
+      if (file.name.split('.')[1] !== 'png' && file.name.split('.')[1] !== 'gif' && file.name.split('.')[1] !== 'jpg' && file.name.split('.')[1] !== 'jpeg' && file.name.split('.')[1] !== 'bmp' && file.name.split('.')[1] !== 'pdf') {
+        this.$message({
+          type: 'info',
+          message: '请上传图片'
+        })
+      } else {
+        var imgSize = file.size / 1024
+        if (imgSize > 5 * 1024) {
+          this.$message({
+            type: 'info',
+            message: '请上传大小不要超过5M的图片'
+          })
+        } else {
+          var reader = new FileReader()
+          reader.readAsDataURL(file) // 读出 base64
+          reader.onloadend = function () {
+            // 图片的 base64 格式, 可以直接当成 img 的 src 属性值
+            var dataURL = reader.result
+            var avatar = dataURL
+            e.target.previousElementSibling.style.backgroundImage = 'url(' + avatar + ')'
+            that.file = file
+          }
+        }
+      }
+    },
     handleSelectionChange (row, column, cell, event) {
       if (event.target.checked === true) {
         this.arr.push(row.carId)
@@ -122,6 +219,7 @@ export default {
         })
       }
     },
+    // 审核不通过-提交
     commit () {
       // console.log(this.arr)
       var ids = ''
@@ -147,24 +245,12 @@ export default {
         }
       })
     },
+    // 通过审核
     pass (str) {
       if (str === 'notpass') {
         this.dialogFormVisible = true
       } else {
-        this.$post('/ad/insure/update', {
-          id: this.$route.query.id,
-          type: 2,
-          batch: this.$route.query.batch,
-          state: 1
-        }).then(res => {
-          // console.log(res)
-          if (res.code === 0) {
-            this.$message({type: 'success', message: '成功'})
-            this.$router.push({name: 'AllChannels'})
-          } else {
-            this.$message.error(res.msg)
-          }
-        })
+        this.dialog = true
       }
     },
     tab (i) {
@@ -179,8 +265,13 @@ export default {
         type: '2'
       }).then(res => {
         // console.log(res.data)
-        this.tableData = res.data.result.obj
-        this.ruleForm = res.data.result.company
+        if (res.code === 0) {
+          this.tableData = res.data.result.obj
+          this.ruleForm = res.data.result.company
+        } else {
+          this.$message(res.msg)
+          this.$router.back(-1)
+        }
       })
     }
   },
@@ -282,6 +373,40 @@ export default {
         font-size: 18px;
         font-weight: bold;
       }
+    }
+    .upload {
+      width:342px;
+      height:186px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      text-align: center;
+      margin: 54px auto 0;
+      position: relative;
+      img {
+        vertical-align: middle;
+        margin-top: 60px;
+      }
+      p {
+        padding-top: 20px;
+      }
+      .imgShow {
+        background-size: 100% 100%;
+      }
+      input, .imgShow {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        cursor: pointer;
+      }
+      input {
+        opacity: 0;
+      }
+    }
+    p {
+      text-align: center;
+      padding-top: 15px;
     }
     .dialog-footer {
       text-align: center;

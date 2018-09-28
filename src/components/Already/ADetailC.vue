@@ -137,6 +137,9 @@ export default {
   mounted () {
     this.getData()
   },
+  deactivated () {
+    this.$destroy()
+  },
   methods: {
     payDetail () {
       this.$fetch('/fd/insure/selectStagesDetail', {

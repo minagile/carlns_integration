@@ -152,6 +152,7 @@ export default {
           this.ruleForm = res.data.result.company
         } else {
           this.$message(res.msg)
+          this.$router.go(-1)
         }
       })
     },
@@ -183,6 +184,9 @@ export default {
         }
       }
     }
+  },
+  deactivated () {
+    this.$destroy()
   },
   components: {
     PicShow

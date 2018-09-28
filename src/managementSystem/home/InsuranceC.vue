@@ -210,15 +210,22 @@ export default {
         batch: this.$route.query.batch,
         type: '2'
       }).then(res => {
-        // console.log(res.data)
-        this.data = res.data.result.order
-        this.tableData = res.data.result.obj
-        this.ruleForm = res.data.result.company
+        if (res.code === 0) {
+          this.data = res.data.result.order
+          this.tableData = res.data.result.obj
+          this.ruleForm = res.data.result.company
+        } else {
+          this.$message(res.msg)
+          this.$router.back(-1)
+        }
       })
     }
   },
   components: {
     PicShow
+  },
+  deactivated () {
+    this.$destroy()
   },
   filters: {
     upToCase (data) {

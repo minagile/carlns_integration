@@ -159,6 +159,9 @@ export default {
       }, 1000)
     }
   },
+  deactivated () {
+    this.$destroy()
+  },
   components: {
     PersonDetail
   }

@@ -32,8 +32,8 @@
         <el-form-item label="验证码：" prop="code" :label-width="formLabelWidth">
           <template>
             <input v-model="ruleForm.code">
-            <el-button class="code" @click="getCode">获取验证码<span v-show="second">{{count}}s</span></el-button>
-            <el-radio v-model="ruleForm.code" label="1">备选项</el-radio>
+            <el-button class="code" @click="getCode">获取验证码<span v-show="second">{{ count }}s</span></el-button>
+            <el-checkbox v-model="radio"><a :href="textUrl" target="_blank">《车险代扣授权协议》</a></el-checkbox>
           </template>
         </el-form-item>
       </el-form>
@@ -80,28 +80,42 @@ export default {
       count: 60,
       clock: '',
       second: false,
-      data: {}
+      data: {},
+      textUrl: '',
+      radio: false
     }
   },
   mounted () {
     this.getData()
+    this.$fetch('/login/resource/show', {type: 3}).then(res => {
+      if (res.code === 0) {
+        this.textUrl = res.data.fileurl
+      } else {
+        this.$message(res.msg)
+      }
+    })
   },
   methods: {
     // 支付
     pay () {
-      this.dialogFormVisible = false
-      this.$fetch('/fd/pay/firstPay', {
-        orderId: this.data.order.orderId,
-        code: this.ruleForm.code
-      }).then(res => {
-        // console.log(res)
-        if (res.code === 0) {
-          this.$message({type: 'success', message: res.msg})
-          this.$router.push({name: 'HomePage'})
-        } else {
-          this.$message.error(res.msg)
-        }
-      })
+      if (this.radio === false) {
+        this.$message('请先阅读并同意车险代扣授权协议')
+      } else if (this.ruleForm.code === '' || this.ruleForm.code === undefined) {
+        this.$message('请输入验证码')
+      } else {
+        this.dialogFormVisible = false
+        this.$fetch('/fd/pay/firstPay', {
+          orderId: this.data.order.orderId,
+          code: this.ruleForm.code
+        }).then(res => {
+          if (res.code === 0) {
+            this.$message({type: 'success', message: res.msg})
+            this.$router.push({name: 'HomePage'})
+          } else {
+            this.$message.error(res.msg)
+          }
+        })
+      }
     },
     // 获取数据
     getData () {
@@ -119,23 +133,32 @@ export default {
     },
     // 获取验证码
     getCode () {
-      if (this.second === false) {
-        this.second = true
-        this.countDown()
-        this.$post('/fd/pay/verifyFirst', {
-          orderId: this.data.order.orderId,
-          name: this.ruleForm.customerName,
-          idCard: this.ruleForm.customerIdcard,
-          bankCard: this.ruleForm.card,
-          phone: this.ruleForm.customerPhone
-        }).then(res => {
-          // console.log(res)
-          if (res.code === 0) {
-            this.$message({type: 'success', message: res.msg})
-          } else {
-            this.$message.error(res.msg)
-          }
-        })
+      if (this.ruleForm.customerName === '') {
+        this.$message.error('姓名不能为空')
+      } else if (this.ruleForm.customerIdcard === '') {
+        this.$message.error('身份证不能为空')
+      } else if (this.ruleForm.card === '' || this.ruleForm.card === undefined) {
+        this.$message.error('银行卡号不能为空')
+      } else if (this.ruleForm.customerPhone === '') {
+        this.$message.error('手机号不能为空')
+      } else {
+        if (this.second === false) {
+          this.second = true
+          this.countDown()
+          this.$post('/fd/pay/verifyFirst', {
+            orderId: this.data.order.orderId,
+            name: this.ruleForm.customerName,
+            idCard: this.ruleForm.customerIdcard,
+            bankCard: this.ruleForm.card,
+            phone: this.ruleForm.customerPhone
+          }).then(res => {
+            if (res.code === 0) {
+              this.$message({type: 'success', message: res.msg})
+            } else {
+              this.$message.error(res.msg)
+            }
+          })
+        }
       }
     },
     // 倒计时
@@ -148,6 +171,9 @@ export default {
         }
       }, 1000)
     }
+  },
+  deactivated () {
+    this.$destroy()
   },
   components: {
     PersonDetail

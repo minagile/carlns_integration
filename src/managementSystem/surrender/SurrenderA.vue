@@ -164,7 +164,12 @@ export default {
         status: data
       }).then(res => {
         // console.log(res.data)
-        this.tableData = res.data
+        if (res.code === 0) {
+          this.tableData = res.data
+        } else {
+          this.$message(res.msg)
+          this.$router.back(-1)
+        }
       })
     },
     tab (index) {

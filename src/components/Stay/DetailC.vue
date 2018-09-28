@@ -15,7 +15,7 @@
             <div class="img_show"></div>
             <input type="file" @change="fileImage($event, 1)" accept="image/jpeg,image/x-png,image/gif" />
           </div>
-          <button>下载</button>
+          <button @click="download">下载</button>
           <p>请先下载付款计划表，盖章后以图片形式上传</p>
           <p class="gey">支持jpg、jpeg、png等格式，体积在5M以下 </p>
         </div>
@@ -102,13 +102,28 @@ export default {
       },
       tableData: [],
       companyPlan: '',
-      payBill: ''
+      payBill: '',
+      id: ''
     }
   },
   mounted () {
     this.getData()
   },
+  deactivated () {
+    this.$destroy()
+  },
   methods: {
+    // 下载按钮
+    download () {
+      this.$post('/fd/insure/downLoad', {orderId: this.id}).then(res => {
+        if (res.code === 0) {
+          window.open(res.data)
+        } else {
+          this.$message(res.msg)
+        }
+      })
+    },
+    // 保存
     save () {
       var formData = new FormData()
       formData.append('companyId', this.$route.query.id)
@@ -142,9 +157,13 @@ export default {
         batch: this.$route.query.batch,
         type: '2'
       }).then(res => {
-        // console.log(res.data)
-        this.tableData = res.data.result.obj
-        this.ruleForm = res.data.result.company
+        if (res.code === 0) {
+          this.tableData = res.data.result.obj
+          this.ruleForm = res.data.result.company
+          this.id = res.data.result.order.orderId
+        } else {
+          this.$message(res.msg)
+        }
       })
     },
     fileImage (e, i) {

@@ -26,6 +26,9 @@ export default {
       data: {}
     }
   },
+  deactivated () {
+    this.$destroy()
+  },
   mounted () {
     this.getData()
   },

@@ -97,6 +97,9 @@ export default {
       })
     }
   },
+  deactivated () {
+    this.$destroy()
+  },
   components: {
     PicShow
   }

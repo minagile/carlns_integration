@@ -239,7 +239,7 @@ export default {
       } else {
         event.target.parentNode.style.borderColor = '#a0a0a0'
         if (this.msg.channelUserPhone !== '') {
-          var myreg = /^[1][3,4,5,7,8][0-9]{9}$/
+          var myreg = /^[1][0-9][0-9]{9}$/
           if (!myreg.test(this.msg.channelUserPhone)) {
             event.target.parentNode.style.borderColor = 'red'
             this.$message({

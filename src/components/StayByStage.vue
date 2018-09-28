@@ -47,12 +47,12 @@
             <div>时间：{{ scope.row.createTime | timeChange }}</div>
           </template>
         </el-table-column>
-        <el-table-column align="center" width="340">
+        <el-table-column align="center">
           <template slot-scope="scope">
             <el-button type="primary" round plain size="small" v-if="scope.row.type === 1" @click="$router.push({name: 'DetailP', query: {id: scope.row.id}})">查看详情</el-button>
             <el-button type="primary" round plain size="small" v-if="scope.row.type === 2" @click="$router.push({name: 'DetailC', query: {id: scope.row.id, batch: scope.row.batch}})">查看详情</el-button>
-            <el-button type="primary" round plain size="small" v-if="scope.row.type === 2" @click="$router.push({name: 'DetailC', query: {id: scope.row.id, batch: scope.row.batch}})">上传付款计划表</el-button>
-            <el-button type="primary" round plain size="small" v-if="scope.row.type === 2" @click="$router.push({name: 'DetailC', query: {id: scope.row.id, batch: scope.row.batch}})">上传付款凭证</el-button>
+            <!-- <el-button type="primary" round plain size="small" v-if="scope.row.type === 2" @click="$router.push({name: 'DetailC', query: {id: scope.row.id, batch: scope.row.batch}})">上传付款计划表</el-button>
+            <el-button type="primary" round plain size="small" v-if="scope.row.type === 2" @click="$router.push({name: 'DetailC', query: {id: scope.row.id, batch: scope.row.batch}})">上传付款凭证</el-button> -->
           </template>
         </el-table-column>
       </el-table>

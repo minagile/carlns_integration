@@ -10,7 +10,7 @@
           </div>
           <div class="itm">
             <img src="../../assets/mImg/time.png" alt="">
-            <span>提交时间：{{ ruleForm.customer.updateTime }}</span>
+            <span>提交时间：{{ ruleForm.customer.updateTime | timeChange }}</span>
           </div>
         </header>
         <div class="tit">
@@ -147,7 +147,7 @@ export default {
         formData.append('type', 1)
         formData.append('uploadBill', this.file)
         this.$http.post(Req + '/ad/insure/uploadBill', formData, config).then(res => {
-          if (res.body.code === 101) {
+          if (res.body.code === 102) {
             this.$router.push({
               path: '/MLogin',
               querry: { redirect: this.$router.currentRoute.fullPath }
@@ -172,8 +172,12 @@ export default {
         id: this.$route.query.id,
         type: '1'
       }).then(res => {
-        // console.log(res.data)
-        this.ruleForm = res.data.result
+        if (res.code === 0) {
+          this.ruleForm = res.data.result
+        } else {
+          this.$message(res.msg)
+          this.$router.back(-1)
+        }
       })
     },
     fileUpload (e) {
@@ -205,9 +209,25 @@ export default {
       }
     }
   },
+  deactivated () {
+    this.$destroy()
+  },
   components: {
     PicShow
+  },
+  filters: {
+    timeChange (data) {
+      let date = new Date(data)
+      return date.getFullYear() + '-' + zero(date.getMonth() + 1) + '-' + zero(date.getDate())
+    },
+    time (data) {
+      return data.split(' ')[0].replace('-', '.').replace('-', '.')
+    }
   }
+}
+function zero (data) {
+  if (data < 10) return '0' + data
+  return data
 }
 </script>
 

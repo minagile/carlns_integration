@@ -180,7 +180,7 @@ export default {
         ],
         tel: [
           { required: true, message: '请输入联系方式', trigger: 'blur' },
-          { pattern: /^[1][3,4,5,7,8][0-9]{9}$/, message: '请输入正确的手机号', trigger: 'blur' }
+          { pattern: /^[1][0-9][0-9]{9}$/, message: '请输入正确的手机号', trigger: 'blur' }
         ],
         carVin: [
           { required: true, message: '请输入车架号', trigger: 'blur' },
@@ -188,13 +188,13 @@ export default {
         ],
         insureCommercial: [
           { required: true, message: '请输入商业险', trigger: 'blur' },
-          { pattern: /^[0-9]+$/, message: '请输入金额', trigger: 'blur' }
+          { pattern: /(^[1-9](\d+)?(\.\d{1,2})?$)|(^0$)|(^\d\.\d{1,2}$)/, message: '请输入金额', trigger: 'blur' }
         ],
         insureFic: [
-          { pattern: /^[0-9]+$/, message: '请输入金额', trigger: 'blur' }
+          { pattern: /(^[1-9](\d+)?(\.\d{1,2})?$)|(^0$)|(^\d\.\d{1,2}$)/, message: '请输入金额', trigger: 'blur' }
         ],
         insureCarBoatTax: [
-          { pattern: /^[0-9]+$/, message: '请输入金额', trigger: 'blur' }
+          { pattern: /(^[1-9](\d+)?(\.\d{1,2})?$)|(^0$)|(^\d\.\d{1,2}$)/, message: '请输入金额', trigger: 'blur' }
         ]
       },
       isInsure: false

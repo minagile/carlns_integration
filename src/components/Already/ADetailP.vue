@@ -70,7 +70,7 @@
     <div class="btn">
       <!-- <button class="save" @click="dialogFormVisible = true">去还款</button> -->
       <!-- <span style="padding: 0 115px;"></span> -->
-      <button @click="$router.go(-1)">返回</button>
+      <button @click="$router.back(-1)">返回</button>
     </div>
     <!-- 支付弹窗 -->
     <el-dialog :visible.sync="dialogFormVisible" :modal-append-to-body="false" width="713px">
@@ -150,6 +150,9 @@ export default {
   },
   mounted () {
     this.getData()
+  },
+  deactivated () {
+    this.$destroy()
   },
   methods: {
     isShowBox (e) {

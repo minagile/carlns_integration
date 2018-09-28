@@ -223,7 +223,7 @@ export default {
           }
         }
         a {
-          width:56px;
+          min-width:56px;
           padding: 0;
           height:28px;
           line-height:28px;

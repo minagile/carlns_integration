@@ -26,8 +26,11 @@
               <span v-if="o.type === '2'">企业：{{ o.name }}</span>
             </p>
             <p>
-              <span v-if="o.car_type ===  1">车牌：{{ o.car_nameplate }}</span>
-              <span v-if="o.car_type ===  2">批次：{{ o.car_batch }}</span>
+              <span v-if="o.type ===  '1'">
+                <span v-if="o.car_type === 2">车牌：{{ o.car_nameplate }}</span>
+                <span v-if="o.car_type === 1">车架号：{{ o.car_nameplate }}</span>
+              </span>
+              <span v-if="o.type ===  '2'">批次：{{ o.car_batch }}</span>
               <span>分期金额：{{ o.insure_amount }}</span>
               <span>分期期数：{{ o.insure_stages }}</span>
               <span>时间：{{ o.create_time | time }}</span>
@@ -52,8 +55,11 @@
               <el-button v-if="o.type === '2'" size="mini" type="primary" plain round @click="$router.push({name: 'DetailC', query: {id: o.id, batch: o.car_batch}})">付款</el-button>
             </p>
             <p>
-              <span v-if="o.car_type ===  1">车牌：{{ o.car_nameplate }}</span>
-              <span v-if="o.car_type ===  2">批次：{{ o.car_batch }}</span>
+              <span v-if="o.type ===  '1'">
+                <span v-if="o.car_type === 2">车牌：{{ o.car_nameplate }}</span>
+                <span v-if="o.car_type === 1">车架号：{{ o.car_nameplate }}</span>
+              </span>
+              <span v-if="o.type ===  '2'">批次：{{ o.car_batch }}</span>
               <span>分期金额：{{ o.insure_amount }}</span>
               <span>分期期数：{{ o.insure_stages }}</span>
               <span>时间：{{ o.create_time | time }}</span>
@@ -79,8 +85,11 @@
               <el-button size="mini" type="primary" plain round @click="payDetail(o.order_id, o.id, o.type, o.car_batch)">还款计划表</el-button>
             </p>
             <p>
-              <span v-if="o.car_type ===  1">车牌：{{ o.car_nameplate }}</span>
-              <span v-if="o.car_type ===  2">批次：{{ o.car_batch }}</span>
+              <span v-if="o.type ===  '1'">
+                <span v-if="o.car_type === 2">车牌：{{ o.car_nameplate }}</span>
+                <span v-if="o.car_type === 1">车架号：{{ o.car_nameplate }}</span>
+              </span>
+              <span v-if="o.type ===  '2'">批次：{{ o.car_batch }}</span>
               <span>分期金额：{{ o.insure_amount }}</span>
               <span>分期期数：{{ o.insure_stages }}</span>
               <span>时间：{{ o.create_time | time }}</span>

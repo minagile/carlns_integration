@@ -43,8 +43,11 @@
               <el-button size="mini" type="primary" v-if="o.type === '1'" plain round @click="$router.push({name: 'AuditP', query: {id: o.id}})">通过审核</el-button>
             </p>
             <p v-if="o.type !== '3'">
-              <span v-if="o.car_type ===  2">车牌：{{ o.car_nameplate }}</span>
-              <span v-if="o.car_type ===  1">批次：{{ o.car_batch }}</span>
+              <span v-if="o.type ===  '1'">
+                <span v-if="o.car_type === 2">车牌：{{ o.car_nameplate }}</span>
+                <span v-if="o.car_type === 1">车架号：{{ o.car_nameplate }}</span>
+              </span>
+              <span v-if="o.type ===  '2'">批次：{{ o.car_batch }}</span>
               <span>分期金额：{{ o.insure_amount }}</span>
               <span>分期期数：{{ o.insure_stages }}</span>
               <span>时间：{{ o.create_time }}</span>
@@ -74,8 +77,11 @@
               <el-button size="mini" type="primary" plain round v-if="o.type === '2'" @click="$router.push({name: 'ObligationsC', query: {batch: o.car_batch, id: o.id}})">确认付款</el-button>
             </p>
             <p>
-              <span v-if="o.car_type ===  2">车牌：{{ o.car_nameplate }}</span>
-              <span v-if="o.car_type ===  1">批次：{{ o.car_batch }}</span>
+              <span v-if="o.type ===  '1'">
+                <span v-if="o.car_type === 2">车牌：{{ o.car_nameplate }}</span>
+                <span v-if="o.car_type === 1">车架号：{{ o.car_nameplate }}</span>
+              </span>
+              <span v-if="o.type ===  '2'">批次：{{ o.car_batch }}</span>
               <span>分期金额：{{ o.insure_amount }}</span>
               <span>分期期数：{{ o.insure_stages }}</span>
               <span>时间：{{ o.create_time | time }}</span>
@@ -101,8 +107,11 @@
               <el-button size="mini" type="primary" plain round @click="payDetail(o.order_id)">还款计划表</el-button>
             </p>
             <p>
-              <span v-if="o.car_type ===  2">车牌：{{ o.car_nameplate }}</span>
-              <span v-if="o.car_type ===  1">批次：{{ o.car_batch }}</span>
+              <span v-if="o.type ===  '1'">
+                <span v-if="o.car_type === 2">车牌：{{ o.car_nameplate }}</span>
+                <span v-if="o.car_type === 1">车架号：{{ o.car_nameplate }}</span>
+              </span>
+              <span v-if="o.type ===  '2'">批次：{{ o.car_batch }}</span>
               <span>分期金额：{{ o.insure_amount }}</span>
               <span>分期期数：{{ o.insure_stages }}</span>
               <span>时间：{{ o.create_time | time }}</span>
@@ -233,6 +242,9 @@ export default {
   mounted () {
     this.getData(this.channelId)
   },
+  deactivated () {
+    this.$destroy()
+  },
   watch: {
     channelId (val) {
       this.getData(val)
@@ -243,11 +255,11 @@ export default {
     jump (o, i) {
       // console.log(o, this.data)
       if (this.data === 0) {
-        this.$router.push({name: 'ChannelDetail', query: {id: o.channelId}})
+        this.$router.push({name: 'ChannelDetail', query: {id: o.channelId, look: 1}})
       } else if (this.data === 1) {
-        this.$router.push({name: 'ObligationsC', query: {id: o.channelId, batch: o.batch}})
+        this.$router.push({name: 'ObligationsC', query: {id: o.companyId, batch: o.batch}})
       } else if (this.data === 2) {
-        this.$router.push({name: 'ObligationsP', query: {id: o.channelId}})
+        this.$router.push({name: 'ObligationsP', query: {id: o.customerId}})
       }
     },
     // 付款计划表弹窗
