@@ -1,6 +1,6 @@
 <template>
   <!-- 待审核-个人 -->
-  <div class="audit_p">
+  <div class="audit_p" v-loading="fullscreenLoading">
     <div class="con">
       <div class="body">
         <header>
@@ -124,7 +124,8 @@ export default {
       labelList: ['资料有误', '图片模糊', '车辆有误'],
       num: 0,
       baodan: 1,
-      radio: '1'
+      radio: '1',
+      fullscreenLoading: false
     }
   },
   mounted () {
@@ -133,6 +134,7 @@ export default {
   methods: {
     // 审核不通过提交
     commit () {
+      this.fullscreenLoading = true
       this.$post('/ad/insure/update', {
         id: this.$route.query.id,
         type: 1,
@@ -141,6 +143,7 @@ export default {
         msg: this.form.msg
       }).then(res => {
         // console.log(res)
+        this.fullscreenLoading = false
         if (res.code === 0) {
           this.$message({type: 'success', message: '成功'})
           this.dialogFormVisible = false
@@ -155,12 +158,14 @@ export default {
       if (str === 'notpass') {
         this.dialogFormVisible = true
       } else {
+        this.fullscreenLoading = true
         this.$post('/ad/insure/update', {
           id: this.$route.query.id,
           type: 1,
           state: 1
         }).then(res => {
           // console.log(res)
+          this.fullscreenLoading = false
           if (res.code === 0) {
             this.$message({type: 'success', message: '成功'})
             this.$router.push({name: 'AllChannels'})

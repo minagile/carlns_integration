@@ -283,6 +283,7 @@ export default {
       }
     },
     saveMsg () {
+      // console.log(typeof this.ruleForm.companyName)
       if (this.ruleForm.companyName === '') {
         this.$message.error('企业姓名不能为空')
       } else if (this.ruleForm.legalPersonName === '') {
@@ -297,10 +298,13 @@ export default {
         this.$message.error('请上传身份证反面')
       } else {
         // console.log(this.ruleForm)
-        // console.log(this.form)
         var formData = new FormData()
-        formData.append('companyName', this.ruleForm.companyName)
-        // formData.append('companyId', this.ruleForm.companyName)
+        if (typeof this.ruleForm.companyName === 'object') {
+          formData.append('companyName', this.ruleForm.companyName.companyId)
+          // formData.append('companyId', this.ruleForm.companyName.companyId)
+        } else {
+          formData.append('companyName', this.ruleForm.companyName)
+        }
         formData.append('legalPersonName', this.ruleForm.legalPersonName)
         formData.append('tel', this.ruleForm.tel)
         formData.append('companyLicenseUrl', this.ruleForm.companyLicenseUrl)
@@ -347,7 +351,6 @@ export default {
             this.$message(res.body.msg)
             this.$router.push({name: 'HomePage'})
           } else {
-            // console.log(JSON.parse(res.body.msg))
             this.$message.error(res.body.msg)
           }
         })

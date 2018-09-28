@@ -1,6 +1,6 @@
 <template>
   <!-- 申请入口-个人 -->
-  <div class="personal">
+  <div class="personal" v-loading="fullscreenLoading">
     <!-- 填写基本信息 -->
     <div class="con">
       <div class="tit">
@@ -197,7 +197,8 @@ export default {
           { pattern: /(^[1-9](\d+)?(\.\d{1,2})?$)|(^0$)|(^\d\.\d{1,2}$)/, message: '请输入金额', trigger: 'blur' }
         ]
       },
-      isInsure: false
+      isInsure: false,
+      fullscreenLoading: false
     }
   },
   mounted () {},
@@ -273,6 +274,7 @@ export default {
             formData.append('carInvoiceUrl', this.ruleForm.carInvoiceUrl)
           }
         }
+        this.fullscreenLoading = true
         let config = {
           headers: {
             'Content-Type': 'multipart/form-data',
@@ -280,9 +282,10 @@ export default {
           }
         }
         this.$http.post(Req + '/fd/insure/insert', formData, config).then(res => {
-          if (res.body.code === 101) {
+          this.fullscreenLoading = false
+          if (res.body.code === 102) {
             this.$router.push({
-              path: '/',
+              path: '/MLogin',
               querry: { redirect: this.$router.currentRoute.fullPath }
               // 从哪个页面跳转
             })

@@ -1,6 +1,6 @@
 <template>
   <!-- 待审核-企业 -->
-  <div class="audit_c">
+  <div class="audit_c" v-loading="fullscreenLoading">
     <header>
       <el-table :data="tableData" style="width: 1127px;" @cell-click="handleSelectionChange">
         <el-table-column prop="carvin" label="车架号" width="180" align="center"></el-table-column>
@@ -128,7 +128,8 @@ export default {
       num: 0,
       arr: [],
       dialog: false,
-      file: {}
+      file: {},
+      fullscreenLoading: false
     }
   },
   mounted () {
@@ -139,6 +140,7 @@ export default {
   },
   methods: {
     fileUp () {
+      this.fullscreenLoading = true
       if (this.file) {
         let config = {
           headers: {
@@ -151,6 +153,7 @@ export default {
         formData.append('batch', this.$route.query.batch)
         formData.append('companyPlan', this.file)
         this.$http.post(Req + '/ad/insure/uploadPlan', formData, config).then(res => {
+          this.fullscreenLoading = false
           if (res.body.code === 102) {
             this.$router.push({
               path: '/MLogin',
@@ -222,6 +225,7 @@ export default {
     // 审核不通过-提交
     commit () {
       // console.log(this.arr)
+      this.fullscreenLoading = true
       var ids = ''
       this.arr.forEach(v => {
         ids += v + ','
@@ -235,6 +239,7 @@ export default {
         ids: ids,
         msg: this.form.msg
       }).then(res => {
+        this.fullscreenLoading = false
         // console.log(res)
         if (res.code === 0) {
           this.$message({type: 'success', message: '成功'})
