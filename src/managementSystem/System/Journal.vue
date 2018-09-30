@@ -85,6 +85,7 @@ function zero (data) {
     button {
       width:80px;
       height:32px;
+      line-height:32px;
       border:1px solid rgba(217,217,217,1);
       border-radius:2px;
       background: #fff;

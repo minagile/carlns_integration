@@ -34,29 +34,31 @@
             <span>投保待审核</span>
             <el-button style="float: right; padding: 3px 0" type="text" icon="el-icon-d-arrow-right"></el-button>
           </div>
-          <div v-for="(o, i) in list1" :key="i" class="text item">
-            <p class="name">
-              <span v-if="o.type === '1'">姓名：{{ o.name }}</span>
-              <span v-if="o.type === '2'">企业：{{ o.name }}</span>
-              <span v-if="o.type === '3'">渠道：{{ o.name }}</span>
-              <el-button size="mini" type="primary" v-if="o.type === '2'" plain round @click="$router.push({name: 'AuditC', query: {batch: o.car_batch, id: o.id}})">通过审核</el-button>
-              <el-button size="mini" type="primary" v-if="o.type === '1'" plain round @click="$router.push({name: 'AuditP', query: {id: o.id}})">通过审核</el-button>
-            </p>
-            <p v-if="o.type !== '3'">
-              <span v-if="o.type ===  '1'">
-                <span v-if="o.car_type === 2">车牌：{{ o.car_nameplate }}</span>
-                <span v-if="o.car_type === 1">车架号：{{ o.car_nameplate }}</span>
-              </span>
-              <span v-if="o.type ===  '2'">批次：{{ o.car_batch }}</span>
-              <span>分期金额：{{ o.insure_amount }}</span>
-              <span>分期期数：{{ o.insure_stages }}</span>
-              <span>时间：{{ o.create_time }}</span>
-            </p>
-            <p v-if="o.type === '3'">
-              <span>法人姓名：{{ o.user_name }}</span>
-              <span>联系方式：{{ o.user_phone }}</span>
-              <span>时间：{{ o.create_time }}</span>
-            </p>
+          <div class="list_scroll">
+            <div v-for="(o, i) in list1" :key="i" class="text item">
+              <p class="name">
+                <span v-if="o.type === '1'">姓名：{{ o.name }}</span>
+                <span v-if="o.type === '2'">企业：{{ o.name }}</span>
+                <span v-if="o.type === '3'">渠道：{{ o.name }}</span>
+                <el-button size="mini" type="primary" v-if="o.type === '2'" plain round @click="$router.push({name: 'AuditC', query: {batch: o.car_batch, id: o.id}})">通过审核</el-button>
+                <el-button size="mini" type="primary" v-if="o.type === '1'" plain round @click="$router.push({name: 'AuditP', query: {id: o.id}})">通过审核</el-button>
+              </p>
+              <p v-if="o.type !== '3'">
+                <span v-if="o.type ===  '1'">
+                  <span v-if="o.car_type === 2">车牌：{{ o.car_nameplate }}</span>
+                  <span v-if="o.car_type === 1">车架号：{{ o.car_nameplate }}</span>
+                </span>
+                <span v-if="o.type ===  '2'">批次：{{ o.car_batch }}</span>
+                <span>分期金额：{{ o.insure_amount }}</span>
+                <span>分期期数：{{ o.insure_stages }}</span>
+                <span>时间：{{ o.create_time }}</span>
+              </p>
+              <p v-if="o.type === '3'">
+                <span>法人姓名：{{ o.user_name }}</span>
+                <span>联系方式：{{ o.user_phone }}</span>
+                <span>时间：{{ o.create_time }}</span>
+              </p>
+            </div>
           </div>
         </el-card>
       </el-col>
@@ -69,23 +71,25 @@
             <span>待付款</span>
             <el-button style="float: right; padding: 3px 0" type="text" icon="el-icon-d-arrow-right"></el-button>
           </div>
-          <div v-for="(o, i) in list2" :key="i" class="text item">
-            <p class="name">
-              <span v-if="o.type === '1'">姓名：{{ o.name }}</span>
-              <span v-if="o.type === '2'">企业：{{ o.name }}</span>
-              <el-button size="mini" type="primary" plain round v-if="o.type === '1'" @click="$router.push({name: 'ObligationsP', query: {id: o.id}})">确认付款</el-button>
-              <el-button size="mini" type="primary" plain round v-if="o.type === '2'" @click="$router.push({name: 'ObligationsC', query: {batch: o.car_batch, id: o.id}})">确认付款</el-button>
-            </p>
-            <p>
-              <span v-if="o.type ===  '1'">
-                <span v-if="o.car_type === 2">车牌：{{ o.car_nameplate }}</span>
-                <span v-if="o.car_type === 1">车架号：{{ o.car_nameplate }}</span>
-              </span>
-              <span v-if="o.type ===  '2'">批次：{{ o.car_batch }}</span>
-              <span>分期金额：{{ o.insure_amount }}</span>
-              <span>分期期数：{{ o.insure_stages }}</span>
-              <span>时间：{{ o.create_time | time }}</span>
-            </p>
+          <div class="list_scroll">
+            <div v-for="(o, i) in list2" :key="i" class="text item">
+              <p class="name">
+                <span v-if="o.type === '1'">姓名：{{ o.name }}</span>
+                <span v-if="o.type === '2'">企业：{{ o.name }}</span>
+                <el-button size="mini" type="primary" plain round v-if="o.type === '1'" @click="$router.push({name: 'ObligationsP', query: {id: o.id}})">确认付款</el-button>
+                <el-button size="mini" type="primary" plain round v-if="o.type === '2'" @click="$router.push({name: 'ObligationsC', query: {batch: o.car_batch, id: o.id}})">确认付款</el-button>
+              </p>
+              <p>
+                <span v-if="o.type ===  '1'">
+                  <span v-if="o.car_type === 2">车牌：{{ o.car_nameplate }}</span>
+                  <span v-if="o.car_type === 1">车架号：{{ o.car_nameplate }}</span>
+                </span>
+                <span v-if="o.type ===  '2'">批次：{{ o.car_batch }}</span>
+                <span>分期金额：{{ o.insure_amount }}</span>
+                <span>分期期数：{{ o.insure_stages }}</span>
+                <span>时间：{{ o.create_time | time }}</span>
+              </p>
+            </div>
           </div>
         </el-card>
       </el-col>
@@ -100,22 +104,24 @@
             <span>已承保</span>
             <el-button style="float: right; padding: 3px 0" type="text" icon="el-icon-d-arrow-right"></el-button>
           </div>
-          <div v-for="(o, i) in list3" :key="i" class="text item">
-            <p class="name">
-              <span v-if="o.type === '1'">姓名：{{ o.name }}</span>
-              <span v-if="o.type === '2'">企业：{{ o.name }}</span>
-              <el-button size="mini" type="primary" plain round @click="payDetail(o.order_id)">还款计划表</el-button>
-            </p>
-            <p>
-              <span v-if="o.type ===  '1'">
-                <span v-if="o.car_type === 2">车牌：{{ o.car_nameplate }}</span>
-                <span v-if="o.car_type === 1">车架号：{{ o.car_nameplate }}</span>
-              </span>
-              <span v-if="o.type ===  '2'">批次：{{ o.car_batch }}</span>
-              <span>分期金额：{{ o.insure_amount }}</span>
-              <span>分期期数：{{ o.insure_stages }}</span>
-              <span>时间：{{ o.create_time | time }}</span>
-            </p>
+          <div class="list_scroll">
+            <div v-for="(o, i) in list3" :key="i" class="text item">
+              <p class="name">
+                <span v-if="o.type === '1'">姓名：{{ o.name }}</span>
+                <span v-if="o.type === '2'">企业：{{ o.name }}</span>
+                <el-button size="mini" type="primary" plain round @click="payDetail(o.order_id)">还款计划表</el-button>
+              </p>
+              <p>
+                <span v-if="o.type ===  '1'">
+                  <span v-if="o.car_type === 2">车牌：{{ o.car_nameplate }}</span>
+                  <span v-if="o.car_type === 1">车架号：{{ o.car_nameplate }}</span>
+                </span>
+                <span v-if="o.type ===  '2'">批次：{{ o.car_batch }}</span>
+                <span>分期金额：{{ o.insure_amount }}</span>
+                <span>分期期数：{{ o.insure_stages }}</span>
+                <span>时间：{{ o.create_time | time }}</span>
+              </p>
+            </div>
           </div>
         </el-card>
       </el-col>
@@ -137,13 +143,8 @@
       <template>
         <div class="header">
           <h2>
-            <!-- <img src="../../assets/img/order_msg.png" alt=""> -->
             <span>还款计划表</span>
           </h2>
-          <!-- <span>公司：{{ ruleForm.legalPersonName }}</span>
-          <span>分期金额：{{ data.countnum }}</span>
-          <span v-if="tableData.length > 0">分期期数：{{ tableData[0].stages }}</span>
-          <button v-if="tableData.length > 0">{{ tableData[0].age }}年期</button> -->
         </div>
       </template>
       <div class="stages">
@@ -264,7 +265,7 @@ export default {
     },
     // 付款计划表弹窗
     payDetail (id) {
-      this.$fetch('/fd/insure/selectStagesDetail', {
+      this.$fetch('/ad/insure/selectStagesDetail', {
         orderId: id
       }).then(res => {
         if (res.code === 0) {
@@ -277,9 +278,7 @@ export default {
     },
     // 修改消息状态 已读未读
     statusChange (id) {
-      this.$post('/ad/news/changeNews', {newId: id}).then(res => {
-        // console.log(res)
-      })
+      this.$post('/ad/news/changeNews', {newId: id}).then(res => {})
     },
     mousemove () {
       this.moveShow = true
@@ -290,9 +289,6 @@ export default {
     // 鼠标移入通知中心展示
     shiftIn (e) {
       let permissionData = JSON.parse(sessionStorage.getItem('permission'))
-      // console.log(permissionData)
-      // this.moveShow = true
-      // console.log(e)
       permissionData.forEach(v => {
         if (v === '渠道待审核') {
           if (e === 0) this.moveShow = true
@@ -327,7 +323,6 @@ export default {
     getData (data) {
       // 待审核
       this.$fetch('/ad/index/countWorkAdAudit', {'channelId': data}).then(res => {
-        // console.log(res)
         this.list1 = res
         if (res.code === 101) {
           this.$message({
@@ -341,7 +336,6 @@ export default {
         'status': '2',
         'channelId': data
       }).then(res => {
-        // console.log(res)
         this.list2 = res
         if (res.code === 101) {
           this.$message({
@@ -355,7 +349,6 @@ export default {
         'status': '3',
         'channelId': data
       }).then(res => {
-        // console.log(res)
         this.list3 = res
         if (res.code === 101) {
           this.$message({
@@ -366,7 +359,6 @@ export default {
       })
       // 消息
       this.$fetch('/ad/news/selectCountByNewType').then(res => {
-        // console.log(res)
         this.headerList = res.data
       })
     }
@@ -406,6 +398,10 @@ function zero (data) {
 .all_channels {
   background: #E0E0E0;
   padding-bottom: 10px;
+  .list_scroll {
+    height: 575px;
+    overflow: scroll;
+  }
   .el-col-4 {
     width: 20%;
     cursor: pointer;

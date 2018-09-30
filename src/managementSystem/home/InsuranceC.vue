@@ -3,10 +3,10 @@
   <div class="insurance_c">
     <header>
       <div class="tabline" @click="payDetail" v-show="$route.query.tuibao !== true">
-        <li>本期待还总计：56236元</li>
-        <li>还款期数：第2期</li>
-        <li>还款时间：2018.6.4</li>
-        <li>查看还款详情</li>
+        <!-- <li><img src="../../assets/mImg/cash.png"> 本期待还总计：56236元</li>
+        <li><img src="../../assets/mImg/moneybag.png"> 还款期数：第2期</li> -->
+        <li><img src="../../assets/mImg/time.png"> 还款时间：{{ ruleForm.updateTime | timeChange }}</li>
+        <li><img src="../../assets/mImg/package.png"> 查看还款详情</li>
       </div>
       <el-table :data="tableData" style="width: 1127px;">
         <el-table-column prop="carvin" label="车架号" width="180" align="center"></el-table-column>
@@ -57,12 +57,13 @@
       <template>
         <div class="header">
           <h2>
-            <img src="../../assets/img/order_msg.png" alt="">
+            <img src="../../assets/mImg/package.png" alt="">
             <span>分期详情</span>
           </h2>
-          <span>公司：{{ ruleForm.legalPersonName }}</span>
-          <span>分期金额：{{ data.countnum }}</span>
-          <span v-if="tableData.length > 0">分期期数：{{ tableData[0].stages }}</span>
+          <span>公司：{{ ruleForm.companyName }}</span>
+          <span>法人姓名：{{ ruleForm.legalPersonName }}</span>
+          <span>分期金额：￥{{ data.countnum }}</span>
+          <span v-if="tableData.length > 0">分期期数：{{ tableData[0].stages }}期</span>
           <button v-if="tableData.length > 0">{{ tableData[0].age | upToCase }}年期</button>
         </div>
       </template>
@@ -77,8 +78,8 @@
         <ul>
           <li>还款时间</li>
           <li v-for="(data, index) in detailList" :key="index">
-            <span v-if="data.stagesState !== 2">{{ data.stagesCutoff }}</span>
-            <span v-if="data.stagesState === 2" style="color: #999999;">{{ data.stagesCutoff }}</span>
+            <span v-if="data.stagesState !== 2">{{ data.stagesCutoff | timeChange }}</span>
+            <span v-if="data.stagesState === 2" style="color: #999999;">{{ data.stagesCutoff | timeChange }}</span>
           </li>
         </ul>
         <ul>
@@ -145,7 +146,7 @@ export default {
         confirmButtonText: '确定',
         cancelButtonText: '取消'
       }).then(() => {
-        this.$post('/fd/insure/uploadStages', {stagesId: id}).then(res => {
+        this.$post('/ad/insure/uploadStages', {stagesId: id}).then(res => {
           if (res.code === 0) {
             this.payDetail()
             this.$message({
@@ -165,7 +166,7 @@ export default {
     },
     // 付款详情
     payDetail () {
-      this.$fetch('/fd/insure/selectStagesDetail', {
+      this.$fetch('/ad/insure/selectStagesDetail', {
         orderId: this.data.orderId
       }).then(res => {
         if (res.code === 0) {
@@ -231,8 +232,19 @@ export default {
     upToCase (data) {
       if (data === 1) return '一'
       if (data === 3) return '三'
+    },
+    timeChange (data) {
+      let date = new Date(data)
+      return date.getFullYear() + '-' + zero(date.getMonth() + 1) + '-' + zero(date.getDate())
+    },
+    time (data) {
+      return data.split(' ')[0].replace('-', '.').replace('-', '.')
     }
   }
+}
+function zero (data) {
+  if (data < 10) return '0' + data
+  return data
 }
 </script>
 
@@ -258,6 +270,9 @@ export default {
       display: flex;
       justify-content: space-around;
       cursor: pointer;
+      img {
+        vertical-align: middle;
+      }
       li {
         font-size:18px;
         font-family:MicrosoftYaHei;
@@ -359,9 +374,13 @@ export default {
         margin-right: 10px;
         width:50px;
         height:20px;
+        line-height:20px;
         background:rgba(40,40,40,1);
         border-radius:10px;
         color: #fff;
+        font-size: 12px;
+        text-indent: 0;
+        text-align: center;
       }
     }
     .stages {
@@ -375,6 +394,7 @@ export default {
         button {
           width:72px;
           height:26px;
+          line-height:26px;
           background:rgba(224,224,224,1);
           border-radius:13px;
           color: #666666;

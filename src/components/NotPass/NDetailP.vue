@@ -139,7 +139,7 @@
       </div>
     </div>
     <div class="btn">
-      <button class="save" @click="submit">确定</button>
+      <button class="save" @click="submit">提交</button>
       <span style="padding: 0 115px;"></span>
       <button @click="$router.go(-1)">返回</button>
     </div>

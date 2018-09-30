@@ -134,6 +134,7 @@ function zero (data) {
     button {
       width:100px;
       height:42px;
+      line-height:42px;
       background:#DEDEDE;
       border-radius:5px;
       color:#666666;

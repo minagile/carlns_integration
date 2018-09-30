@@ -113,15 +113,25 @@
     <!-- 还款计划表 -->
     <el-dialog :visible.sync="dialogFormVisible" :modal-append-to-body="false" width="915px">
       <template>
-        <div class="header" v-if="data.obj">
+        <div class="header" v-if="data.company">
           <h2>
             <!-- <img src="../../assets/img/order_msg.png" alt=""> -->
             <span>还款计划表</span>
           </h2>
           <span>公司：{{ data.company.companyName }}</span>
           <span>分期金额：{{ data.order.countnum }}</span>
-          <span>分期期数：{{ data.obj[0].stages }}</span>
-          <button>{{ data.obj[0].age | upToCase }}年期</button>
+          <span v-if="data.obj">分期期数：{{ data.obj[0].stages }}</span>
+          <button v-if="data.obj">{{ data.obj[0].age | upToCase }}年期</button>
+        </div>
+        <div class="header" v-if="data2.customer">
+          <h2>
+            <!-- <img src="../../assets/img/order_msg.png" alt=""> -->
+            <span>还款计划表</span>
+          </h2>
+          <span>姓名：{{ data2.customer.customerName }}</span>
+          <span>分期金额：{{ data2.order.countnum }}</span>
+          <span v-if="data2.obj">分期期数：{{ data2.obj.stages }}</span>
+          <button v-if="data2.obj">{{ data2.obj.age | upToCase }}年期</button>
         </div>
       </template>
       <div class="stages">
@@ -175,15 +185,25 @@ export default {
   name: 'HomePage',
   data () {
     return {
-      demoEvents: [{
-        date: '2018/9/15',
-        title: 'eat',
-        desc: 'longlonglong description'
-      },
-      {
-        date: '2018/9/12',
-        title: 'this is a title'
-      }],
+      demoEvents: [
+        {
+          date: '2018/9/15',
+          title: 'eat',
+          desc: 'aaa'
+        },
+        {
+          date: '2018/9/30',
+          title: '11111'
+        },
+        {
+          date: '2018/10/20',
+          title: '333333'
+        },
+        {
+          date: '2018/10/10',
+          title: '222222'
+        }
+      ],
       list1: [],
       list2: [],
       list3: [],
@@ -212,7 +232,8 @@ export default {
           text: '本月待还'
         }
       ],
-      msgNum: []
+      msgNum: [],
+      data2: {}
     }
   },
   mounted () {
@@ -221,38 +242,38 @@ export default {
   methods: {
     getData () {
       this.$fetch('/fd/index/selectCountByNewsFd').then(res => {
-        // console.log(res)
         this.msgNum = res.data
       })
       this.$fetch('/fd/index/countWork', {
         status: '1'
       }).then(res => {
-        // console.log(res)
         this.list1 = res
       })
       this.$fetch('/fd/index/countWork', {
         status: '2'
       }).then(res => {
-        // console.log(res)
         this.list2 = res
       })
       this.$fetch('/fd/index/countWork', {
         status: '3'
       }).then(res => {
-        // console.log(res)
         this.list3 = res
       })
     },
     // 付款计划表弹窗
     payDetail (id, did, type, batch) {
-      // console.log(did)
+      console.log(type)
       this.$fetch('/fd/insure/selectDetail', {
         id: did,
         batch: batch,
         type: type
       }).then(res => {
-        // console.log(res.data)
-        this.data = res.data.result
+        console.log(res.data.result)
+        if (type === '1') {
+          this.data2 = res.data.result
+        } else {
+          this.data = res.data.result
+        }
       })
       this.$fetch('/fd/insure/selectStagesDetail', {
         orderId: id

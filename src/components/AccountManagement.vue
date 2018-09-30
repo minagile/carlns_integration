@@ -132,8 +132,11 @@ export default {
       }
     },
     edit (id) {
+      this.form1.id = id
       this.dialogFormVisible = true
-      this.$fetch('/fd/RAM/showRAM', {id: id}).then(res => {
+      this.$fetch('/fd/RAM/showRAM', {
+        id: id
+      }).then(res => {
         this.form1 = res.data
       })
     },
@@ -160,25 +163,31 @@ export default {
           message: '账号不能为空'
         })
       } else {
-        this.$post('/fd/RAM/addRAM', this.form).then(res => {
-          if (res.code === 0) {
-            this.getData()
-            this.$message({
-              type: 'success',
-              message: '添加成功'
-            })
-          } else {
-            this.form = {
-              'username': '',
-              'password': '',
-              'name': ''
+        var reg = /^[1][0-9][0-9]{9}$/
+        console.log(!reg.test(this.form.name))
+        if (!reg.test(this.form.name)) {
+          this.$message('请输入正确的手机号')
+        } else {
+          this.$post('/fd/RAM/addRAM', this.form).then(res => {
+            if (res.code === 0) {
+              this.getData()
+              this.$message({
+                type: 'success',
+                message: '添加成功'
+              })
+            } else {
+              this.form = {
+                'username': '',
+                'password': '',
+                'name': ''
+              }
+              this.$message({
+                type: 'info',
+                message: res.msg
+              })
             }
-            this.$message({
-              type: 'info',
-              message: res.msg
-            })
-          }
-        })
+          })
+        }
       }
     },
     // 删除确认

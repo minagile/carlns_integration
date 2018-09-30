@@ -2,9 +2,9 @@
   <!-- 未通过--企业详情 -->
   <div class="cen_detail_c">
     <div class="table">
-      <div class="errormsg">
-        <span><img src="../../assets/img/danger.png" style="margin: 5px 30px 0 0;">xx车、XX车未及时还款，逾期15天，退保中。</span>
-      </div>
+      <!-- <div class="errormsg">
+        <span><img src="../../assets/img/danger.png" style="margin: 5px 30px 0 0;">{{ error.errormsg }}</span>
+      </div> -->
       <el-table :data="tableData" style="width: 1127px;margin: 0 auto;" >
         <el-table-column prop="carvin" label="车架号" width="180" align="center"></el-table-column>
         <el-table-column prop="nameplate" label="车辆合格证/车牌号" width="180" align="center"></el-table-column>
@@ -90,9 +90,9 @@ export default {
         batch: this.$route.query.batch,
         type: '2'
       }).then(res => {
-        // console.log(res.data)
+        console.log(res.data.result)
         this.tableData = res.data.result.obj
-        this.error = res.data.result.error[0].errorMsg
+        this.error = res.data.result.error
         this.ruleForm = res.data.result.company
       })
     }

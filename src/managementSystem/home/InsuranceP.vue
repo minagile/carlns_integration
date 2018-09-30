@@ -3,7 +3,7 @@
   <div class="insurance_p">
     <div class="con">
       <div class="body">
-        <header @click="payDetail">
+        <!-- <header @click="payDetail">
           <div class="itm">
             <img src="../../assets/mImg/moneybag.png" alt="">
             <span>状态：用户已上传资料，待审核</span>
@@ -12,7 +12,7 @@
             <img src="../../assets/mImg/time.png" alt="">
             <span>提交时间：{{ ruleForm.customer.updateTime | timeChange }}</span>
           </div>
-        </header>
+        </header> -->
         <div class="tit">
           <img src="../../assets/mImg/user_msg.png" alt="">
         </div>

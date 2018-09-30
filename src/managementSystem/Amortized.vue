@@ -12,42 +12,45 @@
             <div class="index">{{ scope.$index + 1 }}</div>
           </template>
         </el-table-column>
-        <el-table-column prop="name" label="企业名称：锦上有限公司">
+        <el-table-column>
           <template slot-scope="scope">
             <div v-if="scope.row.type === 1">姓名：{{ scope.row.name }}</div>
             <div v-if="scope.row.type === 2">企业名称：{{ scope.row.name }}</div>
           </template>
         </el-table-column>
-        <el-table-column prop="car_nameplate" label="车牌号：浙XXXXXX">
+        <el-table-column prop="car_nameplate">
           <template slot-scope="scope">
-            <div v-if="scope.row.carType ===  1">车牌号：{{ scope.row.carNameplate }}</div>
-            <div v-if="scope.row.carType ===  2">批次：{{ scope.row.batch }}</div>
+            <div v-if="scope.row.type ===  1">
+              <span v-if="scope.row.carType === 1">车牌号：{{ scope.row.carNameplate }}</span>
+              <span v-if="scope.row.carType === 2">车架号：{{ scope.row.carNameplate }}</span>
+            </div>
+            <div v-if="scope.row.type ===  2">批次：{{ scope.row.batch }}</div>
           </template>
         </el-table-column>
-        <el-table-column align="center" prop="insureAmount" label="分期金额：5600">
+        <el-table-column align="center" >
           <template slot-scope="scope">
             <div>分期金额：{{ scope.row.insureAmount }}</div>
           </template>
         </el-table-column>
-        <el-table-column align="center" prop="insureStages" label="分期期数：12">
+        <el-table-column align="center">
           <template slot-scope="scope">
             <div>分期期数：{{ scope.row.insureStages }}</div>
           </template>
         </el-table-column>
-        <el-table-column align="center" label="状态：">
+        <el-table-column align="center">
           <template slot-scope="scope">
             <div style="color: #FF9C00;">状态：客户已付款</div>
           </template>
         </el-table-column>
-        <el-table-column align="center" prop="createTime" label="时间：2018.6.16">
+        <el-table-column align="center">
           <template slot-scope="scope">
             <div>时间：{{ scope.row.createTime | timeChange }}</div>
           </template>
         </el-table-column>
         <el-table-column align="center">
           <template slot-scope="scope">
-            <el-button type="primary" round plain v-if="scope.row.type === 2" size="small" @click="$router.push({name: 'InsuranceC', query: {id: scope.row.id, batch: scope.row.batch}})">退保</el-button>
-            <el-button type="primary" round plain v-if="scope.row.type === 1" size="small" @click="$router.push({name: 'InsuranceP', query: {id: scope.row.id}})">退保</el-button>
+            <el-button type="primary" round plain v-if="scope.row.type === 2" size="small" @click="$router.push({name: 'InsuranceC', query: {id: scope.row.id, batch: scope.row.batch}})">查看详情</el-button>
+            <el-button type="primary" round plain v-if="scope.row.type === 1" size="small" @click="$router.push({name: 'InsuranceP', query: {id: scope.row.id}})">查看详情</el-button>
             <!-- <el-button type="primary" round plain size="small">查看详情</el-button> -->
             <!-- <el-button type="primary" round plain size="small">删除</el-button> -->
           </template>
@@ -129,6 +132,7 @@ function zero (data) {
     button {
       width:100px;
       height:42px;
+      line-height:42px;
       background:#DEDEDE;
       border-radius:5px;
       color:#666666;

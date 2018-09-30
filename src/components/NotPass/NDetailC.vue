@@ -142,6 +142,7 @@ export default {
         arrList.push({carId: v.carId, carVin: v.carvin, nameplate: v.nameplate, type: v.type})
       })
       var formData = new FormData()
+      formData.append('carBatch', this.error.errorBatch)
       formData.append('companyId', this.ruleForm.companyId)
       formData.append('companyName', this.ruleForm.companyName)
       formData.append('legalPersonName', this.ruleForm.legalPersonName)

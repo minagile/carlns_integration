@@ -212,6 +212,7 @@ function zero (data) {
       button {
         width:119px;
         height:36px;
+        line-height:36px;
         border:1px solid rgba(75,134,255,1);
         border-radius:16px;
         float: right;
@@ -351,9 +352,11 @@ function zero (data) {
         margin-right: 10px;
         width:50px;
         height:20px;
+        line-height:20px;
         background:rgba(255,255,255,1);
         border-radius:10px;
         color: #2E92FF;
+        text-indent: 0;
       }
     }
     .stages {

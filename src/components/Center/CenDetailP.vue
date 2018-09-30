@@ -2,9 +2,9 @@
   <!-- 未通过--个人详情 -->
   <div class="cen_detail_p">
     <!-- 未通过--个人详情 -->
-    <div class="no-through">
+    <!-- <div class="no-through">
       <div><img src="../../assets/img/danger.png" style="margin: 5px 30px 0 0;">审核未通过原因：图片不清晰，身份证正反面不清晰</div>
-    </div>
+    </div> -->
     <div class="zujian">
       <PersonDetail :tableList="data"/>
     </div>

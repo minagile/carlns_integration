@@ -6,32 +6,33 @@
     </header>
     <div class="con">
       <!-- 个人 -->
-      <el-table :data="tableData" v-if="num === 2" style="width: 100%" :show-header="false">
+      <el-table :data="tableData" v-if="num === 2 || num === 0" style="width: 100%" :show-header="false">
         <el-table-column width="60">
           <template slot-scope="scope">
             <div class="index">{{ scope.$index + 1 }}</div>
           </template>
         </el-table-column>
-        <el-table-column prop="name" label="企业名称：锦上有限公司">
+        <el-table-column>
           <template slot-scope="scope">
-            <div v-if="scope.row.type === '1'">姓名：{{ scope.row.name }}</div>
-            <div v-if="scope.row.type === '2'">企业名称：{{ scope.row.name }}</div>
+            <div v-if="scope.row.type === 1">姓名：{{ scope.row.name }}</div>
+            <div v-if="scope.row.type === 2">企业名称：{{ scope.row.name }}</div>
           </template>
         </el-table-column>
-        <el-table-column prop="car_nameplate" label="车牌号：浙XXXXXX">
+        <el-table-column>
           <template slot-scope="scope">
-            <div v-if="scope.row.car_type ===  1">车牌号：{{ scope.row.car_nameplate }}</div>
-            <div v-if="scope.row.car_type ===  2">批次：{{ scope.row.car_batch }}</div>
+            <div v-if="scope.row.type ===  1 && scope.row.carType === 1">车牌号：{{ scope.row.carNameplate }}</div>
+            <div v-if="scope.row.type ===  1 && scope.row.carType === 2">车架号：{{ scope.row.carNameplate }}</div>
+            <div v-if="scope.row.type ===  2">批次：{{ scope.row.batch }}</div>
           </template>
         </el-table-column>
-        <el-table-column align="center" prop="insure_amount" label="分期金额：5600">
+        <el-table-column align="center">
           <template slot-scope="scope">
-            <div>分期金额：{{ scope.row.insure_amount }}</div>
+            <div>分期金额：{{ scope.row.insureAmount }}</div>
           </template>
         </el-table-column>
-        <el-table-column align="center" prop="insure_stages" label="分期期数：12">
+        <el-table-column align="center">
           <template slot-scope="scope">
-            <div>分期期数：{{ scope.row.insure_stages }}</div>
+            <div>分期期数：{{ scope.row.insureStages }}</div>
           </template>
         </el-table-column>
         <el-table-column align="center" label="状态：">
@@ -39,39 +40,9 @@
             <div style="color: #FF9C00;">状态：已分期</div>
           </template>
         </el-table-column>
-        <el-table-column align="center" prop="create_time" label="时间：2018.6.16">
-          <template slot-scope="scope">
-            <div>时间：{{ scope.row.create_time }}</div>
-          </template>
-        </el-table-column>
         <el-table-column align="center">
           <template slot-scope="scope">
-            <el-button type="primary" round plain v-if="scope.row.type === 2" size="small" @click="$router.push({name: 'InsuranceC', query: {id: scope.row.id, batch: scope.row.batch, tuibao: true}})">查看详情</el-button>
-            <el-button type="primary" round plain v-if="scope.row.type === 1" size="small" @click="$router.push({name: 'InsuranceP', query: {id: scope.row.id, tuibao: true}})">查看详情</el-button>
-            <el-button type="primary" round plain size="small" @click="del(scope.row.id, scope.row.type, scope.row.batch, scope.row.orderId)">删除</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-      <!-- 企业 -->
-      <el-table :data="tableData" v-if="num === 1" style="width: 100%" :show-header="false">
-        <el-table-column width="60">
-          <template slot-scope="scope">
-            <div class="index">{{ scope.$index + 1 }}</div>
-          </template>
-        </el-table-column>
-        <el-table-column prop="name">
-          <template slot-scope="scope">
-            <div>企业名称：{{ scope.row.name }}({{ scope.row.carNum }})</div>
-          </template>
-        </el-table-column>
-        <el-table-column prop="name">
-          <template slot-scope="scope">
-            <div>法人：{{ scope.row.personName }}</div>
-          </template>
-        </el-table-column>
-        <el-table-column prop="car_nameplate">
-          <template slot-scope="scope">
-            <div>联系方式：{{ scope.row.phone }}</div>
+            <div>时间：{{ scope.row.createTime | timeChange }}</div>
           </template>
         </el-table-column>
         <el-table-column align="center">
@@ -83,7 +54,7 @@
         </el-table-column>
       </el-table>
       <!-- 全部 -->
-      <el-table :data="tableData" v-if="num === 0" style="width: 100%" :show-header="false">
+      <el-table :data="tableData" v-if="num === 1" style="width: 100%" :show-header="false">
         <el-table-column width="60">
           <template slot-scope="scope">
             <div class="index">{{ scope.$index + 1 }}</div>
@@ -91,7 +62,7 @@
         </el-table-column>
         <el-table-column prop="name">
           <template slot-scope="scope">
-            <div>企业名称：{{ scope.row.name }}({{ scope.row.carNum }})</div>
+            <div>企业名称：{{ scope.row.name }}({{ scope.row.carNum }}辆)</div>
           </template>
         </el-table-column>
         <el-table-column prop="name">
@@ -163,7 +134,7 @@ export default {
       this.$fetch('/ad/index/findSurrenderEd', {
         status: data
       }).then(res => {
-        // console.log(res.data)
+        console.log(res.data)
         if (res.code === 0) {
           this.tableData = res.data
         } else {
@@ -204,6 +175,7 @@ function zero (data) {
     button {
       width:100px;
       height:42px;
+      line-height:42px;
       background:#DEDEDE;
       border-radius:5px;
       color:#666666;

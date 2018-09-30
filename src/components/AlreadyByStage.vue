@@ -23,8 +23,9 @@
         </el-table-column>
         <el-table-column prop="car_nameplate" label="车牌号：浙XXXXXX">
           <template slot-scope="scope">
-            <div v-if="scope.row.carType ===  1">车牌号：{{ scope.row.carNameplate }}</div>
-            <div v-if="scope.row.carType ===  2">批次：{{ scope.row.batch }}</div>
+            <div v-if="scope.row.type === 1 && scope.row.carType ===  1">车辆合格证：{{ scope.row.carNameplate }}</div>
+            <div v-if="scope.row.type === 1 && scope.row.carType ===  2">车牌号：{{ scope.row.carNameplate }}</div>
+            <div v-if="scope.row.type ===  2">批次：{{ scope.row.batch }}</div>
           </template>
         </el-table-column>
         <el-table-column align="center" prop="insure_amount" label="分期金额：5600">

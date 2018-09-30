@@ -9,52 +9,7 @@
       <el-button type="info" :class="{active: 3 == tabNum}" @click="tab(3)">显示个人</el-button>
     </header>
     <div class="con">
-      <!-- <el-table :data="tableData" :show-header="false" style="width: 100%" :row-style="{'height': '94px'}">
-        <el-table-column width="60">
-          <template slot-scope="scope">
-            <div class="index">{{ scope.$index + 1 }}</div>
-          </template>
-        </el-table-column>
-        <el-table-column prop="name" label="企业名称：锦上有限公司">
-          <template slot-scope="scope">
-            <div v-if="scope.row.type === 1">姓名：{{ scope.row.name }}</div>
-            <div v-if="scope.row.type === 2">企业名称：{{ scope.row.name }}</div>
-          </template>
-        </el-table-column>
-        <el-table-column prop="car_nameplate" label="车牌号：浙XXXXXX">
-          <template slot-scope="scope">
-            <div v-if="scope.row.carType ===  1">车牌号：{{ scope.row.carNameplate }}</div>
-            <div v-if="scope.row.carType ===  2">批次：{{ scope.row.batch }}</div>
-          </template>
-        </el-table-column>
-        <el-table-column align="center" prop="insure_amount" label="分期金额：5600">
-          <template slot-scope="scope">
-            <div>分期金额：{{ scope.row.insureAmount }}</div>
-          </template>
-        </el-table-column>
-        <el-table-column align="center" prop="insure_stages" label="分期期数：12">
-          <template slot-scope="scope">
-            <div>分期期数：{{ scope.row.insureStages }}</div>
-          </template>
-        </el-table-column>
-        <el-table-column align="center" label="状态：">
-          <template slot-scope="scope">
-            <div style="color: #4B86FF">状态：待付款</div>
-          </template>
-        </el-table-column>
-        <el-table-column align="center" prop="create_time" label="时间：2018.6.16">
-          <template slot-scope="scope">
-            <div>时间：{{ scope.row.createTime | timeChange }}</div>
-          </template>
-        </el-table-column>
-        <el-table-column align="center" width="120">
-          <template slot-scope="scope">
-            <el-button type="primary" v-if="scope.row.type === 2" round plain size="small" @click="$router.push({name: 'CenDetailC', query: {id: scope.row.id, batch: scope.row.batch}})">查看详情</el-button>
-            <el-button type="primary" v-if="scope.row.type === 1" round plain size="small" @click="$router.push({name: 'CenDetailP', query: {id: scope.row.id}})">查看详情</el-button>
-          </template>
-        </el-table-column>
-      </el-table> -->
-      <el-table :data="tableData" :row-class-name="getRowClass" :show-header="false" style="width: 100%" :row-style="{'height': '94px'}">
+      <!-- <el-table :data="tableData" :row-class-name="getRowClass" :show-header="false" style="width: 100%" :row-style="{'height': '94px'}">
         <el-table-column width="60">
           <template slot-scope="scope">
             <div class="index">{{ scope.$index + 1 }}</div>
@@ -131,6 +86,52 @@
           </template>
         </el-table-column>
         <el-table-column align="center" width="120">
+          <template slot-scope="scope">
+            <el-button type="primary" v-if="scope.row.type === 2" round plain size="small" @click="$router.push({name: 'CenDetailC', query: {id: scope.row.id, batch: scope.row.batch}})">查看详情</el-button>
+            <el-button type="primary" v-if="scope.row.type === 1" round plain size="small" @click="$router.push({name: 'CenDetailP', query: {id: scope.row.id}})">查看详情</el-button>
+          </template>
+        </el-table-column>
+      </el-table> -->
+      <el-table :data="tableData" :show-header="false" style="width: 100%" :row-style="{'height': '94px'}">
+        <el-table-column width="60">
+          <template slot-scope="scope">
+            <div class="index">{{ scope.$index + 1 }}</div>
+          </template>
+        </el-table-column>
+        <el-table-column>
+          <template slot-scope="scope">
+            <div v-if="scope.row.type === 1">姓名：{{ scope.row.name }}</div>
+            <div v-if="scope.row.type === 2">企业名称：{{ scope.row.name }}({{ scope.row.carNum }}辆)</div>
+          </template>
+        </el-table-column>
+        <el-table-column>
+          <template slot-scope="scope">
+            <div v-if="scope.row.type === 1 && scope.row.carType ===  1">车辆合格证：{{ scope.row.carNameplate }}</div>
+            <div v-if="scope.row.type === 1 && scope.row.carType ===  2">车牌号：{{ scope.row.carNameplate }}</div>
+            <div v-if="scope.row.type === 2">批次：{{ scope.row.batch }}</div>
+          </template>
+        </el-table-column>
+        <el-table-column>
+          <template slot-scope="scope">
+            <div>分期金额：{{ scope.row.insureAmount }}</div>
+          </template>
+        </el-table-column>
+        <el-table-column>
+          <template slot-scope="scope">
+            <div>分期期数：{{ scope.row.insureStages }}</div>
+          </template>
+        </el-table-column>
+        <el-table-column>
+          <template slot-scope="scope">
+            <div style="color: #4B86FF">状态：退保中</div>
+          </template>
+        </el-table-column>
+        <el-table-column align="center">
+          <template slot-scope="scope">
+            <div>时间：{{ scope.row.createTime | timeChange }}</div>
+          </template>
+        </el-table-column>
+        <el-table-column align="center" width="140">
           <template slot-scope="scope">
             <el-button type="primary" v-if="scope.row.type === 2" round plain size="small" @click="$router.push({name: 'CenDetailC', query: {id: scope.row.id, batch: scope.row.batch}})">查看详情</el-button>
             <el-button type="primary" v-if="scope.row.type === 1" round plain size="small" @click="$router.push({name: 'CenDetailP', query: {id: scope.row.id}})">查看详情</el-button>

@@ -11,7 +11,7 @@
         <el-table-column label="是否为默认" align="center" width="90">
           <template slot-scope="scope">
             <div>
-              <img v-if="scope.row.messageState === 0" src="../assets/mImg/mo.png" alt="">
+              <img v-if="scope.row.messageState === 2" src="../assets/mImg/mo.png" alt="">
               <img v-if="scope.row.messageState === 1" src="../assets/mImg/checked.png" alt="">
             </div>
           </template>
@@ -264,6 +264,7 @@ function zero (data) {
     button {
       width:100px;
       height:42px;
+      line-height:42px;
       background:#DEDEDE;
       border-radius:5px;
       color:#666666;
