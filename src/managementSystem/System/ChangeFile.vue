@@ -4,7 +4,7 @@
     <div class="con">
       <el-table :data="tableData" height="100%" style="width: 100%">
         <el-table-column prop="resourceName" label="协议名称" align="center"></el-table-column>
-        <el-table-column prop="resourceUrl" label="内容" width="400"></el-table-column>
+        <el-table-column prop="resourceName" label="内容" width="400"></el-table-column>
         <el-table-column label="类型">
           <template slot-scope="scope">
             <div>{{ scope.row.resourceState | type }}</div>
@@ -30,12 +30,13 @@
         </div>
       </template>
       <div class="box">
-        <p>现有《xx》<el-button size="small" @click="look">查看</el-button></p>
+        <p>现有《{{ filesShow }}》<el-button size="small" @click="look">查看</el-button></p>
         <p>点击下图中的上传按钮上传新的合作协议：</p>
         <div class="upload">
           <img src="../../assets/mImg/upload.png" alt="">
           <a>点击上传PDF</a>
           <input type="file" @change="upfile" accept=".pdf">
+          <span style="position: absolute;top:0;left:0;">{{ file.name }}</span>
         </div>
       </div>
       <div slot="footer" class="dialog-footer">
@@ -55,7 +56,8 @@ export default {
       tableData: [],
       dialogFormVisible: false,
       idList: {},
-      file: ''
+      file: '',
+      filesShow: ''
     }
   },
   mounted () {
@@ -66,19 +68,21 @@ export default {
       this.file = e.target.files[0]
     },
     look () {
-      window.open('http://192.168.1.131:8080/' + this.idList.resourceUrl)
+      window.open(this.idList.resourceUrl)
     },
     addMessage () {
       var formData = new FormData()
       formData.append('file', this.file)
       formData.append('id', this.idList.resourceId)
       let config = {
-        headers: {'Content-Type': 'multipart/form-data'},
-        token: sessionStorage.getItem('token')
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'token': sessionStorage.getItem('token')
+        }
       }
       this.$http.post(Req + '/ad/resource/update', formData, config).then(res => {
         // console.log(res)
-        if (res.body.code === 101) {
+        if (res.body.code === 102) {
           this.$router.push({
             path: '/MLogin',
             querry: { redirect: this.$router.currentRoute.fullPath }
@@ -101,7 +105,8 @@ export default {
     },
     edit (id, data) {
       this.idList = data
-      // console.log(data)
+      console.log(data)
+      this.filesShow = data.resourceName
       this.dialogFormVisible = true
       // this.$post('/ad/resource/update', {
       //   file

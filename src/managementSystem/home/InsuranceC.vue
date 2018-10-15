@@ -142,7 +142,7 @@ export default {
   methods: {
     // 确认付款并修改状态
     changeStates (id) {
-      this.$confirm('是否确认还款', {
+      this.$confirm('已收到用户的转账，确定还款', {
         confirmButtonText: '确定',
         cancelButtonText: '取消'
       }).then(() => {

@@ -233,7 +233,7 @@ export default {
           text: '本月待还'
         }
       ],
-      data: 1,
+      data: 0,
       messageList: [],
       moveShow: false,
       dialogFormVisible: false,

@@ -37,7 +37,7 @@
         </el-table-column>
         <el-table-column align="center" label="状态：">
           <template slot-scope="scope">
-            <div style="color: #FF9C00;">状态：已分期</div>
+            <div style="color: #FF9C00;">状态：已退保</div>
           </template>
         </el-table-column>
         <el-table-column align="center">

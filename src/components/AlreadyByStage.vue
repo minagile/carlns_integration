@@ -40,7 +40,7 @@
         </el-table-column>
         <el-table-column align="center" label="状态：">
           <template slot-scope="scope">
-            <div style="color: #4B86FF">状态：待付款</div>
+            <div style="color: #4B86FF">状态：已分期</div>
           </template>
         </el-table-column>
         <el-table-column align="center" prop="create_time" label="时间：2018.6.16">

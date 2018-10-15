@@ -3,16 +3,16 @@
   <div class="insurance_p">
     <div class="con">
       <div class="body">
-        <!-- <header @click="payDetail">
+        <header @click="payDetail"  v-show="$route.query.tuibao !== true">
           <div class="itm">
             <img src="../../assets/mImg/moneybag.png" alt="">
-            <span>状态：用户已上传资料，待审核</span>
+            <span>状态：已分期，可查看还款详情</span>
           </div>
           <div class="itm">
             <img src="../../assets/mImg/time.png" alt="">
             <span>提交时间：{{ ruleForm.customer.updateTime | timeChange }}</span>
           </div>
-        </header> -->
+        </header>
         <div class="tit">
           <img src="../../assets/mImg/user_msg.png" alt="">
         </div>
@@ -67,7 +67,7 @@
         </div>
         <PicShow :imgList="ruleForm" :from="'个人审核'" />
         <div class="btn">
-          <button class="p" @click="exit">退保</button>
+          <button class="p" @click="exit"  v-show="$route.query.tuibao !== true">退保</button>
           <button @click="$router.go(-1)">取消</button>
         </div>
       </div>
@@ -118,7 +118,7 @@
         <ul>
           <li>还款状态</li>
           <li v-for="(data, index) in detailList" :key="index">
-            <button v-if="data.stagesState !== 2" class="sure" @click="changeStates(data.stagesId)">确定还款</button>
+            <button v-if="data.stagesState !== 2" class="sure">未还款</button>
             <button v-if="data.stagesState === 2" style="color: #999999;">已还款</button>
           </li>
         </ul>
@@ -165,37 +165,14 @@ export default {
     this.getData()
   },
   methods: {
-    // 确认付款并修改状态
-    changeStates (id) {
-      this.$confirm('是否确认还款', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消'
-      }).then(() => {
-        this.$post('/fd/insure/uploadStages', {stagesId: id}).then(res => {
-          if (res.code === 0) {
-            this.payDetail()
-            this.$message({
-              type: 'success',
-              message: '还款成功!'
-            })
-          } else {
-            this.$message.error(res.msg)
-          }
-        })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消确定还款'
-        })
-      })
-    },
     // 付款详情
     payDetail () {
-      this.$fetch('/fd/insure/selectStagesDetail', {
+      this.dialogFormVisible = true
+      this.$fetch('/ad/insure/selectStagesDetail', {
         orderId: this.data.orderId
       }).then(res => {
         if (res.code === 0) {
-          // console.log(res.data)
+          console.log(res.data)
           this.detailList = res.data
           this.dialogFormVisible = true
         }
@@ -387,12 +364,14 @@ function zero (data) {
       }
       button {
         margin-right: 10px;
-        // width:50px;
-        // height:20px;
+        width:50px;
+        height:20px;
+        line-height:20px;
         background:rgba(40,40,40,1);
         border-radius:20px;
         color: #fff;
-        padding: 5px 10px;
+        // padding: 5px 10px;
+        text-indent: 0;
       }
     }
     .stages {
@@ -406,6 +385,7 @@ function zero (data) {
         button {
           width:72px;
           height:26px;
+          line-height:26px;
           background:rgba(224,224,224,1);
           border-radius:13px;
           color: #666666;

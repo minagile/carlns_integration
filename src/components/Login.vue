@@ -15,7 +15,7 @@
         <button @click="login">登 录</button>
         <p class="last">
           <a @click="forget = !forget">忘记密码？</a>
-          <a class="l" href="/ChannelApplication">点我进行渠道代理申请</a>
+          <a class="l" @click="$router.push({name: 'ChannelApplication'})">点我进行渠道代理申请</a>
         </p>
       </div>
     </el-card>
@@ -170,9 +170,9 @@ export default {
 .login {
   height: 100%;
   background-image: url(../assets/img/bg.png);
-  // background-size: 100% 100%;
+  background-size: 100% 100%;
   background-position: center center;
-  // background-size: contain;
+  // background-size: cover;
   position: relative;
   .el-card {
     width:452px;
