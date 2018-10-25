@@ -85,6 +85,11 @@ export default {
   mounted () {
     this.getData(this.num + 1)
   },
+  watch: {
+    '$route' () {
+      this.getData(this.num + 1)
+    }
+  },
   methods: {
     getData (num) {
       this.$fetch('/ad/index/selectSurrenderByStagesFd', {

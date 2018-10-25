@@ -1,7 +1,7 @@
 <template>
   <div class="pic_show">
     <div class="pic">
-      <figure v-for="(item, index) in list" :key="index">
+      <figure v-for="(item, index) in list" :key="index"  v-if="listImg[index]">
         <div class="text"><span>{{ item }}</span></div>
         <div class="right">
           <div class="box" :style="{'backgroundImage': 'url(' + listImg[index] + ')'}"></div>
@@ -17,7 +17,7 @@ export default {
   name: 'PicShow',
   data () {
     return {
-      list: ['缴费通知单：', '购车发票：', '机动车行驶证：', '身份证正面：', '身份证反面：'],
+      list: ['缴费通知单：', '购车发票：', '机动车行驶证：', '身份证正面：', '身份证反面：', '分期计划表：', '已付款凭证：'],
       listImg: []
     }
   },
@@ -27,8 +27,8 @@ export default {
   watch: {
     imgList (val) {
       if (this.from === '企业待审核') {
-        this.list = ['缴费通知单：', '身份证正面：', '身份证反面：']
-        this.listImg = [val.companyLicenseUrl, val.legalPersonUp, val.legalPersonDown]
+        this.list = ['缴费通知单：', '身份证正面：', '身份证反面：', '分期计划表：', '已付款凭证：']
+        this.listImg = [val.companyLicenseUrl, val.legalPersonUp, val.legalPersonDown, val.companyplan, val.firstpaybill]
       }
       if (this.from === '个人审核' || this.from === '查看详情') {
         if (val.obj.type === 1) {

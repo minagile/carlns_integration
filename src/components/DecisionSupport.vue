@@ -69,8 +69,8 @@ export default {
   },
   methods: {
     dateChange (data) {
-      var val = data[0].getFullYear() + '-' + (data[0].getMonth() + 1) + '-' + data[0].getDate() + '~' + data[1].getFullYear() + '-' + (data[1].getMonth() + 1) + '-' + data[1].getDate()
-      console.log(val)
+      // var val = data[0].getFullYear() + '-' + (data[0].getMonth() + 1) + '-' + data[0].getDate() + '~' + data[1].getFullYear() + '-' + (data[1].getMonth() + 1) + '-' + data[1].getDate()
+      // console.log(val)
     },
     tableTab (index) {
       this.num2 = index

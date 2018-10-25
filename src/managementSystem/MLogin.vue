@@ -71,6 +71,7 @@ export default {
                 arr.push(v.adauthName)
               })
               sessionStorage.setItem('permission', JSON.stringify(arr))
+              sessionStorage.setItem('password', this.psd)
               this.$router.push({name: 'AllChannels'})
             })
           } else {
@@ -89,7 +90,7 @@ export default {
 <style lang="less" scoped>
 .m_login {
   height: 100%;
-  background-image: url(../assets/MImg/bg.png);
+  background-image: url(https://easyfq.oss-cn-beijing.aliyuncs.com/resource/background01.png);
   background-size: 100%;
   background-position: center center;
   // background-size: contain;

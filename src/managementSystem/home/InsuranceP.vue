@@ -108,13 +108,13 @@
             <span v-if="data.stagesState === 2" style="color: #999999;">{{ data.stagesPrice }}</span>
           </li>
         </ul>
-        <ul>
+        <!-- <ul>
           <li>到账金额</li>
           <li v-for="(data, index) in detailList" :key="index">
             <span v-if="data.stagesState !== 2">{{ data.stagesPrice }}</span>
             <span v-if="data.stagesState === 2" style="color: #999999;">{{ data.stagesPrice }}</span>
           </li>
-        </ul>
+        </ul> -->
         <ul>
           <li>还款状态</li>
           <li v-for="(data, index) in detailList" :key="index">
@@ -190,16 +190,18 @@ export default {
         }).then(res => {
           if (res.code === 0) {
             this.$message({
+              showClose: true,
               type: 'success',
               message: '退保成功!'
             })
             this.$router.go(-1)
           } else {
-            this.$message.error(res.msg)
+            this.$message({type: 'error', msg: res.msg, showClose: true})
           }
         })
       }).catch(() => {
         this.$message({
+          showClose: true,
           type: 'info',
           message: '已取消删除'
         })
@@ -218,7 +220,7 @@ export default {
           this.data = res.data.result.order
           this.ruleForm = res.data.result
         } else {
-          this.$message(res.msg)
+          this.$message({msg: res.msg, showClose: true})
           this.$router.back(-1)
         }
       })
@@ -380,7 +382,7 @@ function zero (data) {
       padding: 20px 0;
       ul {
         float: left;
-        width: 20%;
+        width: 25%;
         text-align: center;
         button {
           width:72px;

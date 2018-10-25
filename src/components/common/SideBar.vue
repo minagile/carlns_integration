@@ -44,7 +44,7 @@
           <span slot="title">决策支持</span>
         </a>
       </li> -->
-      <li>
+      <li v-if="type === '1'">
         <a :class="{active:7 == num}"  @click="tab(7)">
           <img src="../../assets/img/zhanghao.png" alt="">
           <span slot="title">账号管理</span>
@@ -62,7 +62,8 @@ export default {
       num: 1,
       list: ['/HomePage', '/ApplicationEntrance', '/StayByStage', '/AlreadyByStage', '/NotThrough', '/RetreatCenter', '/AccountManagement'],
       list2: ['首页', '申请入口', '待分期', '已分期', '未通过', '退保中心', '账号管理'],
-      navArr: []
+      navArr: [],
+      type: '2'
     }
   },
   mounted () {
@@ -75,6 +76,7 @@ export default {
       }
     })
     // console.log(this.list1)
+    this.type = sessionStorage.getItem('type')
   },
   methods: {
     tab (index) {

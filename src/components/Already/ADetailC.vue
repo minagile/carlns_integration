@@ -3,13 +3,13 @@
   <div class="a_detail_c">
     <div class="top">
       <p>
-        <span>保费总计：{{ data.countnum }}</span>
+        <span style="visibility: hidden">保费总计：{{ data.countnum }}</span>
         <button @click="payDetail">付款详情</button>
       </p>
       <div class="tabline">
+        <div><img src="../../assets/img/clock_time.png" alt="">保费总计:{{ data.countnum }}</div>
         <div><img src="../../assets/img/bagP.png" alt="">首期总计:{{ data.firstpaynum }}</div>
         <div><img src="../../assets/img/order_msg.png" alt="">渠道总计:{{ data.channelpaynum }}</div>
-        <div><img src="../../assets/img/clock_time.png" alt="">时间:{{ data.channelpaynum }}</div>
       </div>
     </div>
     <div class="table">
@@ -360,7 +360,7 @@ function zero (data) {
       }
     }
     .stages {
-      max-height: 200px;
+      max-height: 400px;
       overflow-y: scroll;
       padding: 20px 0;
       ul {

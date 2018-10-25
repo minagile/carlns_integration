@@ -89,13 +89,13 @@
             <span v-if="data.stagesState === 2" style="color: #999999;">{{ data.stagesPrice }}</span>
           </li>
         </ul>
-        <ul>
+        <!-- <ul>
           <li>到账金额</li>
           <li v-for="(data, index) in detailList" :key="index">
             <span v-if="data.stagesState !== 2">{{ data.stagesPrice }}</span>
             <span v-if="data.stagesState === 2" style="color: #999999;">{{ data.stagesPrice }}</span>
           </li>
-        </ul>
+        </ul> -->
         <ul>
           <li>还款状态</li>
           <li v-for="(data, index) in detailList" :key="index">
@@ -151,16 +151,18 @@ export default {
             this.payDetail()
             this.$message({
               type: 'success',
-              message: '还款成功!'
+              message: '还款成功!',
+              showClose: true
             })
           } else {
-            this.$message.error(res.msg)
+            this.$message({type: 'error', msg: res.msg, showClose: true})
           }
         })
       }).catch(() => {
         this.$message({
           type: 'info',
-          message: '已取消确定还款'
+          message: '已取消确定还款',
+          showClose: true
         })
       })
     },
@@ -189,16 +191,18 @@ export default {
         }).then(res => {
           if (res.code === 0) {
             this.$message({
+              showClose: true,
               type: 'success',
               message: '退保成功!'
             })
             this.$router.go(-1)
           } else {
-            this.$message.error(res.msg)
+            this.$message({type: 'error', msg: res.msg, showClose: true})
           }
         })
       }).catch(() => {
         this.$message({
+          showClose: true,
           type: 'info',
           message: '已取消退保'
         })
@@ -389,7 +393,7 @@ function zero (data) {
       padding: 20px 0;
       ul {
         float: left;
-        width: 20%;
+        width: 25%;
         text-align: center;
         button {
           width:72px;

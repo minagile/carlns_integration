@@ -1,6 +1,6 @@
 <template>
   <!-- 待分期--个人详情 -->
-  <div class="detail_p">
+  <div class="detail_p" id="ss">
     <div class="body">
       <PersonDetail :tableList="data"/>
       <div class="btn">
@@ -13,7 +13,12 @@
     <el-dialog :visible.sync="dialogFormVisible" :modal-append-to-body="false" width="713px">
       <template>
         <div class="header">
-          <span>支付信息</span>
+          <h2>
+            <span>支付信息</span>
+          </h2>
+          <span>分期总额：{{firstQ.countnum}}</span>
+          <span>首期：{{firstQ.firstpaynum}}</span>
+          <span>分期数：{{obj.stages}}</span>
         </div>
       </template>
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" >
@@ -36,9 +41,16 @@
             <el-checkbox v-model="radio"><a :href="textUrl" target="_blank">《车险代扣授权协议》</a></el-checkbox>
           </template>
         </el-form-item>
+        <el-alert
+          :title="text.msg"
+          :type="text.type"
+          close-text="知道了"
+          v-if="text.msg"
+          @close="hello">
+        </el-alert>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="pay">确认支付</el-button>
+        <el-button type="primary" @click="pay" v-loading.fullscreen.lock="fullscreenLoading">确认支付</el-button>
         <el-button @click="dialogFormVisible = false">返回</el-button>
       </div>
     </el-dialog>
@@ -51,6 +63,7 @@ export default {
   name: 'DetailP',
   data () {
     return {
+      fullscreenLoading: false,
       dialogFormVisible: false,
       ruleForm: {
         customerName: '',
@@ -82,7 +95,13 @@ export default {
       second: false,
       data: {},
       textUrl: '',
-      radio: false
+      radio: false,
+      firstQ: {},
+      obj: {},
+      text: {
+        msg: '',
+        type: ''
+      }
     }
   },
   mounted () {
@@ -99,18 +118,21 @@ export default {
     // 支付
     pay () {
       if (this.radio === false) {
-        this.$message('请先阅读并同意车险代扣授权协议')
+        this.text = ({type: 'warning', msg: '请先阅读并同意车险代扣授权协议'})
       } else if (this.ruleForm.code === '' || this.ruleForm.code === undefined) {
-        this.$message('请输入验证码')
+        this.text = ({type: 'warning', msg: '请输入验证码'})
       } else {
-        this.dialogFormVisible = false
+        document.getElementById('ss').style.zIndex = 10
+        this.fullscreenLoading = true
         this.$fetch('/fd/pay/firstPay', {
           orderId: this.data.order.orderId,
           code: this.ruleForm.code
         }).then(res => {
+          this.fullscreenLoading = false
           if (res.code === 0) {
+            this.dialogFormVisible = false
             this.$message({type: 'success', message: res.msg})
-            this.$router.push({name: 'HomePage'})
+            this.$router.push({path: '/StayByStage'})
           } else {
             this.$message.error(res.msg)
           }
@@ -126,21 +148,24 @@ export default {
         // console.log(res)
         this.data = res.data.result
         this.ruleForm = res.data.result.customer
+        this.firstQ = res.data.result.order
+        this.obj = res.data.result.obj
         if (res.code !== 0) {
-          this.$message.error(res.msg)
+          this.text = ({type: 'error', msg: res.msg})
+          // this.$message.error(res.msg)
         }
       })
     },
     // 获取验证码
     getCode () {
       if (this.ruleForm.customerName === '') {
-        this.$message.error('姓名不能为空')
+        this.text = ({type: 'warning', msg: '姓名不能为空'})
       } else if (this.ruleForm.customerIdcard === '') {
-        this.$message.error('身份证不能为空')
+        this.text = ({type: 'warning', msg: '身份证不能为空'})
       } else if (this.ruleForm.card === '' || this.ruleForm.card === undefined) {
-        this.$message.error('银行卡号不能为空')
+        this.text = ({type: 'warning', msg: '银行卡号不能为空'})
       } else if (this.ruleForm.customerPhone === '') {
-        this.$message.error('手机号不能为空')
+        this.text = ({type: 'warning', msg: '手机号不能为空'})
       } else {
         if (this.second === false) {
           this.second = true
@@ -153,9 +178,10 @@ export default {
             phone: this.ruleForm.customerPhone
           }).then(res => {
             if (res.code === 0) {
-              this.$message({type: 'success', message: res.msg})
+              this.text = ({type: 'success', msg: res.msg})
             } else {
-              this.$message.error(res.msg)
+              // this.$message.error(res.msg)
+              this.text = ({type: 'error', msg: res.msg})
             }
           })
         }
@@ -170,6 +196,10 @@ export default {
           this.second = false
         }
       }, 1000)
+    },
+    // 关闭提醒回调
+    hello () {
+      this.text = {}
     }
   },
   deactivated () {
@@ -223,18 +253,35 @@ export default {
     .el-input {
       width: 85%;
     }
-    .header {
+   .header {
       position: absolute;
       top: 0;
       left: 0;
-      background: #2E92FF;
-      text-indent: 10px;
-      color: #fff;
+      background:#2E92FF;
       width: 100%;
-      height: 40px;
-      line-height: 40px;
+      height: 50px;
+      line-height: 50px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       span {
         font-size: 18px;
+      }
+      h2 {
+        padding-left: 10px;
+        span {
+          font-size:18px;
+          font-family:MicrosoftYaHei-Bold;
+          font-weight:bold;
+          color:white;
+        }
+      }
+      span {
+        font-size:12px;
+        font-family:MicrosoftYaHei;
+        font-weight:400;
+        color:white;
+        margin-right: 10px;
       }
     }
     input {
@@ -256,7 +303,7 @@ export default {
       width: 125px;
     }
     .code {
-      background: #ccc;
+      background: #2E92FF;
       color: #fff;
     }
   }

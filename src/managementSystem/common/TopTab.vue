@@ -35,15 +35,46 @@
       </ul>
     </div>
     <div class="user">
-      <a>
+      <!-- <a>
         <img src="../../assets/mImg/user.png" alt="">
         {{ name }}
       </a>
       <a @click="out">
         <img src="../../assets/mImg/out.png" alt="">
         退出登录
-      </a>
+      </a> -->
+      <el-dropdown>
+        <span class="el-dropdown-link">
+          <img src="../../assets/mImg/user.png" alt="">
+          {{ name }}<i class="el-icon-arrow-down el-icon--right"></i>
+        </span>
+        <el-dropdown-menu slot="dropdown">
+          <span @click="out"><el-dropdown-item><img src="../../assets/mImg/out.png" alt="" style="width:20px">退出登录</el-dropdown-item></span>
+          <span @click="changePwd"><el-dropdown-item><img src="../../assets/img/changePwd1.png" alt="" style="width:20px">修改密码</el-dropdown-item></span>
+        </el-dropdown-menu>
+      </el-dropdown>
     </div>
+    <!-- 修改密码弹窗 -->
+    <el-dialog
+      title="修改密码"
+      :visible.sync="dialogVisible"
+      width="450px">
+        <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+          <el-form-item label="登录密码:" prop="oldPwd">
+            <el-input v-model="ruleForm.oldPwd" autocomplete="off" type="password"></el-input>
+          </el-form-item>
+          <el-form-item label="密码" prop="pass">
+            <el-input type="password" v-model="ruleForm.pass" autocomplete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="确认密码" prop="checkPass">
+            <el-input type="password" v-model="ruleForm.checkPass" autocomplete="off"></el-input>
+          </el-form-item>
+          <div class="fenye1">
+            <el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
+          <el-button @click="dialogVisible = false">取消</el-button>
+          </div>
+        </el-form>
+    </el-dialog>
   </div>
 </template>
 
@@ -51,6 +82,34 @@
 export default {
   name: 'TopTab',
   data () {
+    var validatePass = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请输入密码'))
+      } else {
+        if (this.ruleForm.checkPass !== '') {
+          this.$refs.ruleForm.validateField('checkPass')
+        }
+        callback()
+      }
+    }
+    var validatePass2 = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请再次输入密码'))
+      } else if (value !== this.ruleForm.pass) {
+        callback(new Error('两次输入密码不一致!'))
+      } else {
+        callback()
+      }
+    }
+    var validateOldpwd = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请输入登录密码'))
+      } else if (value !== sessionStorage.getItem('password')) {
+        callback(new Error('登录密码错误'))
+      } else {
+        callback()
+      }
+    }
     return {
       // list: ['全部渠道', '待付款', '已分期', '退保中心', '渠道', '系统'],
       // listLink: ['AllChannels', 'Obligations', 'Amortized', 'Surrender', 'Trench', 'System'],
@@ -62,15 +121,34 @@ export default {
       qudaoList: [],
       name: '',
       activeIndex: '1',
-      activeIndex2: '1'
+      activeIndex2: '1',
+      dialogVisible: false,
+      ruleForm: {
+        oldPwd: '',
+        pass: '',
+        checkPass: '',
+        id: ''
+      },
+      batch: null,
+      rules: {
+        oldPwd: [
+          { required: true, validator: validateOldpwd, trigger: 'blur' }
+        ],
+        pass: [
+          { required: true, validator: validatePass, trigger: 'blur' }
+        ],
+        checkPass: [
+          { required: true, validator: validatePass2, trigger: 'blur' }
+        ]
+      }
     }
   },
   mounted () {
     let permissionData = JSON.parse(sessionStorage.getItem('permission'))
     permissionData.forEach(v => {
       if (v === '待付款') {
-        this.list.push(v)
-        this.listLink.push('Obligations')
+        this.list.splice(1, 0, v)
+        this.listLink.splice(1, 0, 'Obligations')
       }
       if (v === '已分期') {
         this.list.push(v)
@@ -153,6 +231,28 @@ export default {
     tab (index) {
       this.num = index
       this.$router.push({name: this.listLink[index]})
+    },
+    changePwd () {
+      this.dialogVisible = true
+    },
+    submitForm (formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.$post('/ad/manager/changePW', {
+            'oldPass': this.ruleForm.oldPwd,
+            'newPass': this.ruleForm.pass
+          }).then(res => {
+            if (res.code === 0) {
+              this.$message({type: 'success', message: res.msg})
+              this.forget = true
+            } else {
+              this.$message(res.msg)
+            }
+          })
+        } else {
+          return false
+        }
+      })
     }
   }
 }
@@ -268,7 +368,15 @@ export default {
     }
     img {
       vertical-align: middle;
+      margin: 0;
     }
   }
+}
+img {
+  vertical-align: text-bottom;
+  margin-right: 10px;
+}
+.el-dialog__header {
+  background: #FFD100!important;
 }
 </style>

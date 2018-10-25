@@ -166,7 +166,6 @@ export default {
         id: this.$route.query.id,
         type: 1
       }).then(res => {
-        // console.log(res.data.result)
         this.data = res.data.result
         this.ruleForm = res.data.result.customer
         if (res.code !== 0) {

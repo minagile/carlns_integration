@@ -44,7 +44,7 @@
     <el-dialog :visible.sync="dialogFormVisible" width="770px" :modal-append-to-body="false">
       <template>
         <div class="header">
-          <span>新增费率</span>
+          <span>新增{{name}}费率</span>
         </div>
       </template>
       <el-form :model="form">
@@ -106,7 +106,8 @@ export default {
         'templateState': 0
       },
       formLabelWidth: '170px',
-      addOrEdit: 1
+      addOrEdit: 1,
+      name: '个人'
     }
   },
   mounted () {
@@ -230,8 +231,10 @@ export default {
       this.board = i
       if (i === 1) {
         this.getData('selectPTemplate')
+        this.name = '个人'
       } else {
         this.getData('selectCTemplate')
+        this.name = '企业'
       }
     }
   }

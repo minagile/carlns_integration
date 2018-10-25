@@ -17,7 +17,7 @@
           <el-form-item label="联系方式：" prop="customerPhone">
             <el-input v-model="ruleForm.customer.customerPhone" ></el-input>
           </el-form-item>
-          <el-form-item label="车架号：" prop="carvin">
+          <el-form-item :label="ruleForm.obj.type === 1 ? '合格证号：' : '车架号：'" prop="carvin">
             <el-input v-model="ruleForm.obj.carvin" ></el-input>
           </el-form-item>
           <el-form-item :label="ruleForm.obj.type === 1 ? '车辆合格证：' : '车牌号：'" prop="nameplate">

@@ -3,8 +3,8 @@ import router from '../../router'
 import qs from 'qs'
 import { Message } from 'element-ui'
 
-axios.defaults.timeout = 5000
-axios.defaults.baseURL = 'http://192.168.1.131:8080'
+axios.defaults.timeout = 10000
+axios.defaults.baseURL = 'https://www.luqingheng.top/carins2'
 
 // http request 拦截器
 axios.interceptors.request.use(

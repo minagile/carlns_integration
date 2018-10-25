@@ -75,7 +75,7 @@
         <el-card class="box-card" :body-style="{ padding: '0px' }">
           <div slot="header" class="clearfix">
             <img src="../assets/img/fq-sf.png" alt="">
-            <span>投保中</span>
+            <span>已承保</span>
             <el-button style="float: right; padding: 3px 0" type="text" icon="el-icon-d-arrow-right"></el-button>
           </div>
           <div v-for="(o, i) in list3" :key="i" class="text item">
@@ -105,7 +105,7 @@
             <img src="../assets/img/rc.png" alt="">
             <span>日程</span>
           </div>
-          <vue-event-calendar :events="demoEvents"></vue-event-calendar>
+          <vue-event-calendar :events="demoEvents" @month-changed="changedMonth($event)"></vue-event-calendar>
         </el-card>
       </el-col>
     </el-row>
@@ -233,13 +233,23 @@ export default {
         }
       ],
       msgNum: [],
-      data2: {}
+      data2: {},
+      date: ''
     }
   },
   mounted () {
     this.getData()
+    this.changedMonth(new Date().getMonth() + '/' + new Date().getFullYear())
   },
   methods: {
+    changedMonth (e) {
+      // console.log(e)
+      this.$fetch('/fd/report/showSchedule', {
+        'datetime': e
+      }).then(res => {
+        this.demoEvents = res.data
+      })
+    },
     getData () {
       this.$fetch('/fd/index/selectCountByNewsFd').then(res => {
         this.msgNum = res.data
@@ -262,13 +272,13 @@ export default {
     },
     // 付款计划表弹窗
     payDetail (id, did, type, batch) {
-      console.log(type)
+      // console.log(type)
       this.$fetch('/fd/insure/selectDetail', {
         id: did,
         batch: batch,
         type: type
       }).then(res => {
-        console.log(res.data.result)
+        // console.log(res.data.result)
         if (type === '1') {
           this.data2 = res.data.result
         } else {

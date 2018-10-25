@@ -4,11 +4,11 @@
     <header>
       <p>添加子账号</p>
       <el-form :inline="true" ref="form" :model="form" label-width="180px">
-        <el-form-item label="登录账号：">
-          <el-input v-model="form.username"></el-input>
-        </el-form-item>
-        <el-form-item label="用户名：">
+        <el-form-item label="名称">
           <el-input v-model="form.name"></el-input>
+        </el-form-item>
+        <el-form-item label="登录账户">
+          <el-input v-model="form.username"></el-input>
         </el-form-item>
         <el-form-item label="登录密码：">
           <el-input v-model="form.password" type="password"></el-input>
@@ -23,8 +23,8 @@
       <p>已有子账号</p>
       <div class="table">
         <el-table :data="tableData" style="width: 100%">
-          <el-table-column prop="userPhone" label="登录账号" width="180" align="center"></el-table-column>
-          <el-table-column prop="userName" label="用户名" align="center"></el-table-column>
+          <el-table-column prop="userName" label="名称" align="center" width="180"></el-table-column>
+          <el-table-column prop="userPhone" label="登录账号" align="center"></el-table-column>
           <el-table-column label="子账号状态" align="center">
             <template slot-scope="scope">
               <div v-if="scope.row.userState === 1">有效</div>
@@ -152,20 +152,20 @@ export default {
           type: 'error',
           message: '密码不能为空'
         })
-      } else if (this.form.username === '') {
+      } else if (this.form.name === '') {
         this.$message({
           type: 'error',
           message: '用户名不能为空'
         })
-      } else if (this.form.name === '') {
+      } else if (this.form.username === '') {
         this.$message({
           type: 'error',
           message: '账号不能为空'
         })
       } else {
         var reg = /^[1][0-9][0-9]{9}$/
-        console.log(!reg.test(this.form.name))
-        if (!reg.test(this.form.name)) {
+        // console.log(!reg.test(this.form.name))
+        if (!reg.test(this.form.username)) {
           this.$message('请输入正确的手机号')
         } else {
           this.$post('/fd/RAM/addRAM', this.form).then(res => {

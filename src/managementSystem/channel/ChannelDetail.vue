@@ -35,7 +35,7 @@
         <figure>
           <div class="text"><span>代理商合作协议：</span></div>
           <div class="right">
-            <a class="box" style="background-image: url(../../assets/mImg/download.png)"></a>
+            <a class="box" style="background-position: center center;background-size: cover;"></a>
             <button @click="download">下载</button>
           </div>
         </figure>
@@ -55,27 +55,31 @@
         </figure>
       </div>
       <div class="btn">
-        <button v-if="$route.query.look === 1" class="p" @click="dialogFormVisible = true">提交</button>
-        <button @click="$router.back(-1)">取消</button>
+        <button v-if="$route.query.look === 1" class="p" @click="audited('审核通过')">审核通过</button>
+        <button @click="$router.back(-1)" v-if="$route.query.look !== 1">取消</button>
+        <button @click="audited('审核不通过')" v-if="$route.query.look === 1">审核不通过</button>
       </div>
     </div>
     <!-- 弹窗 -->
     <el-dialog :show-close="false" :visible.sync="dialogFormVisible" :modal-append-to-body="false" width="770px">
       <template>
         <div class="header">
-          <span>渠道通过审核</span>
+          <span>渠道{{num}}</span>
         </div>
       </template>
       <el-form :model="form">
-        <el-form-item label="个人费率：" label-width="170px">
+        <el-form-item label="个人费率：" label-width="170px" v-if="num === '审核通过'">
           <el-select v-model="form.p">
             <el-option v-for="(o, i) in form.person" :key="i" :label="o.templateName" :value="o.templateId"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="企业费率：" label-width="170px">
+        <el-form-item label="企业费率：" label-width="170px" v-if="num === '审核通过'">
           <el-select v-model="form.c">
             <el-option v-for="(o, i) in form.componay" :key="i" :label="o.templateName" :value="o.templateId"></el-option>
           </el-select>
+        </el-form-item>
+        <el-form-item label="请输入审核不通过原因：" label-width="170px" v-if="num === '审核不通过'">
+          <el-input v-model="form.reason"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -100,10 +104,12 @@ export default {
         channelIdcardUp: '',
         channelIdcardDown: ''
       },
+      num: '审核通过',
       dialogFormVisible: false,
       form: {
         c: '',
-        p: ''
+        p: '',
+        reason: ''
       }
     }
   },
@@ -114,25 +120,49 @@ export default {
     this.$destroy()
   },
   methods: {
+    // 审核
+    audited (msg) {
+      this.num = msg
+      this.dialogFormVisible = true
+    },
     submit () {
-      if (this.form.c === '') {
-        this.$message('选择企业模板费率')
-      } else if (this.form.p === '') {
-        this.$message('选择个人模板费率')
+      if (this.num === '审核通过') {
+        if (this.form.c === '') {
+          this.$message('选择企业模板费率')
+        } else if (this.form.p === '') {
+          this.$message('选择个人模板费率')
+        } else {
+          this.$post('/ad/channel/update', {
+            id: this.$route.query.id,
+            cusTemplateId: this.form.p,
+            comTemplateId: this.form.c,
+            state: 1
+          }).then(res => {
+            if (res.code === 0) {
+              this.$router.push({name: 'Trench'})
+              this.$message({type: 'success', message: '操作成功'})
+            } else {
+              this.$message(res.msg)
+            }
+          })
+        }
       } else {
-        this.$post('/ad/channel/update', {
-          id: this.$route.query.id,
-          cusTemplateId: this.form.p,
-          comTemplateId: this.form.c,
-          state: 1
-        }).then(res => {
-          if (res.code === 0) {
-            this.$router.push({name: 'Trench'})
-            this.$message({type: 'success', message: '操作成功'})
-          } else {
-            this.$message(res.msg)
-          }
-        })
+        if (this.form.reason === '') {
+          this.$message('请输入不通过原因')
+        } else {
+          this.$post('/ad/channel/update', {
+            id: this.$route.query.id,
+            msg: this.form.reason,
+            state: 1
+          }).then(res => {
+            if (res.code === 0) {
+              this.$router.push({name: 'Trench'})
+              this.$message({type: 'success', message: '操作成功'})
+            } else {
+              this.$message(res.msg)
+            }
+          })
+        }
       }
     },
     download () {
@@ -214,7 +244,7 @@ export default {
           position: relative;
           overflow: hidden;
           display: block;
-          background-image: url(../../assets/mImg/download.png);
+          background-image: url(../../assets/img/pdf.png);
           background-repeat: no-repeat;
           background-size: 100% 100%;
           img {

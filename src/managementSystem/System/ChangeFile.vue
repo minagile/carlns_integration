@@ -3,7 +3,7 @@
   <div class="change_file">
     <div class="con">
       <el-table :data="tableData" height="100%" style="width: 100%">
-        <el-table-column prop="resourceName" label="协议名称" align="center"></el-table-column>
+        <el-table-column prop="resourceName" label="协议名称"></el-table-column>
         <el-table-column prop="resourceName" label="内容" width="400"></el-table-column>
         <el-table-column label="类型">
           <template slot-scope="scope">
@@ -34,8 +34,8 @@
         <p>点击下图中的上传按钮上传新的合作协议：</p>
         <div class="upload">
           <img src="../../assets/mImg/upload.png" alt="">
-          <a>点击上传PDF</a>
-          <input type="file" @change="upfile" accept=".pdf">
+          <a>点击上传{{resourceType === 1 ? '图片' : 'PDF'}}</a>
+          <input type="file" @change="upfile" :accept="resourceType === 1 ? 'image/*' : '.pdf'">
           <span style="position: absolute;top:0;left:0;">{{ file.name }}</span>
         </div>
       </div>
@@ -57,7 +57,8 @@ export default {
       dialogFormVisible: false,
       idList: {},
       file: '',
-      filesShow: ''
+      filesShow: '',
+      resourceType: 1
     }
   },
   mounted () {
@@ -99,15 +100,14 @@ export default {
     },
     getData () {
       this.$fetch('/ad/resource/showFiles').then(res => {
-        // console.log(res)
         this.tableData = res.data
       })
     },
     edit (id, data) {
       this.idList = data
-      console.log(data)
       this.filesShow = data.resourceName
       this.dialogFormVisible = true
+      this.resourceType = data.resourceType
       // this.$post('/ad/resource/update', {
       //   file
       // }).then(res => {

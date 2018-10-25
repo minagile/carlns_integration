@@ -60,7 +60,7 @@
         <img src="../../assets/img/car_msg.png" alt="">
       </div>
       <el-table :data="tableData" style="width: 100%">
-        <el-table-column prop="carvin" label="车架号" width="180" align="center"></el-table-column>
+        <el-table-column prop="carvin" label="车架号/合格证号" width="180" align="center"></el-table-column>
         <el-table-column prop="nameplate" label="车辆合格证/车牌号" width="180" align="center"></el-table-column>
         <el-table-column prop="commercial" label="商业险" align="center"></el-table-column>
         <el-table-column prop="cartaffic" label="交强险" align="center"></el-table-column>

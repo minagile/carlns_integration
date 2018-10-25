@@ -4,7 +4,7 @@
     <div class="top" @mouseout="moveout($event)">
       <el-row :gutter="14">
         <el-col :span="4" v-for="(data, i) in list" :key="i" >
-          <div class="grid-content bg-purple width" @mousemove="shiftIn(i)">
+          <div class="grid-content bg-purple width" @mouseover="shiftIn(i)">
             <img :src="data.imgSrc" alt="">
             <span>{{ data.text }}</span>
             <i v-if="headerList.length > 0">{{ headerList[i].newCount }}</i>
@@ -133,7 +133,7 @@
             <img src="../assets/img/rc.png" alt="">
             <span>日程</span>
           </div>
-          <vue-event-calendar :events="demoEvents"></vue-event-calendar>
+          <vue-event-calendar :events="demoEvents" @month-changed="changedMonth($event)"></vue-event-calendar>
         </el-card>
       </el-col>
     </el-row>
@@ -169,13 +169,13 @@
             <span v-if="data.stagesState === 2" style="color: #999999;">{{ data.stagesPrice }}</span>
           </li>
         </ul>
-        <ul>
+        <!-- <ul>
           <li>到账金额</li>
           <li v-for="(data, index) in detailList" :key="index">
             <span v-if="data.stagesState !== 2">{{ data.stagesPrice }}</span>
             <span v-if="data.stagesState === 2" style="color: #999999;">{{ data.stagesPrice }}</span>
           </li>
-        </ul>
+        </ul> -->
         <ul>
           <li>还款状态</li>
           <li v-for="(data, index) in detailList" :key="index">
@@ -218,11 +218,11 @@ export default {
         },
         {
           imgSrc: img2,
-          text: '待上传信息'
+          text: '企业待分期'
         },
         {
           imgSrc: img3,
-          text: '分期待付款'
+          text: '个人待分期'
         },
         {
           imgSrc: img4,
@@ -242,6 +242,7 @@ export default {
   },
   mounted () {
     this.getData(this.channelId)
+    this.changedMonth(new Date().getMonth() + '/' + new Date().getFullYear())
   },
   deactivated () {
     this.$destroy()
@@ -252,6 +253,15 @@ export default {
     }
   },
   methods: {
+    // 日程
+    changedMonth (e) {
+      this.$fetch('/ad/report/showSchedule', {
+        'datetime': e,
+        'channelId': this.channelId
+      }).then(res => {
+        this.demoEvents = res.data
+      })
+    },
     // 消息跳转
     jump (o, i) {
       // console.log(o, this.data)
@@ -260,7 +270,7 @@ export default {
       } else if (this.data === 1) {
         this.$router.push({name: 'ObligationsC', query: {id: o.companyId, batch: o.batch}})
       } else if (this.data === 2) {
-        this.$router.push({name: 'ObligationsP', query: {id: o.customerId}})
+        this.$router.push({name: 'ObligationsP', query: {id: o.customerId, msg: 1}})
       }
     },
     // 付款计划表弹窗
@@ -315,6 +325,12 @@ export default {
         }
         this.$fetch('/ad/news/selectNewAdByType', {
           newsType: this.data + 1
+        }).then(res => {
+          this.messageList = res.data
+        })
+      } else if (e === 0) {
+        this.$fetch('/ad/news/selectNewAdByType', {
+          newsType: 1
         }).then(res => {
           this.messageList = res.data
         })
@@ -571,7 +587,7 @@ function zero (data) {
       padding: 20px 0;
       ul {
         float: left;
-        width: 20%;
+        width: 25%;
         text-align: center;
         button {
           width:72px;
@@ -633,6 +649,7 @@ function zero (data) {
     top: 94px;
     left: 20px;
     line-height: 65px;
+    overflow: auto;
     header {
       height: 65px;
       border-bottom: 1px solid #E6E6E6;

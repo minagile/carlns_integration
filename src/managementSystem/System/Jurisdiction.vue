@@ -4,7 +4,7 @@
     <div class="manage" v-show="detail">
       <div class="button">
         <el-button @click="add">+ 添加账号</el-button>
-        <el-button>删除</el-button>
+        <!-- <el-button>删除</el-button> -->
       </div>
       <el-table :data="tableData" height="95%" style="width: 100%">
         <el-table-column prop="phone" label="账号"></el-table-column>
@@ -16,7 +16,7 @@
         <el-table-column label="操作" align="center">
           <template slot-scope="scope">
             <button class="edit" @click="edit(scope.row.id)">编辑</button>
-            <button class="edit" @click="del(scope.row.id)">删除</button>
+            <button class="edit" @click="del(scope.row.id, scope.row.type)">删除</button>
           </template>
         </el-table-column>
       </el-table>
@@ -208,31 +208,40 @@ export default {
       })
     },
     // 删除
-    del (id) {
+    del (id, type) {
       let that = this
-      this.$confirm('是否删除账号', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消'
-      }).then(() => {
-        that.$fetch('/ad/manager/remove', {
-          id: id
-        }).then(res => {
-          if (res.code === 0) {
-            this.getData()
-            this.$message({
-              type: 'success',
-              message: '删除成功'
-            })
-          } else {
-            this.$message.error(res.msg)
-          }
+      if (type === 5) {
+        const h = this.$createElement
+        this.$notify({
+          title: '警告',
+          message: h('i', {style: 'color: teal'}, '这是超级管理员，不可删除！'),
+          type: 'warning'
         })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消删除'
+      } else {
+        this.$confirm('是否删除账号', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消'
+        }).then(() => {
+          that.$fetch('/ad/manager/remove', {
+            id: id
+          }).then(res => {
+            if (res.code === 0) {
+              this.getData()
+              this.$message({
+                type: 'success',
+                message: '删除成功'
+              })
+            } else {
+              this.$message.error(res.msg)
+            }
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
         })
-      })
+      }
     },
     // 添加账号
     addMessage () {
@@ -278,6 +287,7 @@ export default {
       this.$fetch('/ad/manager/findAll').then(res => {
         // console.log(res)
         this.tableData = res.data
+        console.log(this.tableData)
       })
     }
   }

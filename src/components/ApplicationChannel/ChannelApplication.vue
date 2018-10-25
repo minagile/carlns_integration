@@ -49,7 +49,8 @@
             <div class="text"><span>代理商合作协议：</span></div>
             <div class="right">
               <div class="box">
-                <img src="../../assets/img/uploadpic.png" alt="">
+                <img src="../../assets/img/uploadpic.png" alt="" v-if="!pdfName">
+                <img src="../../assets/img/pdf.png" style="width:150px" alt="" v-if="pdfName">
                 <a>点击上传</a>
                 <div class="img_show">{{ pdfName }}</div>
                 <input type="file" @change="filePdf($event)" accept=".pdf">

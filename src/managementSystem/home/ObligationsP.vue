@@ -6,7 +6,8 @@
         <header>
           <div class="itm">
             <img src="../../assets/mImg/moneybag.png" alt="">
-            <span>状态：客户已付款</span>
+            <span v-if="!this.$route.query.msg">状态：客户已付款</span>
+            <span v-if="this.$route.query.msg">状态：客户未付款</span>
           </div>
           <div class="itm">
             <img src="../../assets/mImg/time.png" alt="">
@@ -67,7 +68,7 @@
         </div>
         <PicShow  :imgList="ruleForm" :from="'个人审核'" />
         <div class="btn">
-          <button class="p" @click="dialogFormVisible = true">确定付款</button>
+          <button class="p" @click="dialogFormVisible = true" v-if="!this.$route.query.msg">确定付款</button>
           <button @click="$router.go(-1)">返回</button>
         </div>
       </div>

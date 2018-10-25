@@ -34,10 +34,10 @@
           <img src="../../assets/mImg/user_msg.png" alt="">
         </div>
         <div class="pic">
-          <PicShow  :imgList="ruleForm" :from="'企业待审核'"/>
+          <PicShow  :imgList="ruleForm" :from="'企业待审核'" :batch="this.$route.query.batch"/>
         </div>
         <div class="btn">
-          <button class="p" @click="dialogFormVisible = true">确定付款</button>
+          <button class="p" @click="dialogFormVisible = true" v-if="this.$route.query.batch !== 2">确定付款</button>
           <button @click="$router.go(-1)">返回</button>
         </div>
       </div>
@@ -150,6 +150,8 @@ export default {
           // console.log(res.data.result)
           this.tableData = res.data.result.obj
           this.ruleForm = res.data.result.company
+          this.ruleForm.companyplan = res.data.result.order.companyplan
+          this.ruleForm.firstpaybill = res.data.result.order.firstpaybill
         } else {
           this.$message(res.msg)
           this.$router.go(-1)

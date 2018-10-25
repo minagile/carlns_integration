@@ -29,7 +29,7 @@
         <input type="text" v-model="user">
         <p>验证码</p>
         <input type="text" v-model="code" style="width: 175px;float:left;">
-        <button style="width: 160px;font-size: 16px;margin: 0 0 0 5px;;float:left;" @click="getCode($event)">获取验证码<span v-show="jump">{{ count }}s</span></button>
+        <button style="width: 160px;font-size: 16px;margin: 0 0 0 5px;;float:left;" @click="getCode($event)" :disabled="jump">获取验证码<span v-show="jump">{{ count }}s</span></button>
         <p>密码</p>
         <div class="psd">
           <input type="password" v-model="forgetpsd">
@@ -150,6 +150,8 @@ export default {
           if (response.code === 0) {
             sessionStorage.setItem('token', response.data.token)
             sessionStorage.setItem('username', response.data.username)
+            sessionStorage.setItem('type', response.data.type)
+            sessionStorage.setItem('pwd', this.psd)
             this.$router.push({name: 'HomePage'})
           } else {
             this.$message({
@@ -169,7 +171,7 @@ export default {
 <style lang="less" scoped>
 .login {
   height: 100%;
-  background-image: url(../assets/img/bg.png);
+  background-image: url(https://easyfq.oss-cn-beijing.aliyuncs.com/resource/background02.png);
   background-size: 100% 100%;
   background-position: center center;
   // background-size: cover;
