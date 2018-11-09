@@ -36,6 +36,9 @@ import System from '@/managementSystem/System'
 import Rote from '@/managementSystem/System/Rote'
 import ChangeFile from '@/managementSystem/System/ChangeFile'
 import Jurisdiction from '@/managementSystem/System/Jurisdiction'
+import ManageAccount from '@/managementSystem/System/ManageAccount'
+import RolePermission from '@/managementSystem/System/RolePermission'
+import Calculater from '@/managementSystem/System/Calculater'
 import Journal from '@/managementSystem/System/Journal'
 import AuditC from '@/managementSystem/home/AuditC'
 import AuditP from '@/managementSystem/home/AuditP'
@@ -253,6 +256,21 @@ export default new Router({
               path: '/m/System/Journal',
               name: 'Journal',
               component: Journal
+            },
+            {
+              path: '/m/System/ManageAccount',
+              name: 'ManageAccount',
+              component: ManageAccount
+            },
+            {
+              path: '/m/System/RolePermission',
+              name: 'RolePermission',
+              component: RolePermission
+            },
+            {
+              path: '/m/System/Calculater',
+              name: 'Calculater',
+              component: Calculater
             }
           ]
         },

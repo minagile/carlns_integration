@@ -10,6 +10,11 @@
           <div class="li" @click="tuibao(2)"><a>已退保</a></div>
         </div>
         <div class="all position" v-show="all" @mouseleave="leave">
+          <div class="area">
+            <div class="l">
+              选择区域：
+            </div>
+          </div>
           <li v-for="o in qudaoList" :key="o.channelId"><a @click="channel(o.channelId)">{{ o.channelName }}</a></li>
         </div>
         <!-- <el-menu

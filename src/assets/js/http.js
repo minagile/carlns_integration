@@ -4,7 +4,7 @@ import qs from 'qs'
 import { Message } from 'element-ui'
 
 axios.defaults.timeout = 10000
-axios.defaults.baseURL = 'https://www.luqingheng.top/carins2'
+axios.defaults.baseURL = 'http://192.168.1.136:80'
 
 // http request 拦截器
 axios.interceptors.request.use(
