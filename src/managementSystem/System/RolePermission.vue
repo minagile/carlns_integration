@@ -7,70 +7,72 @@
         <!-- <el-button>删除</el-button> -->
       </div>
       <el-table :data="tableData" height="95%" style="width: 100%">
-        <el-table-column prop="phone" label="角色"></el-table-column>
+        <el-table-column prop="roleName" label="角色"></el-table-column>
         <el-table-column label="权限管理" align="center">
           <template slot-scope="scope">
-            <button class="edit" @click="manage(scope.row.id)">权限管理</button>
+            <button class="edit" @click="manage(scope.row.roleId, scope.row.roleName)">权限设置</button>
           </template>
         </el-table-column>
         <el-table-column label="操作" align="center">
           <template slot-scope="scope">
-            <button class="edit" @click="edit(scope.row.id)">编辑</button>
-            <button class="edit" @click="del(scope.row.id, scope.row.type)">删除</button>
+            <button class="edit" @click="edit(scope.row.roleId)">编辑</button>
+            <button class="edit" @click="del(scope.row.roleId)">删除</button>
           </template>
         </el-table-column>
       </el-table>
     </div>
     <!-- 权限分配 -->
-    <div class="manage" v-show="!detail">
-      <p>账号：{{ name }}</p>
-      <div class="button r">
-        <el-button @click="sure">确定</el-button>
-        <el-button @click="detail = true">返回</el-button>
+    <el-dialog :visible.sync="rolepermission" width="90%" :modal-append-to-body="false">
+      <div class="manage right">
+        <p v-if="name">角色：{{ name }}</p>
+        <div class="button r">
+          <el-button @click="addsure">确定</el-button>
+          <el-button @click="rolepermission = false">返回</el-button>
+        </div>
+        <el-table :data="manageTable" height="98%" style="width: 100%">
+          <el-table-column type="expand">
+            <template slot-scope="props">
+              <el-table :data="props.row.object" :show-header="false" style="width: 100%">
+                <el-table-column prop="name"></el-table-column>
+                <el-table-column>
+                  <template slot-scope="prop">
+                    <div v-if="prop.row.fp">
+                      <el-checkbox v-if="prop.row.fp[0] === null" disabled></el-checkbox>
+                      <el-checkbox v-if="prop.row.fp[0]" v-model="prop.row.fp[0][0].status" @change="checkBox(prop.row.fp[0][0].id, $event)"></el-checkbox>
+                    </div>
+                  </template>
+                </el-table-column>
+                <el-table-column>
+                  <template slot-scope="prop">
+                    <div v-if="prop.row.fp">
+                      <el-checkbox v-if="prop.row.fp[1] === null" disabled></el-checkbox>
+                      <el-checkbox v-if="prop.row.fp[1]" v-model="prop.row.fp[1][0].status" @change="checkBox(prop.row.fp[1][0].id, $event)"></el-checkbox>
+                    </div>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </template>
+          </el-table-column>
+          <el-table-column prop="name" label="功能"></el-table-column>
+          <el-table-column label="查看">
+            <template slot-scope="prop">
+              <div v-if="prop.row.fpl">
+                <el-checkbox v-if="prop.row.fpl[0] === null" disabled></el-checkbox>
+                <el-checkbox v-if="prop.row.fpl[0]" v-model="prop.row.fpl[0][0].status" @change="checkBox(prop.row.fpl[0][0].id, $event)"></el-checkbox>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column label="删除">
+            <template slot-scope="prop">
+              <div v-if="prop.row.fpl">
+                <el-checkbox v-if="prop.row.fpl[1] === null" disabled></el-checkbox>
+                <el-checkbox v-if="prop.row.fpl[1]" v-model="prop.row.fpl[1][0].status" @change="checkBox(prop.row.fpl[1][0].id, $event)"></el-checkbox>
+              </div>
+            </template>
+          </el-table-column>
+        </el-table>
       </div>
-      <el-table :data="manageTable" height="95%" style="width: 100%">
-        <el-table-column type="expand">
-          <template slot-scope="props">
-            <el-table :data="props.row.object" :show-header="false" style="width: 100%">
-              <el-table-column prop="name"></el-table-column>
-              <el-table-column>
-                <template slot-scope="prop">
-                  <div v-if="prop.row.fp">
-                    <el-checkbox v-if="prop.row.fp[0] === null" disabled></el-checkbox>
-                    <el-checkbox v-if="prop.row.fp[0]" v-model="prop.row.fp[0][0].status" @change="checkBox(prop.row.fp[0][0].id, $event)"></el-checkbox>
-                  </div>
-                </template>
-              </el-table-column>
-              <el-table-column>
-                <template slot-scope="prop">
-                  <div v-if="prop.row.fp">
-                    <el-checkbox v-if="prop.row.fp[1] === null" disabled></el-checkbox>
-                    <el-checkbox v-if="prop.row.fp[1]" v-model="prop.row.fp[1][0].status" @change="checkBox(prop.row.fp[1][0].id, $event)"></el-checkbox>
-                  </div>
-                </template>
-              </el-table-column>
-            </el-table>
-          </template>
-        </el-table-column>
-        <el-table-column prop="name" label="功能"></el-table-column>
-        <el-table-column label="查看">
-          <template slot-scope="prop">
-            <div v-if="prop.row.fpl">
-              <el-checkbox v-if="prop.row.fpl[0] === null" disabled></el-checkbox>
-              <el-checkbox v-if="prop.row.fpl[0]" v-model="prop.row.fpl[0][0].status" @change="checkBox(prop.row.fpl[0][0].id, $event)"></el-checkbox>
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column label="删除">
-          <template slot-scope="prop">
-            <div v-if="prop.row.fpl">
-              <el-checkbox v-if="prop.row.fpl[1] === null" disabled></el-checkbox>
-              <el-checkbox v-if="prop.row.fpl[1]" v-model="prop.row.fpl[1][0].status" @change="checkBox(prop.row.fpl[1][0].id, $event)"></el-checkbox>
-            </div>
-          </template>
-        </el-table-column>
-      </el-table>
-    </div>
+    </el-dialog>
     <!-- 添加 -->
     <el-dialog :visible.sync="dialogFormVisible" width="770px" :modal-append-to-body="false">
       <template>
@@ -79,18 +81,10 @@
         </div>
       </template>
       <el-form :model="form" :rules="rule" ref="form">
-        <el-form-item label="账号：" prop="user" label-width="190px">
-          <el-input v-model="form.user" auto-complete="off"></el-input>
+        <el-form-item label="角色名称：" prop="user" label-width="190px">
+          <el-input v-model="form.user" auto-complete="off" placeholder="请输入角色名称"></el-input>
         </el-form-item>
-        <el-form-item label="手机号：" prop="phone" label-width="190px">
-          <el-input v-model="form.phone" auto-complete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="密码：" prop="psd" label-width="190px">
-          <el-input v-model="form.psd" type="password" auto-complete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="确认密码：" prop="con" label-width="190px">
-          <el-input v-model="form.con" type="password" auto-complete="off"></el-input>
-        </el-form-item>
+        <el-button v-if="title === '添加角色'" size="mini" class="quanxian" @click="manage('')">权限设置</el-button>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
@@ -114,32 +108,37 @@ export default {
         con: ''
       },
       rule: {
-        user: [
-          { required: true, message: '请输入账号', trigger: 'blur' }
-        ],
-        phone: [
-          { required: true, message: '请输入手机号', trigger: 'blur' },
-          { pattern: /^[1][0-9][0-9]{9}$/, message: '请输入正确的手机号', trigger: 'blur' }
-        ],
-        psd: [
-          { required: true, message: '请输入密码', trigger: 'blur' }
-        ],
-        con: [
-          { required: true, message: '请确认密码', trigger: 'blur' }
-        ]
       },
-      title: '添加账号',
+      title: '添加角色',
       id: '',
       name: '',
       detail: true,
       manageTable: [],
-      arr: []
+      arr: [],
+      rolepermission: false,
+      roleId: ''
     }
   },
   mounted () {
-    // this.getData()
+    this.getData()
   },
   methods: {
+    // 添加角色-权限设置-确定按钮
+    addsure () {
+      if (this.id === '') {
+        this.rolepermission = false
+      } else {
+        // console.log(this.arr)
+        // POST /ad/role/updateRole
+        // this.$post('/ad/role/updateRole', {
+        //   id: this.id,
+        //   name: this.form.user
+        // }).then(res => {
+        //   console.log(res)
+        //   // if (res) {}
+        // })
+      }
+    },
     add () {
       this.dialogFormVisible = true
       this.title = '添加账号'
@@ -173,7 +172,7 @@ export default {
       // console.log(ids)
       this.$post('/ad/limit/updatePermission', {
         fundIds: ids,
-        adminId: this.id
+        roleId: this.id
       }).then(res => {
         // console.log(res)
         if (res.code === 0) {
@@ -185,109 +184,124 @@ export default {
       })
     },
     // 权限管理
-    manage (id) {
-      this.detail = false
+    manage (id, name) {
+      this.rolepermission = true
       this.id = id
-      this.$fetch('/ad/limit/findByAdminId', {adminId: id}).then(res => {
+      this.name = name
+      // console.log(id)
+      // 获取权限列表
+      this.$fetch('/ad/limit/findByAdminId', {roleId: id}).then(res => {
+        // console.log(res)
         this.manageTable = res
       })
-      this.$fetch('/ad/limit/selectByAdminId', {adminId: id}).then(res => {
+      // 获取选中权限的id
+      this.$fetch('/ad/limit/selectByAdminId', {roleId: id}).then(res => {
         res.data.forEach(v => {
           this.arr.push(v.adauthId)
         })
       })
+      // console.log(this.arr)
     },
-    // 编辑账号
+    // 修改角色名字
     edit (id) {
-      this.title = '编辑账号'
+      this.title = '编辑角色'
       this.dialogFormVisible = true
       this.id = id
-      this.$fetch('/ad/manager/findById', {id: id}).then(res => {
-        this.form.user = res.data.adminName
-        this.form.phone = res.data.adminPhone
+      this.$post('/ad/role/findById', {id: id}).then(res => {
+        // console.log(res)
+        this.form.user = res.data.roleName
+        this.roleId = res.data.roleId
+        // this.form.phone = res.data.adminPhone
       })
     },
     // 删除
-    del (id, type) {
+    del (id) {
+      // DELETE /ad/role/deleteRole
       let that = this
-      if (type === 5) {
-        const h = this.$createElement
-        this.$notify({
-          title: '警告',
-          message: h('i', {style: 'color: teal'}, '这是超级管理员，不可删除！'),
-          type: 'warning'
+      this.$confirm('是否删除角色', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消'
+      }).then(() => {
+        that.$post('/ad/role/deleteRole', {
+          id: id
+        }).then(res => {
+          if (res.code === 0) {
+            this.getData()
+            this.$message({
+              type: 'success',
+              message: '删除成功'
+            })
+          } else {
+            this.$message.error(res.msg)
+          }
         })
-      } else {
-        this.$confirm('是否删除账号', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消'
-        }).then(() => {
-          that.$fetch('/ad/manager/remove', {
-            id: id
-          }).then(res => {
-            if (res.code === 0) {
-              this.getData()
-              this.$message({
-                type: 'success',
-                message: '删除成功'
-              })
-            } else {
-              this.$message.error(res.msg)
-            }
-          })
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
         })
-      }
+      })
     },
     // 添加账号
     addMessage () {
+      // console.log(this.arr)
       if (this.form.user === '') {
-        this.$message.error('账号不为空')
-      } else if (this.form.phone === '') {
-        this.$message.error('手机号不为空')
-      } else if (this.form.psd === '') {
-        this.$message.error('密码不为空')
-      } else if (this.form.psd === this.form.con) {
-        if (this.title === '编辑账号') {
-          this.$fetch('/ad/manager/update', {
-            name: this.form.user,
-            username: this.form.phone,
-            password: this.form.psd,
-            id: this.id
+        this.$message.error('角色名称不为空')
+      } else {
+        if (this.title === '编辑角色') {
+          this.$post('/ad/role/updateRole', {
+            id: this.id,
+            name: this.form.user
           }).then(res => {
             // console.log(res)
             if (res.code === 0) {
               this.dialogFormVisible = false
               this.getData()
+              this.$message.success(res.msg)
+            } else {
+              this.$message(res.msg)
             }
           })
         } else {
-          this.$post('/ad/manager/add', {
+          let ids = ''
+          this.arr.forEach(v => {
+            ids += v + ','
+          })
+          this.$post('/ad/role/createRole', {
             name: this.form.user,
-            username: this.form.phone,
-            password: this.form.psd
+            fundIds: ids
           }).then(res => {
             // console.log(res)
             if (res.code === 0) {
               this.dialogFormVisible = false
               this.getData()
+              this.$message.success(res.msg)
+            } else {
+              this.$message(res.msg)
             }
           })
         }
-      } else {
-        this.$message.error('两次输入不一致')
       }
+      // } else {
+      //   this.$post('/ad/manager/add', {
+      //     name: this.form.user,
+      //     username: this.form.phone,
+      //     password: this.form.psd
+      //   }).then(res => {
+      //     // console.log(res)
+      //     if (res.code === 0) {
+      //       this.dialogFormVisible = false
+      //       this.getData()
+      //     }
+      //   })
+      // }
     },
     getData () {
       // /ad/manager/findAll
-      this.$fetch('/ad/manager/findAll').then(res => {
+      this.$fetch('/ad/role/findAll').then(res => {
         // console.log(res)
         this.tableData = res.data
-        console.log(this.tableData)
+        // console.log(this.tableData)
       })
     }
   }
@@ -308,6 +322,11 @@ export default {
     padding: 34px 100px 0;
     height: calc(100% - 34px);
     overflow: hidden;
+    &.right {
+      padding: 0;
+      margin-top: -20px;
+      height: 500px;
+    }
     button {
       // width: 80px;
       // height: 32px;
@@ -338,6 +357,20 @@ export default {
     .el-input, .el-textarea {
       width: 405px;
     }
+    .quanxian {
+      float: right;
+      margin-right: 150px;
+      border:1px solid rgba(40,40,40,1);
+      color: rgba(40,40,40,1);
+      &:hover {
+        color: #fff;
+        background: rgba(40,40,40,1);
+      }
+    }
+    .el-form {
+      overflow: hidden;
+      min-height: 300px;
+    }
     .header {
       position: absolute;
       top: 0;
@@ -362,6 +395,10 @@ export default {
         height:40px;
         border:1px solid rgba(40,40,40,1);
         border-radius:5px;
+        &:hover {
+          color: rgba(40,40,40,1);
+          background: #fff;
+        }
       }
       .sub {
         width:85px;

@@ -8,8 +8,8 @@
       </div>
       <el-table :data="tableData" height="95%" style="width: 100%">
         <el-table-column prop="phone" label="账号"></el-table-column>
-        <el-table-column prop="phone" label="密码"></el-table-column>
-        <el-table-column prop="phone" label="角色"></el-table-column>
+        <!-- <el-table-column prop="phone" label="密码"></el-table-column> -->
+        <el-table-column prop="role_name" label="角色"></el-table-column>
         <!-- <el-table-column label="权限管理" align="center">
           <template slot-scope="scope">
             <button class="edit" @click="manage(scope.row.id)">权限管理</button>
@@ -31,19 +31,22 @@
         </div>
       </template>
       <el-form :model="form" :rules="rule" ref="form">
-        <el-form-item label="账号：" prop="user" label-width="190px">
-          <el-input v-model="form.user" auto-complete="off"></el-input>
+        <el-form-item label="账号：" prop="name" label-width="190px">
+          <el-input v-model="form.name" auto-complete="off" placeholder="请输入账号"></el-input>
         </el-form-item>
-        <el-form-item label="密码：" prop="phone" label-width="190px">
-          <el-input v-model="form.phone" auto-complete="off" placeholder="请选择密码"></el-input>
+        <el-form-item label="手机号：" prop="phone" label-width="190px">
+          <el-input v-model="form.phone" auto-complete="off" placeholder="请输入手机号"></el-input>
         </el-form-item>
-        <el-form-item label="确认密码：" prop="psd" label-width="190px">
-          <el-input v-model="form.psd" type="password" auto-complete="off" placeholder="请确认密码"></el-input>
+        <el-form-item label="密码：" prop="psd" label-width="190px">
+          <el-input v-model="form.psd" type="password" auto-complete="off" placeholder="请输入密码"></el-input>
         </el-form-item>
-        <el-form-item label="选择角色：" prop="con" label-width="190px">
-          <el-select v-model="form.psd" placeholder="请选择角色">
-            <el-option label="区域一" value="shanghai"></el-option>
-            <el-option label="区域二" value="beijing"></el-option>
+        <el-form-item label="确认密码：" prop="con" label-width="190px">
+          <el-input v-model="form.con" type="password" auto-complete="off" placeholder="请确认密码"></el-input>
+        </el-form-item>
+        <el-form-item label="选择角色：" prop="username" label-width="190px">
+          <el-select v-model="form.roleId" placeholder="请选择角色">
+            <el-option v-for="(o, i) in roleList" :key="i" :label="o.roleName" :value="o.roleId"></el-option>
+            <!-- <el-option label="区域二" value="beijing"></el-option> -->
           </el-select>
         </el-form-item>
       </el-form>
@@ -63,36 +66,38 @@ export default {
       tableData: [],
       dialogFormVisible: false,
       form: {
-        user: '',
+        name: '',
         phone: '',
         psd: '',
-        con: ''
+        con: '',
+        roleId: ''
       },
       rule: {
-        user: [
-          { required: true, message: '请输入账号', trigger: 'blur' }
-        ],
+        // user: [
+        //   { required: true, message: '请输入账号', trigger: 'blur' }
+        // ],
         phone: [
-          { required: true, message: '请输入手机号', trigger: 'blur' },
+          { message: '请输入手机号', trigger: 'blur' },
           { pattern: /^[1][0-9][0-9]{9}$/, message: '请输入正确的手机号', trigger: 'blur' }
-        ],
-        psd: [
-          { required: true, message: '请输入密码', trigger: 'blur' }
-        ],
-        con: [
-          { required: true, message: '请确认密码', trigger: 'blur' }
         ]
+        // psd: [
+        //   { required: true, message: '请输入密码', trigger: 'blur' }
+        // ],
+        // con: [
+        //   { required: true, message: '请确认密码', trigger: 'blur' }
+        // ]
       },
       title: '添加账号',
       id: '',
       name: '',
       detail: true,
       manageTable: [],
-      arr: []
+      arr: [],
+      roleList: []
     }
   },
   mounted () {
-    // this.getData()
+    this.getData()
   },
   methods: {
     add () {
@@ -104,6 +109,11 @@ export default {
         psd: '',
         con: ''
       }
+      // GET /ad/role/findAll
+      this.$fetch('/ad/role/findAll').then(res => {
+        console.log(res)
+        this.roleList = res.data
+      })
     },
     // 选择
     checkBox (id, status) {
@@ -158,8 +168,13 @@ export default {
       this.dialogFormVisible = true
       this.id = id
       this.$fetch('/ad/manager/findById', {id: id}).then(res => {
-        this.form.user = res.data.adminName
+        this.form.name = res.data.adminName
         this.form.phone = res.data.adminPhone
+        this.form.roleId = res.data.roleId
+      })
+      this.$fetch('/ad/role/findAll').then(res => {
+        // console.log(res)
+        this.roleList = res.data
       })
     },
     // 删除
@@ -198,38 +213,49 @@ export default {
         })
       }
     },
-    // 添加账号
+    // 添加.编辑账号
     addMessage () {
-      if (this.form.user === '') {
+      if (this.form.name === '') {
         this.$message.error('账号不为空')
-      } else if (this.form.phone === '') {
+      } else if (this.form.username === '') {
         this.$message.error('手机号不为空')
       } else if (this.form.psd === '') {
         this.$message.error('密码不为空')
       } else if (this.form.psd === this.form.con) {
         if (this.title === '编辑账号') {
-          this.$fetch('/ad/manager/update', {
-            name: this.form.user,
+          var data = {
+            name: this.form.name,
             username: this.form.phone,
             password: this.form.psd,
+            roleId: this.form.roleId,
             id: this.id
-          }).then(res => {
+          }
+          this.$post('/ad/manager/update', data).then(res => {
             // console.log(res)
             if (res.code === 0) {
               this.dialogFormVisible = false
               this.getData()
+              this.$message.success(res.msg)
+            } else {
+              this.$message.error(res.msg)
             }
           })
         } else {
-          this.$post('/ad/manager/add', {
-            name: this.form.user,
-            username: this.form.phone,
-            password: this.form.psd
-          }).then(res => {
+          var data = {
+            name: this.form.name,
+            phone: this.form.phone,
+            password: this.form.psd,
+            roleId: this.form.roleId
+          }
+          // console.log(data)
+          this.$post('/ad/manager/add', data).then(res => {
             // console.log(res)
             if (res.code === 0) {
               this.dialogFormVisible = false
               this.getData()
+              this.$message.success('添加成功')
+            } else {
+              this.$message.error(res.msg)
             }
           })
         }
