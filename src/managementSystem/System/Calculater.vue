@@ -1,27 +1,104 @@
 <template>
   <div class="calculater">
-    <div class="tit">
-      <!-- <h1>计算器</h1> -->
-      <button class="add" @click="add">添加</button>
-    </div>
+    <p class="title">车险计算器</p>
+      <!-- <button class="add" @click="add">添加</button> -->
+      <div style="display: flex;justify-content: space-between;">
     <div class="content">
-      <table id="list_table" >
-        <tr v-for="(item, index) in list" :key="index">
-          <td>
-            <span>类型:</span>
-            <span class="radio">
+      <div class="select">
+        <span>选择车险</span>
+        <button class="add" @click="add">添加</button>
+      </div>
+      <div style="height:99%;overflow: auto;">
+        <div class="table" v-for="(item, index) in list" :key="index">
+          <div class="lei">类型</div>
+          <div class="radio">
+            <p>
               <input type="radio" :name="index" value="1" checked @change="choose('1', item)">交强险
+            </p>
+            <p>
               <input type="radio" :name="index" value="2" @change="choose('2', item)">商业险
-            </span>
-          </td>
-          <td v-if="item.type === '1'"><span>交强险:</span><input type="text" v-model="item.sali"></td>
-          <td v-if="item.type === '2'"><span>商业险:</span><input type="text" v-model="item.commercials"></td>
-          <td><span>首付时间:</span><input type="date" v-model="item.time"></td>
-          <td><span>查询时间:</span><input type="date" v-model="endtime"></td>
-        </tr>
-      </table>
+            </p>
+          </div>
+          <div v-if="item.type === '1'"><span>交强险：</span><input type="text" v-model="item.sali"></div>
+          <div v-if="item.type === '2'"><span>商业险：</span><input type="text" v-model="item.commercials"></div>
+          <div class="time">
+            <span>首付时间：</span>
+          </div>
+            <el-date-picker
+              v-model="item.time"
+              type="date"
+              placeholder="选择日期"
+              value-format="yyyy-MM-dd"
+              size="mini">
+            </el-date-picker>
+            <!-- <input type="date" v-model="item.time"> -->
+          <div class="time">
+            <span>查询时间：</span>
+            </div>
+            <el-date-picker
+              v-model="endtime"
+              type="date"
+              placeholder="选择日期"
+              value-format="yyyy-MM-dd"
+              size="mini">
+            </el-date-picker>
+            <!-- <input type="date" v-model="endtime"> -->
+        </div>
+        <button class="find" @click="getData">查询</button>
+      </div>
+      <!-- <button class="find" @click="getData">查询</button> -->
     </div>
-    <div class="views">
+    <div style="width:40%;margin-left:5px;">
+      <div class="content ss">
+        <div class="select">
+        <span>显示结果</span>
+      </div>
+        <div style="height:99%;overflow: auto;" v-if="datalist.length > 0">
+          <div class="table" v-for="(tab, i) in datalist" :key="i">
+            <div style="margin-left:10px;">总收入：{{tab.sf}}</div>
+            <div>盈利：{{tab.yl}}</div>
+            <div>本金：{{tab.bj}}</div>
+            <div>我方垫付：{{tab.jf}}</div>
+              <!-- <input type="date" v-model="endtime"> -->
+          </div>
+        </div>
+        <div class="xianshi">
+          <table>
+            <tr>
+              <th></th>
+              <th>总收入</th>
+              <th>盈利</th>
+              <th>本金</th>
+              <th>我方垫付</th>
+            </tr>
+            <tr>
+              <th>统计商业险</th>
+              <td>{{resSoure.commercials.sfs}}</td>
+              <td>{{resSoure.commercials.yls}}</td>
+              <td>{{resSoure.commercials.bjs}}</td>
+              <td>{{resSoure.commercials.jfs}}</td>
+            </tr>
+            <tr>
+              <th>统计交强险</th>
+              <td>{{resSoure.sali.sfc}}</td>
+              <td>{{resSoure.sali.ylc}}</td>
+              <td>{{resSoure.sali.bjc}}</td>
+              <td>{{resSoure.sali.jfc}}</td>
+            </tr>
+            <tr>
+              <th>合计</th>
+              <td>{{resSoure.total.a}}</td>
+              <td>{{resSoure.total.b}}</td>
+              <td>{{resSoure.total.c}}</td>
+              <td>{{resSoure.total.d}}</td>
+            </tr>
+          </table>
+          <!-- {{resSoure.commercials}} -->
+      </div>
+      </div>
+    </div>
+    </div>
+    <!-- <div class="views">
       <div class="right">
         <p>显示区：</p>
         <div>
@@ -42,10 +119,10 @@
           <div id="xianshi"></div>
         </div>
       </div>
-    </div>
-    <div class="btn">
+    </div> -->
+    <!-- <div class="btn">
       <button class="find" @click="getData">查询</button>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -55,6 +132,26 @@ export default {
   name: 'Calculater',
   data () {
     return {
+      resSoure: {
+        commercials: {
+          sfs: 0,
+          yls: 0,
+          jfs: 0,
+          bjs: 0
+        },
+        sali: {
+          sfc: 0,
+          ylc: 0,
+          jfc: 0,
+          bjc: 0
+        },
+        total: {
+          a: 0,
+          b: 0,
+          c: 0,
+          d: 0
+        }
+      },
       type: '1',
       shangye: 0,
       jiaoqiang: 0,
@@ -107,12 +204,9 @@ export default {
       // this.$post('/interestRate/calculators', this.list, {'contentType': 'application/json; charset=UTF-8'}).then(res => {
       this.$http.post(Req + '/interestRate/calculators', JSON.stringify(this.list), config).then(res => {
         if (res.data.code === 0) {
-          var div = ''
           this.datalist = res.data.data1
-          div += '<p><span style="font-weight:bold;">统计商业险： </span>' + res.data.data2.commercials + '</p>' + '<br/>'
-          div += '<p><span style="font-weight:bold;">统计交强险： </span>' + JSON.stringify(res.data.data2.sali) + '</p>' + '<br/>'
-          div += '<p><span style="font-weight:bold;">总计： </span>' + JSON.stringify(res.data.data2.total) + '</p>' + '<br/>'
-          document.getElementById('xianshi').innerHTML = div
+          this.resSoure = res.data.data2
+          console.log(this.resSoure.commercials.sfs)
         } else {
           this.$message(res.data.msg)
         }
@@ -131,101 +225,122 @@ export default {
   top: 0;
   left: 0;
   z-index: 10;
-  padding: 20px;
+  padding: 40px;
   padding-top:0;
   overflow: auto;
   box-sizing: border-box;
-}
-#list_table tr:nth-child(2n){
-  background: rgba(129, 199, 212, 0.4);
-}
-tr {
-  height: 50px;
-  /* border-bottom: 1px solid #999999; */
-  background: rgba(129, 162, 212, 0.4);
-  color: #434343;
-}
-td {
-  padding: 0 20px;
-}
-#list_table input[tpye='text'] {
-  margin-left: 10px;
-  border: none;
-  height: 100%;
-  /* background: none; */
-}
-#list_table {
-  border-collapse: collapse;
-  border: none;
-}
-.add {
-  margin-top: 20px;
-  width: 100px;
-  height: 40px;
-  margin-bottom:10px;
-  border: none;
-  background: #1E88A8;
-  color: white;
-  box-shadow: 2px 2px 5px #999999;
-  display: block;
-}
-.btn {
-  width: 890px;
-  display: flex;
-  justify-content: space-around;
-}
-h1 {
-  margin-bottom: 20px;
-  text-align: center;
-}
-.right {
-  height: 100%;
-}
-#xianshi {
-  padding: 10px;
-}
-#xianshi p {
-  display: inline-block;
-  margin: 5px;
-  font-size: 15px;
-}
-#xianshi span {
-  font-weight: 600;
-  font-size: 18px;
-}
-.btn .find {
-  width: 200px;
-  height: 50px;
-  border: none;
-  border-radius: 50px;
-  margin-top: 20px;
-  color: white;
-  background: #8EC3D3;
+  font-size: 9px;
+  background-image: url('../../assets/img/jisuan.png');
+  .title {
+    font-size: 27px;
+    font-weight: bold;
+    padding-top: 28px;
+  }
+  // background: palevioletred;
 }
 .content {
   display: inline-block;
-  height: 75%;
-  overflow: auto;
-  background: white;
-  /* margin-top: 120px; */
-}
-.views {
-  vertical-align:top;
-  display: inline-block;
-  margin-top: -21px;
-}
-#tableRes {
-  border-collapse: collapse;
-}
-.tit {
-  /* position: fixed; */
+  // height: 75%;
+  // overflow: auto;
   background: none;
-  width: 100%;
+  .select {
+    font-size: 17px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    width: 100%;
+    justify-content: space-between;
+    display: flex;
+    font-weight: bold;
+    button {
+      width: 49px;
+      height: 20px;
+      border: none;
+      background-color: white;
+      border-radius: 7px;
+      font-size: 10px;
+    }
+  }
+  .table {
+    height: 50px;
+    // box-sizing: border-box;
+    overflow: hidden;
+    box-shadow:0px 8px 12px 0px rgba(23,3,79,0.1);
+    border-radius:10px;
+    background-color: white;
+    margin-bottom: 10px;
+    padding: 0 10px 0 0;
+    div {
+      display: inline-block;
+      height: 100%;
+      margin:0;border:0;
+      padding:15px 0;
+      vertical-align: text-top;
+      box-sizing: border-box;
+      margin-right: 10px;
+      input {
+        width: 59px;
+        height: 16px;
+      }
+    }
+    .lei {
+      display: inline-block;
+      background: black;
+      color: white;
+      height: 100.1%;
+      padding: 15px 10px;
+    }
+    .radio {
+      padding: 0;
+      p {
+        padding: 3px 0;
+      }
+    }
+    .el-date-editor.el-input {
+      width: 139px;
+      // padding-left: none;
+    }
+  }
+  .find {
+    float: right;
+    width: 113px;
+    height: 39px;
+    font-size:17px;
+    font-family:Adobe Heiti Std R;
+    font-weight:normal;
+    background: white;
+    border-radius:11px;
+    margin-top: 10px;
+  }
 }
-th {
-  width: 100px;
+.ss {
+  width: 100%;
+ .table {
+   display: flex;
+   justify-content: space-between;
+ }
 }
 ::-webkit-scrollbar {/*隐藏滚轮*/
   display: none;
+  }
+  .xianshi {
+    width: 100%;
+    border:1px solid rgba(255,255,255,1);
+    border-radius:14px;
+    height: 109px;
+  }
+  .content .table .el-date-editor.el-input[data-v-76d92dd6] {
+    padding: 12px 0!important;
+  }
+  .xianshi {
+    background: white;
+    table {
+      // background: white;
+      width: 100%;
+      td, th {
+        width: 19%;
+        text-align: center;
+        height: 20px;
+      }
+    }
   }
 </style>
