@@ -1,53 +1,58 @@
 <template>
   <div class="top">
     <div class="tab">
-      <ul>
-        <li v-for="(data, index) in list" :key="index" :class="{active: index == num}" @click="tab(index)" @mousemove="tabmove(index, $event)">
+      <ul id="quanbu">
+        <li v-for="(data, index) in list" :key="index" :class="{active: index == num}" @click="tab(index)" @mousemove="tabmove(index, $event)" @mouseleave="onleave">
           <a>{{ data }}</a>
         </li>
         <div class="tuibao position" id="tuibao" v-show="retreats" @mouseleave="leave">
           <div class="li" @click="tuibao(1)"><a>退保中</a></div>
           <div class="li" @click="tuibao(2)"><a>已退保</a></div>
         </div>
-        <div class="all position" v-show="all" @mouseleave="leave">
+        <!-- 全部渠道 -->
+        <!-- <div class="all position" v-show="all" @mouseleave="leave"> -->
+        <div class="all position" v-show="ceshi"  @mouseleave="onleave">
           <div class="area">
             <div class="l">
-              选择区域：
+              <span style="margin-left: 30px;">选择区域：</span>
+              <el-cascader
+                :options="options1"
+                @change="handleItemChange1"
+                :props="props"
+                size="small">
+              </el-cascader>
+              省
+              <el-cascader
+                :options="options2"
+                @change="handleItemChange2"
+                :props="props"
+                size="small">
+              </el-cascader>
+              市
+              <el-cascader
+                :options="options3"
+                @change="handleItemChange3"
+                :props="props"
+                size="small">
+              </el-cascader>
+              县/区
+            </div>
+            <div class="r">
+              <el-input
+                placeholder="请输入你要搜索的内容"
+                suffix-icon="el-icon-search"
+                v-model="input6"
+                @change="search"
+                size="small">
+              </el-input>
             </div>
           </div>
           <li v-for="o in qudaoList" :key="o.channelId"><a @click="channel(o.channelId)">{{ o.channelName }}</a></li>
         </div>
-        <!-- <el-menu
-          :default-active="activeIndex2"
-          class="el-menu-demo"
-          mode="horizontal"
-          @select="handleSelect"
-          background-color="#FFC107"
-          text-color="#282828"
-          active-text-color="#FFC107">
-          <el-menu-item index="1"><a>全部渠道</a></el-menu-item>
-          <el-menu-item index="2"><a>待付款</a></el-menu-item>
-          <el-menu-item index="3"><a>已分期</a></el-menu-item>
-          <el-submenu index="4">
-            <template slot="title">退保中心</template>
-            <el-menu-item index="4-1">退保中</el-menu-item>
-            <el-menu-item index="4-2">已退保</el-menu-item>
-          </el-submenu>
-          <el-menu-item index="5"><a>渠道</a></el-menu-item>
-          <el-menu-item index="6"><a>报表</a></el-menu-item>
-          <el-menu-item index="7"><a>系统</a></el-menu-item>
-        </el-menu> -->
       </ul>
     </div>
+    <!-- 个人 -->
     <div class="user">
-      <!-- <a>
-        <img src="../../assets/mImg/user.png" alt="">
-        {{ name }}
-      </a>
-      <a @click="out">
-        <img src="../../assets/mImg/out.png" alt="">
-        退出登录
-      </a> -->
       <el-dropdown>
         <span class="el-dropdown-link">
           <img src="../../assets/mImg/user.png" alt="">
@@ -66,13 +71,13 @@
       width="450px">
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
           <el-form-item label="登录密码:" prop="oldPwd">
-            <el-input v-model="ruleForm.oldPwd" autocomplete="off" type="password"></el-input>
+            <el-input v-model="ruleForm.oldPwd" auto-complete="off" type="password"></el-input>
           </el-form-item>
           <el-form-item label="密码" prop="pass">
-            <el-input type="password" v-model="ruleForm.pass" autocomplete="off"></el-input>
+            <el-input type="password" v-model="ruleForm.pass" auto-complete="off"></el-input>
           </el-form-item>
           <el-form-item label="确认密码" prop="checkPass">
-            <el-input type="password" v-model="ruleForm.checkPass" autocomplete="off"></el-input>
+            <el-input type="password" v-model="ruleForm.checkPass" auto-complete="off"></el-input>
           </el-form-item>
           <div class="fenye1">
             <el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
@@ -116,6 +121,7 @@ export default {
       }
     }
     return {
+      ceshi: false,
       // list: ['全部渠道', '待付款', '已分期', '退保中心', '渠道', '系统'],
       // listLink: ['AllChannels', 'Obligations', 'Amortized', 'Surrender', 'Trench', 'System'],
       list: ['全部渠道'],
@@ -145,10 +151,23 @@ export default {
         checkPass: [
           { required: true, validator: validatePass2, trigger: 'blur' }
         ]
-      }
+      },
+      options1: [],
+      options2: [],
+      options3: [],
+      props: {
+        value: 'id',
+        // label: 'index',
+        children: 'cities'
+      },
+      shengStr: '',
+      shengStr2: '',
+      shengStr3: '',
+      input6: ''
     }
   },
   mounted () {
+    // 权限获取
     let permissionData = JSON.parse(sessionStorage.getItem('permission'))
     permissionData.forEach(v => {
       if (v === '待付款') {
@@ -179,11 +198,123 @@ export default {
       }
     })
     this.name = sessionStorage.getItem('username')
-    this.$fetch('/ad/channel/findAll').then(res => {
+    this.$post('/ad/channel/findAll').then(res => {
       this.qudaoList = res.data.channel
+    })
+    // 获取省级
+    this.$fetch('/ad/index/getProvinceInfo').then(res => {
+      res.data.forEach((v, k) => {
+        this.options1.push({label: v.name, id: v.id})
+      })
     })
   },
   methods: {
+    onleave (e) {
+      var left = document.getElementById('quanbu').offsetLeft + 5
+      if (e.clientY >= 180 || e.clientX <= left || e.clientX >= left + 968) {
+        this.ceshi = false
+      }
+    },
+    search () {
+      this.$emit('search', this.input6)
+    },
+    // 选择地区
+    // handleItemChange (val) {
+    //   setTimeout(_ => {
+    //     // 选择省
+    //     if (val.length === 1) {
+    //       this.$post('/ad/index/getCityInfo', {id: val[0]}).then(res => {
+    //         this.options2.forEach((m, n) => {
+    //           if (m.id === val[0]) {
+    //             m.cities = []
+    //             res.data.forEach((x, y) => {
+    //               m.cities.push({label: x.name, id: x.id, cities: []})
+    //             })
+    //           }
+    //         })
+    //       })
+    //     } else {
+    //       // 选择区/市
+    //       this.$post('/ad/index/getCityInfo', {id: val[1]}).then(res => {
+    //         this.options2.forEach((m, n) => {
+    //           if (m.id === val[0]) {
+    //             m.cities.forEach((x, y) => {
+    //               if (x.id === val[1]) {
+    //                 x.cities = []
+    //                 res.data.forEach((a, b) => {
+    //                   x.cities.push({label: a.name, id: a.id})
+    //                 })
+    //               }
+    //             })
+    //           }
+    //         })
+    //       })
+    //     }
+    //   }, 300)
+    // },
+    // 选择省
+    handleItemChange1 (val) {
+      // console.log(val)
+      setTimeout(_ => {
+        this.options1.forEach(v => {
+          if (v.id === val[0]) {
+            this.shengStr = v.label
+          }
+        })
+        this.$post('/ad/channel/findAll', {
+          address: this.shengStr
+        }).then(res => {
+          this.qudaoList = res.data.channel
+        })
+        this.$emit('province', this.shengStr)
+        this.$post('/ad/index/getCityInfo', {id: val[0]}).then(res => {
+          // console.log(res.data)
+          this.options2 = []
+          res.data.forEach((x, y) => {
+            this.options2.push({label: x.name, id: x.id})
+          })
+        })
+      })
+    },
+    // 选择市
+    handleItemChange2 (val) {
+      setTimeout(_ => {
+        this.options2.forEach(v => {
+          if (v.id === val[0]) {
+            this.shengStr2 = v.label
+          }
+        })
+        this.$post('/ad/channel/findAll', {
+          address: this.shengStr + this.shengStr2
+        }).then(res => {
+          this.qudaoList = res.data.channel
+        })
+        this.$emit('city', this.shengStr + this.shengStr2)
+        this.$post('/ad/index/getCityInfo', {id: val[0]}).then(res => {
+          // console.log(res.data)
+          this.options3 = []
+          res.data.forEach((x, y) => {
+            this.options3.push({label: x.name, id: x.id})
+          })
+        })
+      })
+    },
+    // 选择区
+    handleItemChange3 (val) {
+      // console.log(val)
+      this.options3.forEach(v => {
+        if (v.id === val[0]) {
+          this.shengStr3 = v.label
+        }
+      })
+      this.$post('/ad/channel/findAll', {
+        address: this.shengStr + this.shengStr2 + this.shengStr3
+      }).then(res => {
+        this.qudaoList = res.data.channel
+      })
+      this.$emit('region', this.shengStr + this.shengStr2 + this.shengStr3)
+      // console.log(this.shengStr)
+    },
     handleSelect (key, keyPath) {
       // console.log(key, keyPath)
       if (key === '4-1') {
@@ -213,24 +344,29 @@ export default {
       }
     },
     leave (e) {
+      // console.log(e)
       this.all = false
       this.retreats = false
       // console.log(this.list.indexOf('退保中心'))
     },
     channel (id) {
+      this.ceshi = false
       this.$emit('channelId', id)
     },
     tabmove (i, e) {
       if (i === 0) {
         this.all = true
         this.retreats = false
+        this.ceshi = true
       } else if (i === this.list.indexOf('退保中心')) {
         this.retreats = true
         this.all = false
+        this.ceshi = false
         document.getElementById('tuibao').style.left = e.target.offsetLeft + 'px'
       } else {
         this.all = false
         this.retreats = false
+        this.ceshi = false
       }
     },
     tab (index) {
@@ -272,6 +408,9 @@ export default {
   display: flex;
   justify-content: center;
   min-width: 1170px;
+  .el-cascader {
+    width: 100px;
+  }
   .el-submenu.is-active .el-menu-item.is-active {
     background-color: #282828 !important;
     border-bottom-color: #282828 !important;
@@ -314,10 +453,20 @@ export default {
       .all {
         left: 5px;
         width: 968px;
-        height: 120px;
+        min-height: 120px;
         background:rgba(255,255,255,1);
         border-radius: 5px;
         box-shadow: 0px 0px 4px rgba(0,0,0,0.35);
+        .area {
+          overflow: hidden;
+          padding-right: 20px;
+        }
+        .l {
+          float: left;
+        }
+        .r {
+          float: right;
+        }
         li {
           padding: 0;
           border-right: 1px solid #8F8F8F;

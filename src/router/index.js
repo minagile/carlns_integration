@@ -40,6 +40,7 @@ import ManageAccount from '@/managementSystem/System/ManageAccount'
 import RolePermission from '@/managementSystem/System/RolePermission'
 import Calculater from '@/managementSystem/System/Calculater'
 import Journal from '@/managementSystem/System/Journal'
+import ReportForms from '@/managementSystem/System/ReportForms'
 import AuditC from '@/managementSystem/home/AuditC'
 import AuditP from '@/managementSystem/home/AuditP'
 import ObligationsP from '@/managementSystem/home/ObligationsP'
@@ -237,6 +238,11 @@ export default new Router({
           name: 'System',
           component: System,
           children: [
+            {
+              path: '/m/System/ReportForms',
+              name: 'ReportForms',
+              component: ReportForms
+            },
             {
               path: '/m/System/Rote',
               name: 'Rote',

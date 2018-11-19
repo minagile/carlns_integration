@@ -129,6 +129,8 @@ export default {
         this.rolepermission = false
       } else {
         // console.log(this.arr)
+        this.sure()
+        this.rolepermission = false
         // POST /ad/role/updateRole
         // this.$post('/ad/role/updateRole', {
         //   id: this.id,
@@ -141,7 +143,7 @@ export default {
     },
     add () {
       this.dialogFormVisible = true
-      this.title = '添加账号'
+      this.title = '添加角色'
       this.form = {
         user: '',
         phone: '',
@@ -216,29 +218,47 @@ export default {
     },
     // 删除
     del (id) {
-      // DELETE /ad/role/deleteRole
-      let that = this
-      this.$confirm('是否删除角色', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消'
-      }).then(() => {
-        that.$post('/ad/role/deleteRole', {
-          id: id
-        }).then(res => {
-          if (res.code === 0) {
-            this.getData()
-            this.$message({
-              type: 'success',
-              message: '删除成功'
-            })
-          } else {
-            this.$message.error(res.msg)
-          }
-        })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消删除'
+      // console.log(id)
+      // POST /ad/manager/findByRoleId
+      this.$post('/ad/manager/findByRoleId', {
+        roleId: id
+      }).then(response => {
+        // console.log(response)
+        var str = ''
+        if (response.code === 0) {
+          this.$message(response.msg)
+        } else {
+          this.$message(response.msg)
+          str = response.msg + ','
+        }
+        const h = this.$createElement
+        let that = this
+        // this.$confirm(str + '是否删除角色', {
+        this.$confirm(h('p', null, [
+          h('span', { style: 'color: red' }, str),
+          h('span', null, '是否删除角色')
+        ]), {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消'
+        }).then(() => {
+          that.$post('/ad/role/deleteRole', {
+            id: id
+          }).then(res => {
+            if (res.code === 0) {
+              this.getData()
+              this.$message({
+                type: 'success',
+                message: '删除成功'
+              })
+            } else {
+              this.$message.error(res.msg)
+            }
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
         })
       })
     },

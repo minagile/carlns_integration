@@ -86,8 +86,8 @@ export default {
   name: 'System',
   data () {
     return {
-      list: ['短信模板', '更改协议', '日志', '费率模板', '账号管理', '角色权限', '计算器'],
-      listHref: ['System', 'ChangeFile', 'Journal', 'Rote', 'ManageAccount', 'RolePermission', 'Calculater'],
+      list: ['短信模板', '更改协议', '日志', '费率模板', '账号管理', '角色权限', '计算器', '报表'],
+      listHref: ['System', 'ChangeFile', 'Journal', 'Rote', 'ManageAccount', 'RolePermission', 'Calculater', 'ReportForms'],
       // list: [],
       // listHref: [],
       num: 0,

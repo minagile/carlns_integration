@@ -243,6 +243,7 @@ export default {
   mounted () {
     this.getData(this.channelId)
     this.changedMonth(new Date().getMonth() + '/' + new Date().getFullYear())
+    // console.log(this.search)
   },
   deactivated () {
     this.$destroy()
@@ -250,6 +251,16 @@ export default {
   watch: {
     channelId (val) {
       this.getData(val)
+    },
+    address (val) {
+      this.address = val
+      // console.log(val)
+      this.getData()
+    },
+    search (val) {
+      this.search = val
+      // console.log(val)
+      this.getData()
     }
   },
   methods: {
@@ -338,7 +349,23 @@ export default {
     },
     getData (data) {
       // 待审核
-      this.$fetch('/ad/index/countWorkAdAudit', {'channelId': data}).then(res => {
+      // this.$fetch('/ad/index/countWorkAdAudit', {
+      //   'channelId': data
+      // }).then(res => {
+      //   this.list1 = res
+      //   if (res.code === 101) {
+      //     this.$message({
+      //       message: res.msg,
+      //       type: 'info'
+      //     })
+      //   }
+      // })
+      this.$fetch('/ad/index/countWork', {
+        'status': '1',
+        'channelId': data,
+        'address': this.address,
+        'search': this.search
+      }).then(res => {
         this.list1 = res
         if (res.code === 101) {
           this.$message({
@@ -350,7 +377,9 @@ export default {
       // 待付款
       this.$fetch('/ad/index/countWork', {
         'status': '2',
-        'channelId': data
+        'channelId': data,
+        'address': this.address,
+        'search': this.search
       }).then(res => {
         this.list2 = res
         if (res.code === 101) {
@@ -363,7 +392,9 @@ export default {
       // 投保中
       this.$fetch('/ad/index/countWork', {
         'status': '3',
-        'channelId': data
+        'channelId': data,
+        'address': this.address,
+        'search': this.search
       }).then(res => {
         this.list3 = res
         if (res.code === 101) {
@@ -386,6 +417,18 @@ export default {
       type: String,
       default () {
         return '1'
+      }
+    },
+    address: {
+      type: String,
+      default () {
+        return ''
+      }
+    },
+    search: {
+      type: String,
+      default () {
+        return ''
       }
     }
   },

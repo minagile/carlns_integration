@@ -44,7 +44,7 @@
           <el-input v-model="form.con" type="password" auto-complete="off" placeholder="请确认密码"></el-input>
         </el-form-item>
         <el-form-item label="选择角色：" prop="username" label-width="190px">
-          <el-select v-model="form.roleId" placeholder="请选择角色">
+          <el-select v-model="form.roleId" placeholder="请选择角色" @change="changeselect">
             <el-option v-for="(o, i) in roleList" :key="i" :label="o.roleName" :value="o.roleId"></el-option>
             <!-- <el-option label="区域二" value="beijing"></el-option> -->
           </el-select>
@@ -100,6 +100,9 @@ export default {
     this.getData()
   },
   methods: {
+    changeselect (valhe) {
+      // console.log(valhe)
+    },
     add () {
       this.dialogFormVisible = true
       this.title = '添加账号'
@@ -111,7 +114,7 @@ export default {
       }
       // GET /ad/role/findAll
       this.$fetch('/ad/role/findAll').then(res => {
-        console.log(res)
+        // console.log(res)
         this.roleList = res.data
       })
     },
@@ -223,14 +226,14 @@ export default {
         this.$message.error('密码不为空')
       } else if (this.form.psd === this.form.con) {
         if (this.title === '编辑账号') {
-          var data = {
+          var data1 = {
             name: this.form.name,
             username: this.form.phone,
             password: this.form.psd,
             roleId: this.form.roleId,
             id: this.id
           }
-          this.$post('/ad/manager/update', data).then(res => {
+          this.$post('/ad/manager/update', data1).then(res => {
             // console.log(res)
             if (res.code === 0) {
               this.dialogFormVisible = false
