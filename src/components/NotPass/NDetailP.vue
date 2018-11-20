@@ -88,7 +88,7 @@
             <p>支持jpg、jpeg、png等格式，体积在5M以下 </p>
           </div>
         </figure>
-        <figure>
+        <figure v-if="ruleForm.type === 1">
           <div class="text"><span>购车发票：</span></div>
           <div class="right">
             <div class="box">
@@ -101,13 +101,25 @@
           </div>
         </figure>
         <figure v-if="ruleForm.type === 2">
-          <div class="text"><span>机动车行驶证：</span></div>
+          <div class="text"><span>机动车行驶证左边：</span></div>
           <div class="right">
             <div class="box">
               <img src="../../assets/img/uploadpic.png" alt="">
               <a>点击上传</a>
-              <div class="img_show" :style="{'backgroundImage': 'url(' + ruleForm.license + ')'}"></div>
+              <div class="img_show" :style="{'backgroundImage': 'url(' + ruleForm.certificate + ')'}"></div>
               <input type="file" @change="fileImage($event, 3)" accept="image/jpeg,image/x-png,image/gif" />
+            </div>
+            <p>支持jpg、jpeg、png等格式，体积在5M以下 </p>
+          </div>
+        </figure>
+        <figure v-if="ruleForm.type === 2">
+          <div class="text"><span>机动车行驶证右边：</span></div>
+          <div class="right">
+            <div class="box">
+              <img src="../../assets/img/uploadpic.png" alt="">
+              <a>点击上传</a>
+              <div class="img_show" :style="{'backgroundImage': 'url(' + ruleForm.certificateBack + ')'}"></div>
+              <input type="file" @change="fileImage($event, 6)" accept="image/jpeg,image/x-png,image/gif" />
             </div>
             <p>支持jpg、jpeg、png等格式，体积在5M以下 </p>
           </div>
@@ -226,10 +238,14 @@ export default {
       formData.append('state', this.ruleForm.state)
       formData.append('insureStages', this.ruleForm.stages)
       formData.append('carPayBillUrl', this.ruleForm.pay)
-      formData.append('carInvoiceUrl', this.ruleForm.invoice)
-      formData.append('license', this.ruleForm.license)
       formData.append('personUp', this.ruleForm.customerIdcardUp)
       formData.append('personDown', this.ruleForm.customerIdcardDown)
+      if (this.ruleForm.type === 1) {
+        formData.append('carInvoiceUrl', this.ruleForm.invoice)
+      } else {
+        formData.append('license', this.ruleForm.certificate)
+        formData.append('licenseBack', this.ruleForm.certificateBack)
+      }
       let config = {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -282,7 +298,8 @@ export default {
             stages: res.data.result.obj.stages,
             pay: res.data.result.obj.pay,
             invoice: res.data.result.obj.invoice,
-            license: res.data.result.obj.license,
+            certificate: res.data.result.obj.certificate,
+            certificateBack: res.data.result.obj.certificateBack,
             customerIdcardUp: res.data.result.customer.customerIdcardUp,
             customerIdcardDown: res.data.result.customer.customerIdcardDown
           }
@@ -373,13 +390,16 @@ export default {
               that.ruleForm.invoice = file
             }
             if (i === 3) {
-              that.ruleForm.license = file
+              that.ruleForm.certificate = file
             }
             if (i === 4) {
               that.ruleForm.customerIdcardUp = file
             }
             if (i === 5) {
               that.ruleForm.customerIdcardDown = file
+            }
+            if (i === 6) {
+              that.ruleForm.certificateBack = file
             }
           }
         }

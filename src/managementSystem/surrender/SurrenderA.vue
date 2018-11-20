@@ -134,7 +134,7 @@ export default {
       this.$fetch('/ad/index/findSurrenderEd', {
         status: data
       }).then(res => {
-        console.log(res.data)
+        // console.log(res.data)
         if (res.code === 0) {
           this.tableData = res.data
         } else {

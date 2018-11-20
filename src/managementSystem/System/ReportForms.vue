@@ -141,7 +141,8 @@ export default {
           this.$fetch('/ad/report/findByTime', {type: 2, endTime: value.getFullYear() + '-' + zero(value.getMonth() + 1)}).then(res => {
             // console.log(res.data)
             if (res.code === 0) {
-              this.dealData(res.data[0].list)
+              this.dealData(res.data)
+              // this.dealData(res.data[0].list)
             } else {
               this.$message(res.msg)
             }

@@ -23,7 +23,7 @@
           <div class="choose">
             <div class="license p">
               <el-radio v-model="ruleForm.type" label="1" @change="changeCarNumber($event)">车辆合格证：</el-radio>
-              <el-input size="mini" v-model="ruleForm.carNameplate" placeholder="请输入您的合格证号" id="hege" ></el-input>
+              <el-input size="mini" v-model="ruleForm.carQuilification" placeholder="请输入您的合格证号" id="hege" ></el-input>
             </div>
             <div class="carnumber p">
               <el-radio v-model="ruleForm.type" label="2" @change="changeCarNumber($event)">车牌号：</el-radio>
@@ -91,7 +91,7 @@
             <p>支持jpg、jpeg、png等格式，体积在5M以下 </p>
           </div>
         </figure>
-        <figure>
+        <figure v-if="ruleForm.type === '1'">
           <div class="text"><span>购车发票：</span></div>
           <div class="right">
             <div class="box">
@@ -104,13 +104,25 @@
           </div>
         </figure>
         <figure v-if="ruleForm.type === '2'">
-          <div class="text"><span>机动车行驶证：</span></div>
+          <div class="text"><span>机动车行驶证左边：</span></div>
           <div class="right">
             <div class="box">
               <img src="../../assets/img/uploadpic.png" alt="">
               <a>点击上传</a>
               <div class="img_show"></div>
               <input type="file" @change="fileImage($event, 3)" accept="image/jpeg,image/x-png,image/gif" />
+            </div>
+            <p>支持jpg、jpeg、png等格式，体积在5M以下 </p>
+          </div>
+        </figure>
+        <figure v-if="ruleForm.type === '2'">
+          <div class="text"><span>机动车行驶证右边：</span></div>
+          <div class="right">
+            <div class="box">
+              <img src="../../assets/img/uploadpic.png" alt="">
+              <a>点击上传</a>
+              <div class="img_show"></div>
+              <input type="file" @change="fileImage($event, 6)" accept="image/jpeg,image/x-png,image/gif" />
             </div>
             <p>支持jpg、jpeg、png等格式，体积在5M以下 </p>
           </div>
@@ -162,6 +174,7 @@ export default {
         tel: '',
         carVin: '',
         type: '1',
+        carQuilification: '',
         carNameplate: '',
         insureCommercial: '',
         insureFic: '',
@@ -205,6 +218,7 @@ export default {
   methods: {
     changeCarNumber (num) {
       this.ruleForm.carNameplate = ''
+      this.ruleForm.carQuilification = ''
       if (num === '1') {
         document.getElementById('hege').disabled = false
         document.getElementById('chepai').disabled = true
@@ -250,7 +264,6 @@ export default {
         formData.append('tel', this.ruleForm.tel)
         formData.append('carVin', this.ruleForm.carVin)
         formData.append('type', this.ruleForm.type)
-        formData.append('carNameplate', this.ruleForm.carNameplate)
         formData.append('insureCommercial', this.ruleForm.insureCommercial)
         formData.append('insureFic', this.ruleForm.insureFic)
         formData.append('insureCarBoatTax', this.ruleForm.insureCarBoatTax)
@@ -264,14 +277,18 @@ export default {
           if (this.ruleForm.carInvoiceUrl === '') {
             this.$message.error('请上传购车发票')
           } else {
+            formData.append('carNameplate', this.ruleForm.carNameplate)
             formData.append('carInvoiceUrl', this.ruleForm.carInvoiceUrl)
           }
         } else {
           if (this.ruleForm.license === '') {
-            this.$message.error('请上传机动车行驶证')
+            this.$message.error('请上传机动车行驶证左边')
+          } else if (this.ruleForm.licenseBack === '') {
+            this.$message.error('请上传机动车行驶证右边')
           } else {
+            formData.append('carNameplate', this.ruleForm.carQuilification)
             formData.append('license', this.ruleForm.license)
-            formData.append('carInvoiceUrl', this.ruleForm.carInvoiceUrl)
+            formData.append('licenseBack', this.ruleForm.licenseBack)
           }
         }
         this.fullscreenLoading = true
@@ -336,6 +353,9 @@ export default {
             }
             if (i === 5) {
               that.ruleForm.personDown = file
+            }
+            if (i === 6) {
+              that.ruleForm.licenseBack = file
             }
           }
         }

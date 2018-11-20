@@ -86,10 +86,10 @@ export default {
   name: 'System',
   data () {
     return {
-      list: ['短信模板', '更改协议', '日志', '费率模板', '账号管理', '角色权限', '计算器', '报表'],
-      listHref: ['System', 'ChangeFile', 'Journal', 'Rote', 'ManageAccount', 'RolePermission', 'Calculater', 'ReportForms'],
-      // list: [],
-      // listHref: [],
+      // list: ['短信模板', '更改协议', '日志', '费率模板', '账号管理', '角色权限', '计算器', '报表'],
+      // listHref: ['System', 'ChangeFile', 'Journal', 'Rote', 'ManageAccount', 'RolePermission', 'Calculater', 'ReportForms'],
+      list: [],
+      listHref: [],
       num: 0,
       tableData: [],
       dialogFormVisible: false,
@@ -107,29 +107,39 @@ export default {
     }
   },
   mounted () {
-    // let permissionData = JSON.parse(sessionStorage.getItem('permission'))
-    // permissionData.forEach(v => {
-    //   if (v === '短信模板') {
-    //     this.list.push(v)
-    //     this.listHref.push('System')
-    //   }
-    //   if (v === '更改协议') {
-    //     this.list.push(v)
-    //     this.listHref.push('ChangeFile')
-    //   }
-    //   if (v === '权限分配') {
-    //     this.list.push(v)
-    //     this.listHref.push('Jurisdiction')
-    //   }
-    //   if (v === '日志') {
-    //     this.list.push(v)
-    //     this.listHref.push('Journal')
-    //   }
-    //   if (v === '费率模板') {
-    //     this.list.push(v)
-    //     this.listHref.push('Rote')
-    //   }
-    // })
+    let permissionData = JSON.parse(sessionStorage.getItem('permission'))
+    permissionData.forEach(v => {
+      if (v === '短信模板') {
+        this.list.push(v)
+        this.listHref.push('System')
+      }
+      if (v === '更改协议') {
+        this.list.push(v)
+        this.listHref.push('ChangeFile')
+      }
+      if (v === '日志') {
+        this.list.push(v)
+        this.listHref.push('Journal')
+      }
+      if (v === '费率模板') {
+        this.list.push(v)
+        this.listHref.push('Rote')
+      }
+      if (v === '账号管理') {
+        this.list.push(v)
+        this.listHref.push('ManageAccount')
+      }
+      if (v === '角色权限') {
+        this.list.push(v)
+        this.listHref.push('RolePermission')
+      }
+      if (v === '报表') {
+        this.list.push(v)
+        this.listHref.push('ReportForms')
+      }
+    })
+    this.list.push('计算器')
+    this.listHref.push('Calculater')
     let path = this.$router.history.current.fullPath
     // console.log(path.split('/').reverse()[0])
     this.listHref.forEach((v, k) => {

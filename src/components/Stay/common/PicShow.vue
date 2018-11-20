@@ -3,10 +3,10 @@
     <div class="pic">
       <figure v-for="(item, index) in list" :key="index"  v-if="listImg[index]">
         <div class="text"><span>{{ item }}</span></div>
-        <div class="right">
+        <a class="right" :href="listImg[index]" target="_blank">
           <div class="box" :style="{'backgroundImage': 'url(' + listImg[index] + ')'}"></div>
           <p>支持jpg、jpeg、png等格式，体积在5M以下 </p>
-        </div>
+        </a>
       </figure>
     </div>
   </div>
@@ -36,8 +36,8 @@ export default {
           this.listImg = [val.obj.pay, val.obj.invoice, val.customer.customerIdcardUp, val.customer.customerIdcardDown]
         }
         if (val.obj.type === 2) {
-          this.list = ['缴费通知单：', '购车发票：', '机动车行驶证：', '身份证正面：', '身份证反面：']
-          this.listImg = [val.obj.pay, val.obj.invoice, val.obj.certificate, val.customer.customerIdcardUp, val.customer.customerIdcardDown]
+          this.list = ['缴费通知单：', '机动车行驶证左边：', '机动车行驶证右边：', '身份证正面：', '身份证反面：']
+          this.listImg = [val.obj.pay, val.obj.certificate, val.obj.certificateBack, val.customer.customerIdcardUp, val.customer.customerIdcardDown]
         }
       }
     }
@@ -84,6 +84,7 @@ export default {
         }
       }
       .right {
+        display: block;
         float: left;
         width: 268px;
         height: 100%;
