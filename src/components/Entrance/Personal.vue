@@ -277,7 +277,7 @@ export default {
           if (this.ruleForm.carInvoiceUrl === '') {
             this.$message.error('请上传购车发票')
           } else {
-            formData.append('carNameplate', this.ruleForm.carNameplate)
+            formData.append('carNameplate', this.ruleForm.carQuilification)
             formData.append('carInvoiceUrl', this.ruleForm.carInvoiceUrl)
           }
         } else {
@@ -286,7 +286,7 @@ export default {
           } else if (this.ruleForm.licenseBack === '') {
             this.$message.error('请上传机动车行驶证右边')
           } else {
-            formData.append('carNameplate', this.ruleForm.carQuilification)
+            formData.append('carNameplate', this.ruleForm.carNameplate)
             formData.append('license', this.ruleForm.license)
             formData.append('licenseBack', this.ruleForm.licenseBack)
           }

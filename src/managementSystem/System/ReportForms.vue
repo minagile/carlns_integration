@@ -28,8 +28,19 @@
     </div>
     <div class="tab">
       <el-button size="small" v-for="(o, i) in list" :key="i" :class="{active: num === i}" @click="tab(i)">{{ o }}</el-button>
+      <div class="change_table">
+        <el-button class="le" size="small" :class="{active: tableNum === 1}" @click="changeTable(1)">图表</el-button>
+        <el-button class="ri" size="small" :class="{active: tableNum === 2}" @click="changeTable(2)">表格</el-button>
+      </div>
     </div>
-    <div id="main" style="width: 100%;height:500px;background: #fff;margin: 0 auto;"></div>
+    <div v-show="tableNum === 1" id="main" style="width: 100%;height:500px;background: #fff;margin: 0 auto;"></div>
+    <div v-show="tableNum === 2" class="table" style="width: 80%;margin: 0 auto;">
+      <el-table :data="tableData" style="width: 100%" height="100%">
+        <el-table-column prop="time" label="时间"></el-table-column>
+        <el-table-column prop="commerce" label="商业险"></el-table-column>
+        <el-table-column prop="synthesize" label="综合险"></el-table-column>
+      </el-table>
+    </div>
   </div>
 </template>
 
@@ -69,7 +80,9 @@ export default {
       },
       pieData: [],
       type: '',
-      allnum: 0
+      allnum: 0,
+      tableNum: 1,
+      tableData: []
     }
   },
   mounted () {
@@ -82,6 +95,9 @@ export default {
     // /ad/report/findByTime
   },
   methods: {
+    changeTable (i) {
+      this.tableNum = i
+    },
     all () {
       this.num = 0
       this.type = ''
@@ -118,10 +134,52 @@ export default {
         this.arr.synthesize.dfs.push(v.synthesize.dfz)
       })
       this.chartsTwo(this.arr, this.arr.commerce.srs, this.arr.synthesize.srs)
+      this.tableData = []
+      this.arr.year.forEach((v, k) => {
+        this.tableData.push({time: v, commerce: this.arr.commerce.srs[k], synthesize: this.arr.synthesize.srs[k]})
+      })
     },
     // 选择时间
     chooseDate (type, value) {
-      if (value) {
+      // console.log(type, value)
+      if (value === null) {
+        // 日期被清空
+        if (type === 'date') {
+          if (this.value4) {
+            this.$fetch('/ad/report/findByTime', {type: 2, endTime: this.value4.getFullYear() + '-' + zero(this.value4.getMonth() + 1)}).then(res => {
+              if (res.code === 0) {
+                this.dealData(res.data)
+              } else {
+                this.$message(res.msg)
+              }
+            })
+          } else if (this.value5) {
+            this.$fetch('/ad/report/findByTime', {type: 1, endTime: this.value5.getFullYear()}).then(res => {
+              if (res.code === 0) {
+                this.dealData(res.data)
+              } else {
+                this.$message(res.msg)
+              }
+            })
+          } else {
+            this.all()
+          }
+        } else if (type === 'month') {
+          if (this.value5) {
+            this.$fetch('/ad/report/findByTime', {type: 1, endTime: this.value5.getFullYear()}).then(res => {
+              if (res.code === 0) {
+                this.dealData(res.data)
+              } else {
+                this.$message(res.msg)
+              }
+            })
+          } else {
+            this.all()
+          }
+        } else {
+          this.all()
+        }
+      } else {
         this.num = 0
         this.type = type
         this.allnum = 1
@@ -160,6 +218,11 @@ export default {
               }
               // console.log(this.pieData)
               this.pieCahrts(this.pieData.srs)
+              this.tableData = [{
+                time: this.value1.getFullYear() + '-' + zero(this.value1.getMonth() + 1) + '-' + zero(this.value1.getDate()),
+                commerce: this.pieData.srs[0].value,
+                synthesize: this.pieData.srs[1].value
+              }]
             } else {
               this.$message(res.msg)
             }
@@ -168,26 +231,59 @@ export default {
       }
     },
     tab (i) {
+      this.tableData = []
       this.num = i
       if (this.type === 'date') {
         if (i === 0) {
           this.pieCahrts(this.pieData.srs)
+          this.tableData = [{
+            time: this.value1.getFullYear() + '-' + zero(this.value1.getMonth() + 1) + '-' + zero(this.value1.getDate()),
+            commerce: this.pieData.srs[0].value,
+            synthesize: this.pieData.srs[1].value
+          }]
         } else if (i === 1) {
           this.pieCahrts(this.pieData.yls)
+          this.tableData = [{
+            time: this.value1.getFullYear() + '-' + zero(this.value1.getMonth() + 1) + '-' + zero(this.value1.getDate()),
+            commerce: this.pieData.yls[0].value,
+            synthesize: this.pieData.yls[1].value
+          }]
         } else if (i === 2) {
           this.pieCahrts(this.pieData.bjs)
+          this.tableData = [{
+            time: this.value1.getFullYear() + '-' + zero(this.value1.getMonth() + 1) + '-' + zero(this.value1.getDate()),
+            commerce: this.pieData.bjs[0].value,
+            synthesize: this.pieData.bjs[1].value
+          }]
         } else {
           this.pieCahrts(this.pieData.dfs)
+          this.tableData = [{
+            time: this.value1.getFullYear() + '-' + zero(this.value1.getMonth() + 1) + '-' + zero(this.value1.getDate()),
+            commerce: this.pieData.dfs[0].value,
+            synthesize: this.pieData.dfs[1].value
+          }]
         }
       } else {
         if (i === 0) {
           this.chartsTwo(this.arr, this.arr.commerce.srs, this.arr.synthesize.srs)
+          this.arr.year.forEach((v, k) => {
+            this.tableData.push({time: v, commerce: this.arr.commerce.srs[k], synthesize: this.arr.synthesize.srs[k]})
+          })
         } else if (i === 1) {
           this.chartsTwo(this.arr, this.arr.commerce.yls, this.arr.synthesize.yls)
+          this.arr.year.forEach((v, k) => {
+            this.tableData.push({time: v, commerce: this.arr.commerce.yls[k], synthesize: this.arr.synthesize.yls[k]})
+          })
         } else if (i === 2) {
           this.chartsTwo(this.arr, this.arr.commerce.bjs, this.arr.synthesize.bjs)
+          this.arr.year.forEach((v, k) => {
+            this.tableData.push({time: v, commerce: this.arr.commerce.bjs[k], synthesize: this.arr.synthesize.bjs[k]})
+          })
         } else {
           this.chartsTwo(this.arr, this.arr.commerce.dfs, this.arr.synthesize.dfs)
+          this.arr.year.forEach((v, k) => {
+            this.tableData.push({time: v, commerce: this.arr.commerce.dfs[k], synthesize: this.arr.synthesize.dfs[k]})
+          })
         }
       }
     },
@@ -365,6 +461,31 @@ function zero (data) {
   .tab {
     padding-left: 30px;
     margin-bottom: 20px;
+    .change_table {
+      float: right;
+      margin-right: 100px;
+      .el-button {
+        margin: 0;
+      }
+      .le {
+        border-right: 0;
+        margin-right: -5px;
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+      }
+      .ri {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+      }
+      .el-button.active {
+        background-color:rgba(240,120,143,1);
+      }
+    }
+  }
+  .table {
+    height: calc(100% - 150px);
+  }
+  .el-table {
   }
 }
 </style>
